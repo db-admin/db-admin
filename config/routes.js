@@ -50,6 +50,13 @@ module.exports.routes = {
     });
   },
 
+  '/models/:model': {
+    'view': 'models/list',
+    'locals': {
+      'model': 'da'
+    }
+  },
+
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *

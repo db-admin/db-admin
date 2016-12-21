@@ -1,0 +1,21 @@
+<h1 id="title"><%- req.params.model %></h1>
+
+<table id="attributes">
+  <thead>
+    <tr>
+      <!-- Generated Code -->
+    </tr>
+  </thead>
+</table>
+
+<script type="text/javascript">
+  // The attributes of the current model;
+  const attributes = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
+
+  // convert to th
+  for(let key in attributes){
+    const th = document.createElement('th');
+    th.innerHTML = key;
+    document.querySelector('#attributes thead tr').appendChild(th);
+  }
+</script>
