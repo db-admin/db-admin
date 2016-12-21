@@ -1,4 +1,8 @@
-<h1 id="title"><%- req.params.model %></h1>
+<h1 id="title"></h1>
+
+<div class="actions">
+  <a id="add-new" style="float:right">Add new</a>
+</div>
 
 <table id="attributes">
   <thead>
@@ -9,6 +13,10 @@
 </table>
 
 <script type="text/javascript">
+  const model = '<%= req.params.model %>';
+  document.getElementById('title').innerHTML = model;
+  document.getElementById('add-new').href = `/models/${model}/create`;
+
   // The attributes of the current model;
   const attributes = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
 
