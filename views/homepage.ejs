@@ -3,16 +3,42 @@
 <div id="models"></div>
 
 <script type="text/javascript">
-fetch('/_config').then(response => response.json().then(config => {
+fetch('/_config')
+.then(response => response.json().then(config => {
 
   // set title
   document.getElementById('title').innerHTML = config.title;
 
   // set models
   config.models.forEach(model => {
-    const button = document.createElement('button');
-    button.innerHTML = model;
-    document.getElementById('models').appendChild(button);
+    const link = document.createElement('a');
+    link.innerHTML = model;
+    link.href = `/models/${model}`;
+    document.getElementById('models').appendChild(link);
   });
-}));
+
+})
+);
+// close fetch
 </script>
+<style media="screen">
+html{
+  font-family: consolas;
+}
+#models{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+#models a{
+  appearance: button;
+  -moz-appearance: button;
+  -webkit-appearance: button;
+  text-decoration: none;
+  color: ButtonText;
+  display: block;
+  width: 33%;
+  text-align: center;
+  padding: 5px;
+}
+</style>
