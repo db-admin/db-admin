@@ -1,6 +1,15 @@
 <h1 id="title"></h1>
-<hr />
-<div id="models"></div>
+<table id="models">
+  <thead>
+    <tr>
+      <th>Table Name</th>
+      <th># of Rows</th>
+    </tr>
+  </thead>
+  <tbody>
+
+  </tbody>
+</table>
 
 <script type="text/javascript">
 fetch('/_config')
@@ -11,34 +20,44 @@ fetch('/_config')
 
   // set models
   config.models.forEach(model => {
-    const link = document.createElement('a');
-    link.innerHTML = model;
-    link.href = `/models/${model}`;
-    document.getElementById('models').appendChild(link);
+    const tr = document.createElement('tr');
+    const nameTd = document.createElement('td');
+    const numOfRowsTd = document.createElement('td');
+    const a = document.createElement('a');
+
+    a.innerHTML = model;
+    a.href = `/models/${model}`;
+
+    nameTd.appendChild(a);
+
+    tr.appendChild(nameTd);
+    tr.appendChild(numOfRowsTd);
+
+    document.querySelector('#models tbody').appendChild(tr);
   });
 
-})
-);
+}));
 // close fetch
 </script>
+
 <style media="screen">
 html{
   font-family: consolas;
+  background-color: #282a36;
+  color: #50fa72;
 }
-#models{
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
+a {
+  color: white;
 }
-#models a{
-  appearance: button;
-  -moz-appearance: button;
-  -webkit-appearance: button;
-  text-decoration: none;
-  color: ButtonText;
-  display: block;
-  width: 33%;
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid white;
+}
+#title{
   text-align: center;
-  padding: 5px;
 }
 </style>
