@@ -1,0 +1,34 @@
+<h1 id="title"></h1>
+<hr>
+<form method="post"></form>
+
+<script type="text/javascript">
+  const form = document.querySelector('form');
+  const submitButton = document.createElement('input');
+  const model = '<%- req.params.model %>';
+  const attributes = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
+
+  // Set page title
+  document.getElementById('title').innerHTML = `New '${model}' item`;
+
+  // Set destination of form post
+  form.action = `/${model}`;
+
+  // create input for each attribute
+  for(let key in attributes){
+    const container = document.container = document.createElement('div');
+    const input = document.createElement('input');
+    const label = document.createElement('label');
+
+    input.type = 'text';
+    input.name = key;
+    label.innerHTML = `${key} `;
+    container.appendChild(label);
+    container.appendChild(input);
+    form.appendChild(container);
+  }
+
+  // add submit button
+  submitButton.type = 'submit';
+  form.appendChild(submitButton);
+</script>

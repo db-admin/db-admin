@@ -51,10 +51,11 @@ module.exports.routes = {
   },
 
   '/models/:model': {
-    'view': 'models/list',
-    'locals': {
-      'model': 'da'
-    }
+    'view': 'models/list'
+  },
+
+  '/models/:model/create': {
+    'view': 'models/create-edit'
   },
 
   /***************************************************************************
