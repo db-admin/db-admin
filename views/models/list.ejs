@@ -4,12 +4,15 @@
   <a id="add-new" style="float:right">Add new</a>
 </div>
 
-<table id="attributes">
+<table>
   <thead>
     <tr>
       <!-- Generated Code -->
     </tr>
   </thead>
+  <tbody>
+
+  </tbody>
 </table>
 
 <script type="text/javascript">
@@ -24,6 +27,19 @@
   for(let key in attributes){
     const th = document.createElement('th');
     th.innerHTML = key;
-    document.querySelector('#attributes thead tr').appendChild(th);
+    document.querySelector('table thead tr').appendChild(th);
   }
+
+  // Display the data
+  fetch(`/${model}`).then(response => response.json().then(data => {
+    data.forEach(item => {
+      const tr = document.createElement('tr');
+      for(let key in attributes){
+        const td = document.createElement('td');
+        td.innerHTML = item[key];
+        tr.appendChild(td);
+        document.querySelector('table tbody').appendChild(tr);
+      }
+    });
+  }));
 </script>
