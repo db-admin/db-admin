@@ -11,8 +11,24 @@
   // Set page title
   document.getElementById('title').innerHTML = `New '${model}' item`;
 
-  // Set destination of form post
-  form.action = `/${model}`;
+  // on form submit
+  form.addEventListener('submit', event => {
+    const data = {};
+
+    event.preventDefault();
+
+    for(let i = 0; i < form.elements.length; i++){
+      const element = form.elements[i];
+      const name = element.name;
+      const value = element.value;
+      if(value) data[name] = value;
+    }
+debugger;
+    fetch(`/${model}`, { method: 'POST' }).then(response => {
+      if(response.ok) location.href = `/models/${model}`;
+    });
+
+  });
 
   // create input for each attribute
   for(let key in attributes){

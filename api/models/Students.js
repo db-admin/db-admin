@@ -6,7 +6,6 @@
  */
 
 module.exports = {
-
   attributes: {
     name: { 'type': 'string' },
     major: { 'model': 'Majors' },

@@ -50,7 +50,7 @@ module.exports.routes = {
     });
   },
 
-  '/models/:model': {
+  'get /models/:model': {
     'view': 'models/list'
   },
 
