@@ -17,14 +17,10 @@
 
     event.preventDefault();
 
-    for(let i = 0; i < form.elements.length; i++){
-      const element = form.elements[i];
-      const name = element.name;
-      const value = element.value;
-      if(value) data[name] = value;
-    }
-debugger;
-    fetch(`/${model}`, { method: 'POST' }).then(response => {
+    fetch(`/${model}`, {
+      method: 'POST',
+      body: new FormData(form) // this is cool!
+    }).then(response => {
       if(response.ok) location.href = `/models/${model}`;
     });
 
@@ -36,15 +32,31 @@ debugger;
     const input = document.createElement('input');
     const label = document.createElement('label');
 
-    input.type = 'text';
+    // create the input
+    input.type = getInputType(attributes[key].type);
     input.name = key;
+    input.id = `model-${key}`;
+
+    // create the label
+    label.for = input.id;
     label.innerHTML = `${key} `;
+
+    // Append to the input container
     container.appendChild(label);
     container.appendChild(input);
+
+    // Append to the form
     form.appendChild(container);
   }
 
   // add submit button
   submitButton.type = 'submit';
   form.appendChild(submitButton);
+
+  function getInputType(attributeType){
+    return {
+      'string': 'text',
+      'integer': 'number'
+    }[attributeType];
+  }
 </script>

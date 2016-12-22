@@ -18,29 +18,65 @@
 
 <script type="text/javascript">
   const model = '<%= req.params.model %>';
+  const theadTr = document.querySelector('table thead tr');
+  const attributes = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
+
   document.getElementById('title').innerHTML = model;
   document.getElementById('add-new').href = `/models/${model}/create`;
 
-  // The attributes of the current model;
-  const attributes = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
+  const editTh = document.createElement('th');
+  editTh.innerHTML = 'Edit';
+  theadTr.appendChild(editTh);
 
-  // convert to th
+  // convert attributes to th
   for(let key in attributes){
     const th = document.createElement('th');
     th.innerHTML = key;
-    document.querySelector('table thead tr').appendChild(th);
+    theadTr.appendChild(th);
   }
+
+    const deleteTh = document.createElement('th');
+    deleteTh.innerHTML = 'Delete';
+    theadTr.appendChild(deleteTh);
 
   // Display the data
   fetch(`/${model}`).then(response => response.json().then(data => {
     data.forEach(item => {
+      const deleteTd = document.createElement('td');
+      const deleteLink = document.createElement('a');
+      const editTd = document.createElement('td');
+      const editLink = document.createElement('a');
       const tr = document.createElement('tr');
+
+      editLink.innerHTML = 'Edit';
+      editLink.href = `models/${model}/edit?id=${item.id}`;
+      editTd.appendChild(editLink);
+
+      deleteLink.innerHTML = 'Delete';
+      deleteLink.href = `/models/${model}`;
+      deleteLink.onclick = event => {
+        event.preventDefault();
+        if(confirm(`Are you sure you want to delete this item?\n\n${JSON.stringify(item)}`)){
+          fetch(`/${model}/${item.id}`, {
+            'method': 'DELETE',
+            'body': item
+          }).then(response => {
+            location.href = deleteLink.href;
+          });
+        }
+      }
+      deleteTd.appendChild(deleteLink);
+      tr.appendChild(editTd);
+
       for(let key in attributes){
         const td = document.createElement('td');
         td.innerHTML = item[key];
         tr.appendChild(td);
         document.querySelector('table tbody').appendChild(tr);
       }
+
+      tr.appendChild(deleteTd);
+
     });
   }));
 </script>
