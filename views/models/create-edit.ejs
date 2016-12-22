@@ -52,16 +52,36 @@
 
   // create input for each attribute
   for(let key in attributes){
-    if(attributes[key].model) continue; // not supported yet
     if(attributes[key].collection) continue; // not supported yet
     const container = document.container = document.createElement('div');
-    const input = document.createElement('input');
     const label = document.createElement('label');
+    let input; // the input for this attribute
 
     // create the input
-    input.type = getInputType(attributes[key]);
+    const inputType = getInputType(attributes[key]);
+
+    if(inputType == 'select'){
+      const foreignModel = attributes[key].model;
+      input = document.createElement('select');
+
+      // get options
+      fetch(`/${foreignModel}`).then(response => response.json().then(results => {
+        results.forEach(result => {
+          const option = document.createElement('option');
+          option.value = result.id;
+          option.innerHTML = result.name;
+          input.appendChild(option);
+        });
+      }));
+    } else if (inputType == 'multiselect?... idk'){
+      // not yet supported
+    } else {
+      // regular input
+      input = document.createElement('input');
+      input.type = inputType;
+      input.id = `model-${key}`;
+    }
     input.name = key;
-    input.id = `model-${key}`;
 
     // create the label
     label.for = input.id;
@@ -80,6 +100,7 @@
   form.appendChild(submitButton);
 
   function getInputType(attribute){
+    if(attribute.model) return 'select';
     return {
       'string': 'text',
       'integer': 'number'

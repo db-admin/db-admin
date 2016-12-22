@@ -71,7 +71,9 @@ fetch(`/${model}`).then(response => response.json().then(data => {
 
     for(let key in attributes){
       const td = document.createElement('td');
-      td.innerHTML = item[key];
+      let name = getFriendlyName(item[key], attributes[key]);
+
+      td.innerHTML = name;
       tr.appendChild(td);
       document.querySelector('table tbody').appendChild(tr);
     }
@@ -80,4 +82,16 @@ fetch(`/${model}`).then(response => response.json().then(data => {
 
   });
 }));
+
+function getFriendlyName(attributeValue, attribute){
+  if(!attributeValue) {
+    return null;
+  } else if (attribute.collection) {
+    return `${attributeValue.length} ${attribute.collection}`;
+  } else if(attribute.model){
+    return attributeValue.name;
+  } else {
+    return attributeValue;
+  }
+}
 </script>
