@@ -58,6 +58,10 @@ module.exports.routes = {
     'view': 'models/create-edit'
   },
 
+  '/models/:model/:id': {
+    'view': 'models/create-edit'
+  },
+
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *

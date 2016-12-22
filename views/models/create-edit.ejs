@@ -6,34 +6,60 @@
   const form = document.querySelector('form');
   const submitButton = document.createElement('input');
   const model = '<%- req.params.model %>';
+  const modelId = <%- req.params.id || 'null' %>;
   const attributes = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
+  const title = document.getElementById('title')
 
-  // Set page title
-  document.getElementById('title').innerHTML = `New '${model}' item`;
+  let modelEditing = null;
+
+  if(modelId){
+    // If editing
+    fetch(`/${model}/${modelId}`).then(results => results.json().then(result => {
+      modelEditing = result;
+      title.innerHTML = result.name;
+
+      for(let i = 0; i < form.elements.length; i++){
+        const element = form.elements[i];
+        if(element.type == 'submit') continue; // skip the submit button
+        if(!result[element.name]) continue; // skip ones with no value
+        element.value = result[element.name];
+      }
+
+    }));
+  } else {
+    // Is creating
+    title.innerHTML = `New '${model}' item`;
+  }
+
 
   // on form submit
   form.addEventListener('submit', event => {
     const data = {};
+    const fetchMethod = null;
 
     event.preventDefault();
 
-    fetch(`/${model}`, {
-      method: 'POST',
+    fetch(`/${model}` + (modelId ? `/${modelId}` : ''), {
+      method: modelId ? 'PUT' : 'POST',
       body: new FormData(form) // this is cool!
     }).then(response => {
       if(response.ok) location.href = `/models/${model}`;
+    }, error => {
+      console.log('didnt work because idk');
     });
 
   });
 
   // create input for each attribute
   for(let key in attributes){
+    if(attributes[key].model) continue; // not supported yet
+    if(attributes[key].collection) continue; // not supported yet
     const container = document.container = document.createElement('div');
     const input = document.createElement('input');
     const label = document.createElement('label');
 
     // create the input
-    input.type = getInputType(attributes[key].type);
+    input.type = getInputType(attributes[key]);
     input.name = key;
     input.id = `model-${key}`;
 
@@ -53,10 +79,10 @@
   submitButton.type = 'submit';
   form.appendChild(submitButton);
 
-  function getInputType(attributeType){
+  function getInputType(attribute){
     return {
       'string': 'text',
       'integer': 'number'
-    }[attributeType];
+    }[attribute.type];
   }
 </script>
