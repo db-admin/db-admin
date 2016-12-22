@@ -8,7 +8,7 @@
 module.exports = {
 
   attributes: {
-
+    'name': { 'type': 'string' },
+    'majors': { 'collection': 'Majors' }
   }
 };
-
