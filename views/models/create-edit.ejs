@@ -31,7 +31,6 @@
     title.innerHTML = `New '${model}' item`;
   }
 
-
   // on form submit
   form.addEventListener('submit', event => {
     const data = {};
@@ -62,10 +61,15 @@
 
     if(inputType == 'select'){
       const foreignModel = attributes[key].model;
+      const emptyOption = document.createElement('option');
+
       input = document.createElement('select');
+      emptyOption.value = null;
+      emptyOption.innerHTML = null;
 
       // get options
       fetch(`/${foreignModel}`).then(response => response.json().then(results => {
+        input.appendChild(emptyOption);
         results.forEach(result => {
           const option = document.createElement('option');
           option.value = result.id;
