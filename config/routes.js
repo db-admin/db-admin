@@ -32,6 +32,11 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
+  'put /test/:id': (req, res) => {
+    sails.log(req.allParams());
+    res.ok();
+  },
+
   '/': {
     view: 'homepage'
   },

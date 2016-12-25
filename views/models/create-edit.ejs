@@ -3,111 +3,154 @@
 <form method="post"></form>
 
 <script type="text/javascript">
-  const form = document.querySelector('form');
-  const submitButton = document.createElement('input');
-  const model = '<%- req.params.model %>';
-  const modelId = <%- req.params.id || 'null' %>;
-  const attributes = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
-  const title = document.getElementById('title')
 
-  let modelEditing = null;
+const form = document.querySelector('form'); // the form HTML elements
+const submitButton = document.createElement('input'); // the sumbit button
+const table = '<%- req.params.model %>'; // the model table name
+const recordId = <%- req.params.id || 'null' %>;
+const attributes = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
+const isEditing = recordId != null;
+let modelEditing = null; // What the user is currently editing (initially as null)
+let numOfSelects = 0; // The number of <select> HTML elements
+let numOfSelectsPopulated = 0; // The number of <select> HTML elements
 
-  if(modelId){
-    // If editing
-    fetch(`/${model}/${modelId}`).then(results => results.json().then(result => {
+// 1. Load the form elements
+// 2. Load the foreign records if needed
+// 3. Populate the form elements if the user is editing
+
+// create input for each attribute
+for(let key in attributes){
+  const container = document.container = document.createElement('div'); // container for the current for input
+  const label = document.createElement('label');
+  let input; // the input for this attribute
+
+  // create the input
+  const inputType = getInputType(attributes[key]);
+
+  // if is select box (if requires foreign table)
+  if(['select', 'multiselect'].indexOf(inputType) != -1){
+    const foreignTable = inputType == 'multiselect' ? attributes[key].collection : attributes[key].model;
+
+    input = document.createElement('select');
+    input.multiple = inputType == 'multiselect' ? 'multiple' : null;
+
+  } else {
+    // regular input
+    input = document.createElement('input');
+    input.type = inputType;
+  }
+
+  // Finish the input element
+  input.id = `model-${key}`;
+  input.name = key;
+
+  // create the label
+  label.for = input.id;
+  label.innerHTML = `${key} `;
+
+  // Append to the input container
+  container.appendChild(label);
+  container.appendChild(input);
+
+  // Append to the form
+  form.appendChild(container);
+}
+
+// Populate the input elements that require foreign records
+for(let key in attributes){
+  const input = document.querySelector(`form select[name=${key}]`);
+  if(!input) continue; // the current element is not a <select> skip
+
+  const inputType = getInputType(attributes[key]);
+  const foreignTable = inputType == 'multiselect' ? attributes[key].collection : attributes[key].model;
+
+  numOfSelects++;
+
+  // gets the options for selected boxes (remember, this can run multiple times)
+  fetch(`/${foreignTable}`).then(response => response.json().then(results => {
+
+    // Populate the select box with the foreign table records
+    results.forEach(result => {
+      const option = document.createElement('option');
+      option.value = result.id;
+      option.innerHTML = `#${result.id} ${result.name}`;
+      input.appendChild(option);
+    });
+
+
+    numOfSelectsPopulated++;
+
+    // If finished populating all the <selects>
+    if(numOfSelectsPopulated == numOfSelects){
+      loadEditingModel();
+    }
+  })); // End fetch
+}
+
+function loadEditingModel(){
+
+  // gets the current editing model (if editing). (And this needs to finish first!)
+  if(isEditing){
+    fetch(`/${table}/${recordId}`).then(results => results.json().then(result => {
       modelEditing = result;
       title.innerHTML = result.name;
 
+      // for each form item
       for(let i = 0; i < form.elements.length; i++){
-        const element = form.elements[i];
-        if(element.type == 'submit') continue; // skip the submit button
-        if(!result[element.name]) continue; // skip ones with no value
-        element.value = result[element.name];
+        const input = form.elements[i]; // get the current item
+        const currentValue = modelEditing[input.name]; // The value of the current record attribute
+        if(!currentValue) continue; // skip ones with no value
+
+        // If is <select multiple> element
+        if(input.tagName == 'SELECT' && input.multiple){
+          const options = input.getElementsByTagName('option');
+          for(let j = 0; j < options.length; j++){
+            const valueIds = currentValue.map(item => item.id);
+            const option = options[j];
+            if(valueIds.indexOf(Number(option.value)) != -1){
+              option.selected = true;
+            }
+          }
+        } else {
+          if(input.tagName == 'SELECT') input.value = currentValue.id;
+          else input.value = currentValue;
+        }
       }
 
     }));
-  } else {
-    // Is creating
-    title.innerHTML = `New '${model}' item`;
   }
 
-  // on form submit
-  form.addEventListener('submit', event => {
-    const data = {};
-    const fetchMethod = null;
+}
 
-    event.preventDefault();
+// on form submit
+form.addEventListener('submit', event => {
+  const data = {};
+  const fetchMethod = null;
 
-    fetch(`/${model}` + (modelId ? `/${modelId}` : ''), {
-      method: modelId ? 'PUT' : 'POST',
-      body: new FormData(form) // this is cool!
-    }).then(response => {
-      if(response.ok) location.href = `/models/${model}`;
-    }, error => {
-      console.log('didnt work because idk');
-    });
+  event.preventDefault();
 
+  fetch(`/${table}` + (recordId ? `/${recordId}` : ''), {
+    method: recordId ? 'PUT' : 'POST',
+    body: new FormData(form) // this is cool!
+  }).then(response => {
+    if(response.ok) location.href = `/models/${table}`;
+  }, error => {
+    console.log('didnt work because idk');
   });
 
-  // create input for each attribute
-  for(let key in attributes){
-    if(attributes[key].collection) continue; // not supported yet
-    const container = document.container = document.createElement('div');
-    const label = document.createElement('label');
-    let input; // the input for this attribute
+});
 
-    // create the input
-    const inputType = getInputType(attributes[key]);
+// add submit button
+submitButton.type = 'submit';
+form.appendChild(submitButton);
 
-    if(inputType == 'select'){
-      const foreignModel = attributes[key].model;
-      const emptyOption = document.createElement('option');
-
-      input = document.createElement('select');
-      emptyOption.value = null;
-      emptyOption.innerHTML = null;
-
-      // get options
-      fetch(`/${foreignModel}`).then(response => response.json().then(results => {
-        input.appendChild(emptyOption);
-        results.forEach(result => {
-          const option = document.createElement('option');
-          option.value = result.id;
-          option.innerHTML = result.name;
-          input.appendChild(option);
-        });
-      }));
-    } else if (inputType == 'multiselect?... idk'){
-      // not yet supported
-    } else {
-      // regular input
-      input = document.createElement('input');
-      input.type = inputType;
-      input.id = `model-${key}`;
-    }
-    input.name = key;
-
-    // create the label
-    label.for = input.id;
-    label.innerHTML = `${key} `;
-
-    // Append to the input container
-    container.appendChild(label);
-    container.appendChild(input);
-
-    // Append to the form
-    form.appendChild(container);
-  }
-
-  // add submit button
-  submitButton.type = 'submit';
-  form.appendChild(submitButton);
-
-  function getInputType(attribute){
-    if(attribute.model) return 'select';
-    return {
-      'string': 'text',
-      'integer': 'number'
-    }[attribute.type];
-  }
+function getInputType(attribute){
+  if(attribute.model) return 'select';
+  if(attribute.collection) return 'multiselect';
+  return {
+    'string': 'text',
+    'integer': 'number',
+    'datetime': 'text'
+  }[attribute.type];
+}
 </script>

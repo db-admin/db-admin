@@ -8,7 +8,6 @@
 module.exports = {
 
   attributes: {
-    'class': { 'model': 'Classes' },
     'startDateTime': { 'type': 'datetime' },
     'endDateTime': { 'type': 'datetime' },
   }

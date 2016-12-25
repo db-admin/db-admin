@@ -21,7 +21,7 @@ const model = '<%= req.params.model %>';
 const theadTr = document.querySelector('table thead tr');
 const attributes = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
 
-document.getElementById('title').innerHTML = model;
+document.getElementById('title').innerHTML = `${model}`;
 document.getElementById('add-new').href = `/models/${model}/create`;
 
 const editTh = document.createElement('th');
@@ -90,6 +90,8 @@ function getFriendlyName(attributeValue, attribute){
     return `${attributeValue.length} ${attribute.collection}`;
   } else if(attribute.model){
     return attributeValue.name;
+  } else if(['date', 'datetime', 'time'].indexOf(attribute.type) != -1) {
+    return new Date(attributeValue).toString();
   } else {
     return attributeValue;
   }
