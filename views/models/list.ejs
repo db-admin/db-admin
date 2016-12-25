@@ -91,7 +91,8 @@ function getFriendlyName(attributeValue, attribute){
   } else if(attribute.model){
     return attributeValue.name;
   } else if(['date', 'datetime', 'time'].indexOf(attribute.type) != -1) {
-    return new Date(attributeValue).toString();
+    const date = new Date(attributeValue);
+    return `${date.toDateString()} ${date.toTimeString()}`
   } else {
     return attributeValue;
   }

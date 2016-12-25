@@ -14,11 +14,12 @@ let modelEditing = null; // What the user is currently editing (initially as nul
 let numOfSelects = 0; // The number of <select> HTML elements
 let numOfSelectsPopulated = 0; // The number of <select> HTML elements
 
+// Algorithm:
 // 1. Load the form elements
 // 2. Load the foreign records if needed
-// 3. Populate the form elements if the user is editing
+// 3. Populate the form elements (by filling out their values, if the user is editing)
 
-// create input for each attribute
+// 1. Create input for each attribute
 for(let key in attributes){
   const container = document.container = document.createElement('div'); // container for the current for input
   const label = document.createElement('label');
@@ -56,39 +57,44 @@ for(let key in attributes){
   form.appendChild(container);
 }
 
-// Populate the input elements that require foreign records
-for(let key in attributes){
-  const input = document.querySelector(`form select[name=${key}]`);
-  if(!input) continue; // the current element is not a <select> skip
+// 2. Populate the input elements that require foreign records
+if(form.getElementsByTagName('select').length != 0){
+  // if there are some select inputs
+  for(let key in attributes){
+    const input = document.querySelector(`form select[name=${key}]`);
+    if(!input) continue; // the current element is not a <select> skip
 
-  const inputType = getInputType(attributes[key]);
-  const foreignTable = inputType == 'multiselect' ? attributes[key].collection : attributes[key].model;
+    const inputType = getInputType(attributes[key]);
+    const foreignTable = inputType == 'multiselect' ? attributes[key].collection : attributes[key].model;
 
-  numOfSelects++;
+    numOfSelects++;
 
-  // gets the options for selected boxes (remember, this can run multiple times)
-  fetch(`/${foreignTable}`).then(response => response.json().then(results => {
+    // gets the options for selected boxes (remember, this can run multiple times)
+    fetch(`/${foreignTable}`).then(response => response.json().then(results => {
 
-    // Populate the select box with the foreign table records
-    results.forEach(result => {
-      const option = document.createElement('option');
-      option.value = result.id;
-      option.innerHTML = `#${result.id} ${result.name}`;
-      input.appendChild(option);
-    });
+      // Populate the select box with the foreign table records
+      results.forEach(result => {
+        const option = document.createElement('option');
+        option.value = result.id;
+        option.innerHTML = `#${result.id} ${result.name}`;
+        input.appendChild(option);
+      });
 
+      numOfSelectsPopulated++;
 
-    numOfSelectsPopulated++;
-
-    // If finished populating all the <selects>
-    if(numOfSelectsPopulated == numOfSelects){
-      loadEditingModel();
-    }
-  })); // End fetch
+      // If finished populating all the <selects>
+      if(numOfSelectsPopulated == numOfSelects){
+        loadEditingModel();
+      }
+    })); // End fetch
+  }
+} else {
+  // There's no select inputs
+  loadEditingModel();
 }
 
+// 3. Populate form elements
 function loadEditingModel(){
-
   // gets the current editing model (if editing). (And this needs to finish first!)
   if(isEditing){
     fetch(`/${table}/${recordId}`).then(results => results.json().then(result => {

@@ -10,5 +10,6 @@ module.exports = {
   attributes: {
     'startDateTime': { 'type': 'datetime' },
     'endDateTime': { 'type': 'datetime' },
+    'name': { 'type': 'string' }
   }
 };
