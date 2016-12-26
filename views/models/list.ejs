@@ -19,23 +19,7 @@
 <script type="text/javascript">
 const model = '<%= req.params.model %>';
 const theadTr = document.querySelector('table thead tr');
-let attrObject = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
-
-// sort the attribute keys (using custom sort method)
-const firstItems = ['id', 'name'];
-const secondItems = ['createdAt', 'updatedAt'];
-
-attributes = Object.keys(attrObject) // get array of keys
-.filter(item => firstItems.indexOf(item) == -1 && secondItems.indexOf(item) == -1) // take out filtered items
-.sort(); // sort
-
-attributes = firstItems.concat(attributes, secondItems);
-
-attributes = attributes.map(attr => {
-  const thingToReturn = {};
-  thingToReturn[attr] = attrObject[attr];
-  return thingToReturn;
-});
+let attributes = sortAttributes(<%- JSON.stringify(sails.models[req.params.model].attributes) %>);
 
 document.getElementById('title').innerHTML = `${model}`;
 document.getElementById('add-new').href = `/models/${model}/create`;
@@ -103,6 +87,11 @@ fetch(`/${model}`).then(response => response.json().then(data => {
   });
 }));
 
+/**
+ * Converts the value given to a user friendly string
+ * @param attributeValue the value to convert
+ * @param attribute the attribute object itself, specifying its properties
+ */
 function getFriendlyName(attributeValue, attribute){
   if(!attributeValue) {
     return null;
@@ -132,4 +121,28 @@ function getFriendlyName(attributeValue, attribute){
   }
 }
 
+/**
+ * Sorts the attributes of the attributes object in a user friendly order
+ * @param attrObject The attributes object to sort its keys
+ * @return an array with the sorted keys
+ */
+function sortAttributes(attrObject){
+  const firstItems = ['id', 'name'];
+  const secondItems = ['createdAt', 'updatedAt'];
+  let sortedAttributes = [];
+
+  // Sort attributes in a user friendly order
+  sortedAttributes = Object.keys(attrObject) // get array of keys
+  .filter(item => firstItems.indexOf(item) == -1 && secondItems.indexOf(item) == -1) // take out filtered items
+  .sort(); // sort
+
+  sortedAttributes = firstItems.concat(sortedAttributes, secondItems); // prepend first items and append last items
+  sortedAttributes = sortedAttributes.map(attr => {
+    const thingToReturn = {};
+    thingToReturn[attr] = attrObject[attr];
+    return thingToReturn;
+  });
+
+  return sortedAttributes;
+}
 </script>
