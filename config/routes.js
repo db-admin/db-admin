@@ -59,6 +59,15 @@ module.exports.routes = {
     'view': 'models/list'
   },
 
+  // End point to get the count of a model
+  'get /:model/count': (req, res) => {
+    const model = sails.models[req.params.model];
+    model.count().exec((err, count) => {
+      if(err) return sails.error(err);
+      res.send(200, count);
+    });
+  },
+
   '/models/:model/create': {
     'view': 'models/create-edit'
   },
