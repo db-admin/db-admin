@@ -92,19 +92,24 @@ function getFriendlyName(attributeValue, attribute){
     return attributeValue.name;
   } else if(['datetime'].indexOf(attribute.type) != -1) {
 
+    const pad = number => {
+      number = number.toString();
+      return number.length == 1 ? `0${number}` : number;
+    }
     const date = new Date(attributeValue);
-    const month = date.getMonth();
-    const day = date.getDate();
+    const month = pad(date.getMonth() + 1); // the +1 is because month is zero-based
+    const day = pad(date.getDate());
     const year = date.getFullYear();
-    const hour = date.getHours();
-    const minutes = date.getMinutes();
-    let seconds = date.getSeconds().toString();
+    const hour = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const seconds = pad(date.getSeconds().toString());
 
-    seconds = seconds.length == 1 ? `0${seconds}` : seconds; // pad the seconds to two characters
 
     return `${month}/${day}/${year} ${hour}:${minutes}:${seconds}`;
+
   } else {
     return attributeValue;
   }
 }
+
 </script>
