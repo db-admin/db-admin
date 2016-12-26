@@ -19,12 +19,21 @@
 <script type="text/javascript">
 const model = '<%= req.params.model %>';
 const theadTr = document.querySelector('table thead tr');
-let attributes = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
+let attrObject = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
 
 // sort the attribute keys (using custom sort method)
-attributes = Object.keys(attributes).sort().map(attr => {
+const firstItems = ['id', 'name'];
+const secondItems = ['createdAt', 'updatedAt'];
+
+attributes = Object.keys(attrObject) // get array of keys
+.filter(item => firstItems.indexOf(item) == -1 && secondItems.indexOf(item) == -1) // take out filtered items
+.sort(); // sort
+
+attributes = firstItems.concat(attributes, secondItems);
+
+attributes = attributes.map(attr => {
   const thingToReturn = {};
-  thingToReturn[attr] = attributes[attr];
+  thingToReturn[attr] = attrObject[attr];
   return thingToReturn;
 });
 
