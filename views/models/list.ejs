@@ -19,7 +19,14 @@
 <script type="text/javascript">
 const model = '<%= req.params.model %>';
 const theadTr = document.querySelector('table thead tr');
-const attributes = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
+let attributes = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
+
+// sort the attribute keys (using custom sort method)
+attributes = Object.keys(attributes).sort().map(attr => {
+  const thingToReturn = {};
+  thingToReturn[attr] = attributes[attr];
+  return thingToReturn;
+});
 
 document.getElementById('title').innerHTML = `${model}`;
 document.getElementById('add-new').href = `/models/${model}/create`;
@@ -29,11 +36,13 @@ editTh.innerHTML = 'Edit';
 theadTr.appendChild(editTh);
 
 // convert attributes to th
-for(let key in attributes){
+attributes.forEach(attr => {
+  const keys = Object.keys(attr);
+  const key = keys[0];
   const th = document.createElement('th');
   th.innerHTML = key;
   theadTr.appendChild(th);
-}
+});
 
 const deleteTh = document.createElement('th');
 deleteTh.innerHTML = 'Delete';
@@ -69,14 +78,16 @@ fetch(`/${model}`).then(response => response.json().then(data => {
     deleteTd.appendChild(deleteLink);
     tr.appendChild(editTd);
 
-    for(let key in attributes){
+    attributes.forEach(attr => {
+      const keys = Object.keys(attr);
+      const key = keys[0];
       const td = document.createElement('td');
-      let name = getFriendlyName(item[key], attributes[key]);
+      let name = getFriendlyName(item[key], attr[key]);
 
       td.innerHTML = name;
       tr.appendChild(td);
       document.querySelector('table tbody').appendChild(tr);
-    }
+    });
 
     tr.appendChild(deleteTd);
 

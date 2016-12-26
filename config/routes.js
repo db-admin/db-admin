@@ -43,7 +43,7 @@ module.exports.routes = {
 
   // returns the configuration for sails-my-admin
   '/_config': (req, res) => {
-    let models = []; // The models.
+    let models = []; // The models (table names).
 
     for(let key in sails.models){
       models.push(key);
