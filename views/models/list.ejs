@@ -98,7 +98,9 @@ function getFriendlyName(attributeValue, attribute){
     const year = date.getFullYear();
     const hour = date.getHours();
     const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
+    let seconds = date.getSeconds().toString();
+
+    seconds = seconds.length == 1 ? `0${seconds}` : seconds; // pad the seconds to two characters
 
     return `${month}/${day}/${year} ${hour}:${minutes}:${seconds}`;
   } else {
