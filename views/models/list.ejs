@@ -90,9 +90,17 @@ function getFriendlyName(attributeValue, attribute){
     return `${attributeValue.length} ${attribute.collection}`;
   } else if(attribute.model){
     return attributeValue.name;
-  } else if(['date', 'datetime', 'time'].indexOf(attribute.type) != -1) {
+  } else if(['datetime'].indexOf(attribute.type) != -1) {
+
     const date = new Date(attributeValue);
-    return `${date.toDateString()} ${date.toTimeString()}`
+    const month = date.getMonth();
+    const day = date.getDate();
+    const year = date.getFullYear();
+    const hour = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+
+    return `${month}/${day}/${year} ${hour}:${minutes}:${seconds}`;
   } else {
     return attributeValue;
   }
