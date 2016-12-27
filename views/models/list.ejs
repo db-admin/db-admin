@@ -17,32 +17,127 @@
 </table>
 
 <script type="text/javascript">
-const model = '<%= req.params.model %>';
-const theadTr = document.querySelector('table thead tr');
-let attributes = sortAttributes(<%- JSON.stringify(sails.models[req.params.model].attributes) %>);
 
-document.getElementById('title').innerHTML = `${model}`;
-document.getElementById('add-new').href = `/models/${model}/create`;
+const ModelList = class {
+  constructor(modelName, attributes) {
+    this.modelName = modelName;
+    this.attributes = attributes;
+  }
 
-const editTh = document.createElement('th');
-editTh.innerHTML = 'Edit';
-theadTr.appendChild(editTh);
+  /**
+  * Gets the data for the current model
+  * @return A promise to use to get the records
+  */
+  getRecords() {
+    return fetch(`/${this.modelName}`).then(response => response.json());
+  };
 
-// convert attributes to th
-attributes.forEach(attr => {
-  const keys = Object.keys(attr);
-  const key = keys[0];
-  const th = document.createElement('th');
-  th.innerHTML = key;
-  theadTr.appendChild(th);
-});
+  /**
+  * Sorts the attributes of the attributes object in a user friendly order
+  * @return an array with the sorted keys
+  */
+  getSortedAttributes() {
+    const firstItems = ['id', 'name'];
+    const secondItems = ['createdAt', 'updatedAt'];
+    let sortedAttributes = [];
 
-const deleteTh = document.createElement('th');
-deleteTh.innerHTML = 'Delete';
-theadTr.appendChild(deleteTh);
+    // Sort attributes in a user friendly order
+    sortedAttributes = Object.keys(this.attributes) // get array of keys
+    .filter( // take out pre-indexed items
+      item => firstItems.indexOf(item) == -1 &&
+      secondItems.indexOf(item) == -1
+    )
+    .sort();
+
+    // prepend first items and append last items
+    sortedAttributes = firstItems.concat(sortedAttributes, secondItems);
+
+    // Convert the attributes back to their objects
+    sortedAttributes = sortedAttributes.map(attr => {
+      const thingToReturn = {};
+      thingToReturn[attr] = this.attributes[attr];
+      return thingToReturn;
+    });
+
+    return sortedAttributes;
+  }
+
+  /**
+  * Converts the value given to a user friendly string
+  * @param attributeValue the value to convert
+  * @param attribute the attribute object itself, specifying its properties
+  */
+  getFriendlyValueName(attributeValue, attribute){
+    if(!attributeValue) {
+      return null;
+    } else if (attribute.collection) {
+      return `${attributeValue.length} ${attribute.collection}`;
+    } else if(attribute.model){
+      return attributeValue.name;
+    } else if(['datetime'].indexOf(attribute.type) != -1) {
+
+      const pad = number => {
+        number = number.toString();
+        return number.length == 1 ? `0${number}` : number;
+      }
+      const date = new Date(attributeValue);
+      const month = pad(date.getMonth() + 1); // the +1 is because month is zero-based
+      const day = pad(date.getDate());
+      const year = date.getFullYear();
+      const hour = pad(date.getHours());
+      const minutes = pad(date.getMinutes());
+      const seconds = pad(date.getSeconds().toString());
+
+      return `${month}/${day}/${year} ${hour}:${minutes}:${seconds}`;
+
+    } else {
+      return attributeValue;
+    }
+  }
+
+  /**
+   * Deletes a record from the db
+   * @return a promise for the delete event
+   */
+   deleteRecord(record) {
+     return fetch(`/${modelList.modelName}/${record.id}`, {
+       'method': 'DELETE',
+       'body': record
+     });
+   }
+};
+
+// Instantiate the class
+const modelList = new ModelList('<%= req.params.model %>', <%- JSON.stringify(sails.models[req.params.model].attributes) %>);
+
+// Create table headers
+{
+  const theadTr = document.querySelector('table thead tr');
+  const editTh = document.createElement('th');
+
+  document.getElementById('title').innerHTML = `${modelList.modelName}`;
+  document.getElementById('add-new').href = `/models/${modelList.modelName}/create`;
+  editTh.innerHTML = 'Edit';
+  theadTr.appendChild(editTh);
+
+  // convert attributes to th
+  modelList.getSortedAttributes().forEach(attr => {
+    const keys = Object.keys(attr);
+    const name = keys[0];
+    const properties = attr[name];
+    const th = document.createElement('th');
+
+    th.innerHTML = name;
+    theadTr.appendChild(th);
+  });
+
+  const deleteTh = document.createElement('th');
+  deleteTh.innerHTML = 'Delete';
+  theadTr.appendChild(deleteTh);
+}
 
 // Display the data
-fetch(`/${model}`).then(response => response.json().then(data => {
+modelList.getRecords().then(data => {
   data.forEach(item => {
     const deleteTd = document.createElement('td');
     const deleteLink = document.createElement('a');
@@ -51,19 +146,16 @@ fetch(`/${model}`).then(response => response.json().then(data => {
     const tr = document.createElement('tr');
 
     editLink.innerHTML = 'Edit';
-    editLink.href = `/models/${model}/${item.id}`;
+    editLink.href = `/models/${modelList.modelName}/${item.id}`;
     editTd.appendChild(editLink);
 
     deleteLink.innerHTML = 'Delete';
-    deleteLink.href = `/models/${model}`;
+    deleteLink.href = `/models/${modelList.modelName}`;
     deleteLink.onclick = event => {
       event.preventDefault();
       const warningMessage = `Are you sure you want to delete this item?\n\n${JSON.stringify(item)}`;
       if(confirm(warningMessage)){
-        fetch(`/${model}/${item.id}`, {
-          'method': 'DELETE',
-          'body': item
-        }).then(response => {
+        modelList.deleteRecord(item).then(response => {
           location.href = deleteLink.href;
         });
       }
@@ -71,13 +163,23 @@ fetch(`/${model}`).then(response => response.json().then(data => {
     deleteTd.appendChild(deleteLink);
     tr.appendChild(editTd);
 
-    attributes.forEach(attr => {
+    modelList.getSortedAttributes().forEach(attr => {
       const keys = Object.keys(attr);
-      const key = keys[0];
+      const attrName = keys[0];
+      const attrProperties = attr[attrName];
+      const value = item[attrName];
       const td = document.createElement('td');
-      let name = getFriendlyName(item[key], attr[key]);
+      let name = modelList.getFriendlyValueName(value, attrProperties);
 
-      td.innerHTML = name;
+      if(attrProperties.model){
+        const a = document.createElement('a');
+        a.innerHTML = name;
+        a.href = `/models/${attrProperties.model}/${value.id}`;
+        a.title = `#${value.id}`; // hover
+        td.appendChild(a);
+      } else {
+        td.innerHTML = name;
+      }
       tr.appendChild(td);
       document.querySelector('table tbody').appendChild(tr);
     });
@@ -85,64 +187,6 @@ fetch(`/${model}`).then(response => response.json().then(data => {
     tr.appendChild(deleteTd);
 
   });
-}));
+});
 
-/**
- * Converts the value given to a user friendly string
- * @param attributeValue the value to convert
- * @param attribute the attribute object itself, specifying its properties
- */
-function getFriendlyName(attributeValue, attribute){
-  if(!attributeValue) {
-    return null;
-  } else if (attribute.collection) {
-    return `${attributeValue.length} ${attribute.collection}`;
-  } else if(attribute.model){
-    return attributeValue.name;
-  } else if(['datetime'].indexOf(attribute.type) != -1) {
-
-    const pad = number => {
-      number = number.toString();
-      return number.length == 1 ? `0${number}` : number;
-    }
-    const date = new Date(attributeValue);
-    const month = pad(date.getMonth() + 1); // the +1 is because month is zero-based
-    const day = pad(date.getDate());
-    const year = date.getFullYear();
-    const hour = pad(date.getHours());
-    const minutes = pad(date.getMinutes());
-    const seconds = pad(date.getSeconds().toString());
-
-
-    return `${month}/${day}/${year} ${hour}:${minutes}:${seconds}`;
-
-  } else {
-    return attributeValue;
-  }
-}
-
-/**
- * Sorts the attributes of the attributes object in a user friendly order
- * @param attrObject The attributes object to sort its keys
- * @return an array with the sorted keys
- */
-function sortAttributes(attrObject){
-  const firstItems = ['id', 'name'];
-  const secondItems = ['createdAt', 'updatedAt'];
-  let sortedAttributes = [];
-
-  // Sort attributes in a user friendly order
-  sortedAttributes = Object.keys(attrObject) // get array of keys
-  .filter(item => firstItems.indexOf(item) == -1 && secondItems.indexOf(item) == -1) // take out filtered items
-  .sort(); // sort
-
-  sortedAttributes = firstItems.concat(sortedAttributes, secondItems); // prepend first items and append last items
-  sortedAttributes = sortedAttributes.map(attr => {
-    const thingToReturn = {};
-    thingToReturn[attr] = attrObject[attr];
-    return thingToReturn;
-  });
-
-  return sortedAttributes;
-}
 </script>
