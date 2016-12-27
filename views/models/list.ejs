@@ -171,6 +171,7 @@ modelList.getRecords().then(data => {
       const td = document.createElement('td');
       let name = modelList.getFriendlyValueName(value, attrProperties);
 
+      // If the attribute is a foreign model, make it a link to that model.
       if(attrProperties.model){
         const a = document.createElement('a');
         a.innerHTML = name;
