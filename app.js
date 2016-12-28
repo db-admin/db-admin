@@ -8,11 +8,14 @@ const rc = require('rc');
 
 // Sails My Admin
 const fs = require('fs');
-const config = JSON.parse(fs.readFileSync('sma-config.json'));
+const config = JSON.parse(fs.readFileSync('sma.config.json'));
 
 sails.lift({
-  log: {
-    level: 'warn'
+  'connections': {
+    'userSpecified': config.connections[config.connection]
+  },
+  'globals': {
+    'title': config.title
   }
 }, error => {
   if(error) return console.error(error);

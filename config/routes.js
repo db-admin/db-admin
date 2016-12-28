@@ -63,7 +63,7 @@ module.exports.routes = {
   'get /:model/count': (req, res) => {
     const model = sails.models[req.params.model];
     model.count().exec((err, count) => {
-      if(err) return sails.error(err);
+      if(err) return console.error(err);
       res.send(200, count);
     });
   },
