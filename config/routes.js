@@ -39,6 +39,7 @@ module.exports.routes = {
   // returns the configuration for sails-my-admin
   '/_config': (req, res) => {
     res.send({
+      'title': sails.config.globals.title,
       'models': Object.keys(sails.models),
     });
   },
