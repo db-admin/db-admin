@@ -4,20 +4,21 @@
 process.chdir(__dirname);
 
 const sails = require('sails');
-const rc = require('rc');
+let rc = require('rc');
+rc = rc('sails');
 
 // Sails My Admin
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync('sma.config.json'));
 
-sails.lift({
-  'connections': {
-    'userSpecified': config.connections[config.connection]
-  },
-  'globals': {
-    'title': config.title
-  }
-}, error => {
+rc.connections = {
+  'userSpecified': config.connections[config.connection]
+};
+rc.globals = {
+  'title': config.title
+};
+
+sails.lift(rc, error => {
   if(error) return console.error(error);
   console.log('Ready at localhost:1337');
 });

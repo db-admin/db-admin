@@ -32,26 +32,14 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  'put /test/:id': (req, res) => {
-    sails.log(req.allParams());
-    res.ok();
-  },
-
   '/': {
     view: 'homepage'
   },
 
   // returns the configuration for sails-my-admin
   '/_config': (req, res) => {
-    let models = []; // The models (table names).
-
-    for(let key in sails.models){
-      models.push(key);
-    }
-
     res.send({
-      'title': 'My Sample Database',
-      'models': models,
+      'models': Object.keys(sails.models),
     });
   },
 
