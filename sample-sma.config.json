@@ -1,0 +1,18 @@
+{
+  "title": "My Amazing App's Database",
+  "connection": "database1",
+  "connections": {
+
+    "database1" : {
+      "adapter": "sails-postgresql",
+      "host": "databasehostname.somegibberish.us-west-2.rds.amazonaws.com",
+      "user": "db_user",
+      "password": "secret_password",
+      "database": "databasename"
+    },
+
+    "database2": {
+      "adapter": "sails-disk"
+    }
+  }
+}
