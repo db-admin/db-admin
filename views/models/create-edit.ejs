@@ -23,6 +23,7 @@ let numOfSelectsPopulated = 0; // The number of <select> HTML elements
 for(let key in attributes){
   const container = document.container = document.createElement('div'); // container for the current for input
   const label = document.createElement('label');
+  const labelAfter = document.createElement('label');
   let input; // the input for this attribute
 
   // create the input
@@ -48,6 +49,10 @@ for(let key in attributes){
   // create the label
   label.for = input.id;
   label.innerHTML = `${key} `;
+
+  if(attributes[key].type == 'datetime'){
+    label.innerHTML += '(UTC) '
+  }
 
   // Append to the input container
   container.appendChild(label);
@@ -98,6 +103,7 @@ function loadEditingModel(){
   // gets the current editing model (if editing). (And this needs to finish first!)
   if(isEditing){
     fetch(`/${table}/${recordId}`).then(results => results.json().then(result => {
+      console.log('Model editing:', result)
       modelEditing = result;
       title.innerHTML = result.name;
 
@@ -117,9 +123,12 @@ function loadEditingModel(){
               option.selected = true;
             }
           }
+        } else if(input.tagName == 'SELECT') {
+          input.value = currentValue.id;
+        } else if(input.type == 'datetime-local') {
+          input.setAttribute('value', new Date(currentValue).toISOString().slice(0, 22));
         } else {
-          if(input.tagName == 'SELECT') input.value = currentValue.id;
-          else input.value = currentValue;
+          input.value = currentValue;
         }
       }
 
@@ -156,7 +165,7 @@ function getInputType(attribute){
   return {
     'string': 'text',
     'integer': 'number',
-    'datetime': 'text'
+    'datetime': 'datetime-local'
   }[attribute.type];
 }
 </script>
