@@ -10,6 +10,7 @@ module.exports = {
   attributes: {
     'startDateTime': { 'type': 'datetime' },
     'endDateTime': { 'type': 'datetime' },
+    'classes': { 'collection': 'Classes', 'via': 'sessions' },
     'name': { 'type': 'string' }
   }
 };

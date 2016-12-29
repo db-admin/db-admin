@@ -10,6 +10,6 @@ module.exports = {
   attributes: {
     'number': { 'type': 'string' },
     'name': { 'type': 'string' },
-    'sessions': { 'collection': 'ClassSessions', via: 'id'}
+    'sessions': { 'collection': 'Sessions', 'via': 'classes'}
   }
 };
