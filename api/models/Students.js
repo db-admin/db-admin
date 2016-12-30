@@ -9,6 +9,6 @@ module.exports = {
   attributes: {
     name: { 'type': 'string' },
     major: { 'model': 'Majors' },
-    enrollments: { 'collection': 'Enrollments' }
+    enrollments: { 'collection': 'Enrollments', 'via': 'student' }
   }
 };

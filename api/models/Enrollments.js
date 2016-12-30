@@ -9,7 +9,7 @@ module.exports = {
 
   attributes: {
     'student': { model: 'Students' },
-    'classSession': { model: 'Classes' },
-    'grade': { 'type': 'integer' }
+    'grade': { 'type': 'integer' },
+    'name': { 'type': 'string' }
   }
 };
