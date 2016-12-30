@@ -1,10 +1,9 @@
 <h1 id="title"></h1>
-
 <div class="actions">
-  <a href="/"><- Back</a>
-  <a id="add-new" style="float:right">Add new</a>
+  <a href="/">
+    <- Back</a>
+      <a id="add-new" style="float:right">Add new</a>
 </div>
-
 <table>
   <thead>
     <tr>
@@ -12,10 +11,8 @@
     </tr>
   </thead>
   <tbody>
-
   </tbody>
 </table>
-
 <script type="text/javascript">
 
 const ModelList = class {
@@ -164,12 +161,24 @@ modelList.getRecords().then(data => {
       const td = document.createElement('td');
       let name = modelList.getFriendlyValueName(value, attrProperties);
 
+      if(attrProperties == undefined) {
+        // if the user forgets to add the name to a model, inform the user, then skip the rest of the code.
+        alert("Missing property '" + attrName + "' in model '" + modelList.modelName + "'");
+        td.innerHTML = "";
+        tr.appendChild(td);
+        document.querySelector('table tbody').appendChild(tr);
+        return;  
+      }
+
       // If the attribute is a foreign model, make it a link to that model.
       if(attrProperties.model){
         const a = document.createElement('a');
         a.innerHTML = name;
-        a.href = `/models/${attrProperties.model}/${value.id}`;
-        a.title = `#${value.id}`; // hover
+        // if the link is undefined, allow the rest of the page to render
+        if (value != undefined) { 
+          a.href = `/models/${attrProperties.model}/${value.id}`;
+          a.title = `#${value.id}`; // hover
+        }
         td.appendChild(a);
       } else {
         td.innerHTML = name;
