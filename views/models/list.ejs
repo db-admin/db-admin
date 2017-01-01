@@ -192,20 +192,9 @@ modelList.getRecords().then(data => {
           button.innerHTML = expandCode;
           button.addEventListener('click', function(){
             // Convert the button to a shrink icon
-            let state = null;
-            if(button.innerHTML == shrinkCode){
-              state = 'expanded';
-            } else {
-              state = 'shrunk';
-            }
-
-            if(state == 'shrunk'){
-              button.innerHTML = shrinkCode;
-            } else {
-              // Expanded state
-              button.innerHTML = expandCode;
-            }
-
+            let isExpanded = button.innerHTML == shrinkCode;
+            button.innerHTML = isExpanded ? expandCode : shrinkCode;
+            
           });
           span.innerHTML = name;
 
