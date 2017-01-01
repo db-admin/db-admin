@@ -18,7 +18,9 @@
 ################################################
 
 
-
+sma.config.json
+api/controllers/*
+api/models/*
 
 ################################################
 # Local Configuration
@@ -114,6 +116,3 @@ npm-debug.log
 nbproject
 .idea
 .node_history
-
-sma.config.json
-api
