@@ -36,6 +36,10 @@ module.exports.routes = {
     view: 'homepage'
   },
 
+  // '/:model/:id': (req, res) => {
+  //   console.log(req.allParams());
+  // },
+
   // returns the configuration for sails-my-admin
   '/_config': (req, res) => {
     res.send({
