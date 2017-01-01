@@ -177,7 +177,29 @@ modelList.getRecords().then(data => {
         }
       } else {
         // If not a foreign key
-        td.innerHTML = name;
+
+        // If the current attribute is a collection (1-to-N relationship)
+        if(attrProperties.collection){
+          const button = document.createElement('button'); // Expand / shrink button
+          const container = document.createElement('div');
+          const expandCode = '&#709;';
+          const shrinkCode = '&#708;';
+          const span = document.createElement('span'); // The value
+
+          container.classList.add('container-flex-center');
+          button.classList.add('expand-shrink-button');
+
+          button.innerHTML = expandCode;
+          span.innerHTML = name;
+
+          container.appendChild(span);
+          container.appendChild(button);
+
+          td.appendChild(container);
+        } else {
+          td.innerHTML = value;
+        }
+
       }
       tr.appendChild(td);
       document.querySelector('table tbody').appendChild(tr);

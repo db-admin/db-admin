@@ -14,6 +14,7 @@
        'collection': 'session', // collection: <table name>
        'via': 'classes',
        'through': 'classsession'
-     }
+     },
+     'supportedMajors': { 'collection': 'major', 'via': 'requiredClasses'}
    }
  };
