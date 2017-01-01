@@ -182,14 +182,31 @@ modelList.getRecords().then(data => {
         if(attrProperties.collection){
           const button = document.createElement('button'); // Expand / shrink button
           const container = document.createElement('div');
-          const expandCode = '&#709;';
-          const shrinkCode = '&#708;';
+          const expandCode = '˅';
+          const shrinkCode = '˄';
           const span = document.createElement('span'); // The value
 
           container.classList.add('container-flex-center');
           button.classList.add('expand-shrink-button');
 
           button.innerHTML = expandCode;
+          button.addEventListener('click', function(){
+            // Convert the button to a shrink icon
+            let state = null;
+            if(button.innerHTML == shrinkCode){
+              state = 'expanded';
+            } else {
+              state = 'shrunk';
+            }
+
+            if(state == 'shrunk'){
+              button.innerHTML = shrinkCode;
+            } else {
+              // Expanded state
+              button.innerHTML = expandCode;
+            }
+
+          });
           span.innerHTML = name;
 
           container.appendChild(span);
