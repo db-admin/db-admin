@@ -36,6 +36,13 @@ for(let key in attributes){
     input = document.createElement('select');
     input.multiple = inputType == 'multiselect' ? 'multiple' : null;
 
+    // See https://github.com/balderdashy/sails/issues/3946
+    // Therefore, disabled
+    if(attributes[key].through){
+      input.disabled = 'disabled';
+      input.title = 'This attribute uses the "through" property which is currently not supported to do a SailsJS bug. See the SailsJS GitHub issue #3946'
+    }
+
   } else {
     // regular input
     input = document.createElement('input');
@@ -144,8 +151,8 @@ form.addEventListener('submit', event => {
   event.preventDefault();
 
   fetch(`/${table}` + (recordId ? `/${recordId}` : ''), {
-    method: recordId ? 'PUT' : 'POST',
-    body: new FormData(form) // this is cool!
+    'method': recordId ? 'PUT' :'POST',
+    'body': new FormData(form) // this is cool!
   }).then(response => {
     if(response.ok) location.href = `/models/${table}`;
   }, error => {

@@ -8,8 +8,8 @@
 module.exports = {
 
   attributes: {
-    'classes': { 'model': 'classes', 'required': true },
-    'sessions': { 'model': 'sessions', 'required': true },
+    'class': { 'model': 'class', 'required': true },
+    'session': { 'model': 'session', 'required': true },
     'name': { 'type': 'string' }
   }
 };
