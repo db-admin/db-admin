@@ -12,7 +12,7 @@
      'name': { 'type': 'string' },
      'sessions': {
        'collection': 'session', // collection: <table name>
-       'via': 'class',
+       'via': 'classes',
        'through': 'classsession'
      }
    }

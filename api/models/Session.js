@@ -13,7 +13,7 @@
      'name': { 'type': 'string' },
      'classes':{
        'collection': 'class',
-       'via': 'session',
+       'via': 'sessions',
        'through': 'classsession'
      }
    }

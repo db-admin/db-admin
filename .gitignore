@@ -100,8 +100,6 @@ npm-debug.log
 
 
 
-
-
 ################################################
 # Miscellaneous
 #
@@ -118,3 +116,4 @@ nbproject
 .node_history
 
 sma.config.json
+api
