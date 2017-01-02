@@ -110,22 +110,42 @@ theadTr.appendChild(editTh);
 
 // convert attributes to th
 modelList.getSortedAttributes().forEach(attr => {
+  const arrowsContainer = document.createElement('div');
   const keys = Object.keys(attr);
-  const name = keys[0];
+  const downArrow = document.createElement('span');
+  const name = document.createElement('span');
   const properties = attr[name];
   const th = document.createElement('th');
+  const thContainer = document.createElement('div');
+  const upArrow = document.createElement('span');
+
+  upArrow.innerHTML = '▲';
+  downArrow.innerHTML =  '▼';
+
+  arrowsContainer.classList.add('container');
+  arrowsContainer.classList.add('container-arrows');
+  arrowsContainer.appendChild(upArrow);
+  arrowsContainer.appendChild(downArrow);
 
   th.addEventListener('click', function(){
-
+    const attributeName = th.innerHTML;
   });
 
-  th.innerHTML = name;
+  name.innerHTML = keys[0];
+
+  thContainer.appendChild(name);
+  thContainer.appendChild(arrowsContainer);
+  thContainer.classList.add('container');
+  thContainer.classList.add('container-th');
+
+  th.appendChild(thContainer)
   theadTr.appendChild(th);
 });
 
 const deleteTh = document.createElement('th');
 deleteTh.innerHTML = 'Delete';
 theadTr.appendChild(deleteTh);
+// End table headersd
 
 // Display the data
 modelList.getRecords().then(data => {

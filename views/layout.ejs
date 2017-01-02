@@ -23,9 +23,24 @@ th {
   cursor: pointer;
 }
 
-.container-flex-center {
+.container{
   display: flex;
-  flex-flow: row;
+}
+
+.container-th{
+  justify-content: space-between;
+  align-items: center;
+}
+
+.container-arrows{
+  flex-direction: column;
+  line-height: 11px;
+  font-size: 14px;
+  padding: 2px;
+}
+
+.container-flex-center {
+  flex-direction: row;
   justify-content: center; /* flex-flow alignment */
   align-items: center; /* opposite of flex-flow alignment */
   justify-content: space-between; /* How the children are distributed (or spread out) */
