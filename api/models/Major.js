@@ -9,6 +9,7 @@
 
    attributes: {
      'name': { 'type': 'string' },
-     'department': { 'model': 'department' }
+     'department': { 'model': 'department' },
+     'requiredClasses': { 'collection': 'class', 'via': 'supportedMajors' }
    }
  };

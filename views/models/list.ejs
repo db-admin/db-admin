@@ -132,6 +132,7 @@ const modelList = new ModelList('<%= req.params.model %>', <%- JSON.stringify(sa
 // Display the data
 modelList.getRecords().then(data => {
   data.forEach(item => {
+    // For loop that run for each record in table
     const deleteTd = document.createElement('td');
     const deleteLink = document.createElement('a');
     const editTd = document.createElement('td');
@@ -156,6 +157,7 @@ modelList.getRecords().then(data => {
     deleteTd.appendChild(deleteLink);
     tr.appendChild(editTd);
 
+    // For loop that runs for each attrubte of a record
     modelList.getSortedAttributes().forEach(attr => {
       const keys = Object.keys(attr);
       const attrName = keys[0];
@@ -177,7 +179,106 @@ modelList.getRecords().then(data => {
         }
       } else {
         // If not a foreign key
-        td.innerHTML = name;
+
+        // If the current attribute is a collection (1-to-N relationship)
+        if(attrProperties.collection){
+          const button = document.createElement('button'); // Expand / shrink button
+          const container = document.createElement('div');
+          const expandCode = '˅';
+          const shrinkCode = '˄';
+          const span = document.createElement('span'); // The value (the text)
+
+          container.classList.add('container');
+          container.classList.add('container-flex-center');
+          button.classList.add('expand-shrink-button');
+
+          button.innerHTML = expandCode;
+          // Handler function for when the button is clicked
+          button.addEventListener('click', event => {
+            // Convert the button to a shrink icon
+            let isExpanded = button.innerHTML == shrinkCode;
+            button.innerHTML = isExpanded ? expandCode : shrinkCode;
+
+            const elementsClickedOn = event.path;
+            const clickedTd = elementsClickedOn.filter(element => element.tagName == 'TD')[0];
+            const tdContainer = clickedTd.getElementsByClassName('container')[0];
+            const clickedTr = elementsClickedOn.filter(element => element.tagName == 'TR')[0];
+            const tds = clickedTr.getElementsByTagName('td');
+
+            if(isExpanded){
+              /**
+               * 1. Delete the newly created TRs
+               * 2. Convert the TDs to rowspan == 1
+               * 3. Fix the value being displayed
+               */
+
+              // Step 1
+               for(let i = 1; i < value.length; i++){
+                 const trToDelete = clickedTr.nextSibling;
+                 clickedTr.parentNode.removeChild(trToDelete);
+               }
+
+               // Step 2
+               for(let i = 0; i < tds.length; i++){
+                 tds[i].setAttribute('rowspan', 1);
+               }
+
+              // Step 3
+              const childToDelete = tdContainer.getElementsByClassName('value-child')[0];
+              childToDelete.parentNode.removeChild(childToDelete);
+              tdContainer.getElementsByClassName('value')[0].style.display = 'initial';
+
+            } else {
+              /**
+               * 1. Convert the other TDs into rowspan = the number of items
+               * 2. Split the td (with the collection) into multiple tds (specifically, into the amount of items)
+               */
+
+              //  For each td in the tr
+               for(let i = 0; i < tds.length; i++){
+                 const td = tds[i];
+
+                // If the current td is not the one they clicked on
+                 if(td != clickedTd){
+                   td.setAttribute('rowspan', value.length); // value.length == number of items in collection
+                 }
+               }
+
+               const clickedTable = elementsClickedOn.filter(element => element.tagName == 'TABLE')[0];
+
+               const newA = document.createElement('a');
+               newA.innerHTML = value[0].name;
+               newA.href = `/models/${attrProperties.collection}/${value[0].id}`;
+               newA.classList.add('value-child');
+               tdContainer.insertBefore(newA, tdContainer.firstChild);
+               tdContainer.getElementsByClassName('value')[0].style.display = 'none';
+
+               for(let i = 1; i < value.length; i++){
+                 const newTr = document.createElement('tr');
+                 const newTD = document.createElement('td');
+                 const newA = document.createElement('a');
+
+                 newA.innerHTML = value[i].name;
+                 newA.href = `/models/${attrProperties.collection}/${value[i].id}`;
+                 newTD.appendChild(newA);
+                 newTr.appendChild(newTD);
+
+                 clickedTr.parentNode.insertBefore(newTr, clickedTr.nextSibling);
+               }
+            }
+
+          });
+          span.innerHTML = name;
+          span.classList.add('value');
+
+          container.appendChild(span);
+          container.appendChild(button);
+
+          td.appendChild(container);
+        } else {
+          td.innerHTML = value;
+        }
+
       }
       tr.appendChild(td);
       document.querySelector('table tbody').appendChild(tr);
