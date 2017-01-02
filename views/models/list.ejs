@@ -104,30 +104,32 @@ const ModelList = class {
 const modelList = new ModelList('<%= req.params.model %>', <%- JSON.stringify(sails.models[req.params.model].attributes) %>);
 
 // Create table headers
-{
-  const theadTr = document.querySelector('table thead tr');
-  const editTh = document.createElement('th');
+const theadTr = document.querySelector('table thead tr');
+const editTh = document.createElement('th');
 
-  document.getElementById('title').innerHTML = `${modelList.modelName}`;
-  document.getElementById('add-new').href = `/models/${modelList.modelName}/create`;
-  editTh.innerHTML = 'Edit';
-  theadTr.appendChild(editTh);
+document.getElementById('title').innerHTML = `${modelList.modelName}`;
+document.getElementById('add-new').href = `/models/${modelList.modelName}/create`;
+editTh.innerHTML = 'Edit';
+theadTr.appendChild(editTh);
 
-  // convert attributes to th
-  modelList.getSortedAttributes().forEach(attr => {
-    const keys = Object.keys(attr);
-    const name = keys[0];
-    const properties = attr[name];
-    const th = document.createElement('th');
+// convert attributes to th
+modelList.getSortedAttributes().forEach(attr => {
+  const keys = Object.keys(attr);
+  const name = keys[0];
+  const properties = attr[name];
+  const th = document.createElement('th');
 
-    th.innerHTML = name;
-    theadTr.appendChild(th);
+  th.addEventListener('click', function(){
+
   });
 
-  const deleteTh = document.createElement('th');
-  deleteTh.innerHTML = 'Delete';
-  theadTr.appendChild(deleteTh);
-}
+  th.innerHTML = name;
+  theadTr.appendChild(th);
+});
+
+const deleteTh = document.createElement('th');
+deleteTh.innerHTML = 'Delete';
+theadTr.appendChild(deleteTh);
 
 // Display the data
 modelList.getRecords().then(data => {
