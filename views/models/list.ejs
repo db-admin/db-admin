@@ -121,14 +121,66 @@ modelList.getSortedAttributes().forEach(attr => {
 
   upArrow.innerHTML = '▲';
   downArrow.innerHTML =  '▼';
+  upArrow.style.opacity = 0; // invisible
+  downArrow.style.opacity = 0; // invisible
 
   arrowsContainer.classList.add('container');
   arrowsContainer.classList.add('container-arrows');
   arrowsContainer.appendChild(upArrow);
   arrowsContainer.appendChild(downArrow);
 
-  th.addEventListener('click', function(){
+  // When the user clicks a <th> (to sort)
+  th.addEventListener('click', event => {
     const attributeName = th.innerHTML;
+    const clickedTh = event.path.filter(element => element.tagName == 'TH')[0];
+    const thNumber = Array.from(clickedTh.parentNode.children).indexOf(clickedTh); // get the number of the clicked TH
+
+    const tbody = document.querySelector('tbody');
+    const trs = Array.from(tbody.getElementsByTagName('tr'));
+
+    // Can be 'ascending', 'descending', or null. Null means not sorted;
+    let targetSort = null; // the sort that the user is attempting
+
+    if(upArrow.style.opacity == 0){
+      if(downArrow.style.opacity == 0){
+        targetSort = 'ascending';
+      } else {
+        // downArrow.style.opacity == 1
+        targetSort = null;
+      }
+    } else {
+      // upArrow.style.opacity == 1
+      targetSort = 'descending';
+    }
+
+    if(!targetSort){
+      // Then they're trying to unsort the data
+
+      upArrow.style.opacity = 0;
+      downArrow.style.opacity = 0;
+
+      // TODO: unsort data
+    } else {
+      // They're trying to sort the data
+      const trsSorted = trs.sort((tr1, tr2) => {
+        const tr1Value = tr1.getElementsByTagName('td')[thNumber].innerHTML;
+        const tr2Value = tr2.getElementsByTagName('td')[thNumber].innerHTML;
+
+        if(targetSort == 'ascending') return tr1Value > tr2Value;
+        if(targetSort == 'descending') return tr1Value < tr2Value;
+
+      });
+
+      // Show the <tr>s sorted
+      tbody.innerHTML = '';
+      trsSorted.forEach(tr => {
+        tbody.appendChild(tr);
+      });
+
+      // Toggle arrows
+      upArrow.style.opacity = targetSort == 'ascending' ? 1 : 0;
+      downArrow.style.opacity = targetSort == 'ascending' ? 0 : 1;
+    }
   });
 
   name.innerHTML = keys[0];
@@ -145,7 +197,7 @@ modelList.getSortedAttributes().forEach(attr => {
 const deleteTh = document.createElement('th');
 deleteTh.innerHTML = 'Delete';
 theadTr.appendChild(deleteTh);
-// End table headersd
+// End table headers
 
 // Display the data
 modelList.getRecords().then(data => {
