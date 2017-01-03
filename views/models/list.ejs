@@ -163,8 +163,11 @@ modelList.getSortedAttributes().forEach(attr => {
     } else {
       // They're trying to sort the data
       const trsSorted = trs.sort((tr1, tr2) => {
-        const tr1Value = tr1.getElementsByTagName('td')[thNumber].innerHTML;
-        const tr2Value = tr2.getElementsByTagName('td')[thNumber].innerHTML;
+        let tr1Value = tr1.getElementsByTagName('td')[thNumber].innerHTML;
+        let tr2Value = tr2.getElementsByTagName('td')[thNumber].innerHTML;
+
+        if(Number(tr1Value).toString() != 'NaN') tr1Value = Number(tr1Value);
+        if(Number(tr2Value).toString() != 'NaN') tr2Value = Number(tr2Value);
 
         if(targetSort == 'ascending') return tr1Value > tr2Value;
         if(targetSort == 'descending') return tr1Value < tr2Value;
