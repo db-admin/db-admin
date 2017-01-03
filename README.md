@@ -44,6 +44,7 @@ These are the steps to get started:
 2. Clone this repository.
 3. Run `npm install`
 4. Create a sma-config.json file at the root of this project. See the [example config file](https://github.com/AskYous/sails-my-admin/blob/master/sample-sma.config.json) in this repository.
+4. Install the [sails adapter](https://www.npmjs.com/search?q=sails%20adapter) for your database using NPM.
 5. Use the `sails generate api` command to generate APIs for your database tables. Essentially, this means that for each table in your database, run `sails generate api <table name>` in a command prompt at the root of this project. If `sails` is not a recognized command on your computer, then run `npm -g install sails`. Then try again.
 6. Edit the generated models files to add your table's columns so Sails knows how to read it. Use Sails' [attributes](http://sailsjs.com/documentation/concepts/models-and-orm/attributes) documentation to learn how to do this.
 7. Run `npm start` and navigate to `localhost:1337` in your browser to start using this application! You can also run `node app.js --port=<port number>` to set the port yourself.
