@@ -30,9 +30,9 @@ This page is where users can see the records in the current model they're viewin
 
 Two possible URLs:
 
-* `uri: /models/<model name>/create` 
+* `uri: '/models/<model name>/create'` 
 * or
-* `url: /models/<model name>/<record id>`
+* `url: '/models/<model name>/<record id>'`
 
 This page gives the user the ability to edit a record in a database using a friendly form. The key benefits of this form is the ability to use SELECT HTML elements to reference foreign keys for one-to-one relationships, or one-to-many relationships.
 
