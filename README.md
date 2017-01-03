@@ -1,7 +1,7 @@
 #sails-my-admin
 
 ## Introduction
-Sails My Admin is a web data manager for any database supported by [Sails](http://sailsjs.com/). The management interface is user-friendly, easy to use, and incldues many beneficial features (listed below). To see which databases are supported, read Sails' [Models and ORM documentation]. Specifically, the [Database Agnosticism section](http://sailsjs.com/documentation/concepts/models-and-orm#?database-agnosticism). In short, some of the databases they support are MySQL, PostgreSQL, and MongoDB. [Here](https://www.npmjs.com/search?q=sails%20adapter&page=2&ranking=optimal) are almost all the other databases supported. I don't know how this application will work with NoSQL databases.
+Sails My Admin is a web data manager for any database supported by [Sails](http://sailsjs.com/). The management interface is user-friendly, easy to use, and incldues many beneficial features (listed below). To see which databases are supported, read Sails' [Models and ORM documentation](http://sailsjs.com/documentation/concepts/models-and-orm). Specifically, the [Database Agnosticism section](http://sailsjs.com/documentation/concepts/models-and-orm#?database-agnosticism). In short, some of the databases they support are MySQL, PostgreSQL, and MongoDB. [Here](https://www.npmjs.com/search?q=sails%20adapter&page=2&ranking=optimal) are almost all the other databases supported. I don't know how this application will work with NoSQL databases.
 
 ## Terminology
 
