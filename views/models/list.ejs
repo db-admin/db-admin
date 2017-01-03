@@ -121,8 +121,8 @@ modelList.getSortedAttributes().forEach(attr => {
 
   upArrow.innerHTML = '▲';
   downArrow.innerHTML =  '▼';
-  upArrow.style.opacity = 0; // invisible
-  downArrow.style.opacity = 0; // invisible
+  upArrow.style.display = 'none'; // invisible
+  downArrow.style.display = 'none'; // invisible
 
   arrowsContainer.classList.add('container');
   arrowsContainer.classList.add('container-arrows');
@@ -141,8 +141,8 @@ modelList.getSortedAttributes().forEach(attr => {
     // Can be 'ascending', 'descending', or null. Null means not sorted;
     let targetSort = null; // the sort that the user is attempting
 
-    if(upArrow.style.opacity == 0){
-      if(downArrow.style.opacity == 0){
+    if(upArrow.style.display == 'none'){
+      if(downArrow.style.display == 'none'){
         targetSort = 'ascending';
       } else {
         // downArrow.style.opacity == 1
@@ -156,8 +156,8 @@ modelList.getSortedAttributes().forEach(attr => {
     if(!targetSort){
       // Then they're trying to unsort the data
 
-      upArrow.style.opacity = 0;
-      downArrow.style.opacity = 0;
+      upArrow.style.display = 'none';
+      downArrow.style.display = 'none';
 
       // TODO: unsort data
     } else {
@@ -181,8 +181,8 @@ modelList.getSortedAttributes().forEach(attr => {
       });
 
       // Toggle arrows
-      upArrow.style.opacity = targetSort == 'ascending' ? 1 : 0;
-      downArrow.style.opacity = targetSort == 'ascending' ? 0 : 1;
+      upArrow.style.display = targetSort == 'ascending' ? 'initial' : 'none';
+      downArrow.style.display = targetSort == 'ascending' ? 'none' : 'initial';
     }
   });
 
