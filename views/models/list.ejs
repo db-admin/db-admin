@@ -163,6 +163,9 @@ modelList.getSortedAttributes().forEach(attr => {
     } else {
       // They're trying to sort the data
       const trsSorted = trs.sort((tr1, tr2) => {
+        // TODO: Fix it so it can sort rows that have expanded collection attribute values
+        // TODO: Fix so it can sort model values
+
         let tr1Value = tr1.getElementsByTagName('td')[thNumber].innerHTML;
         let tr2Value = tr2.getElementsByTagName('td')[thNumber].innerHTML;
 
