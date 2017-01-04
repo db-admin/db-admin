@@ -19,8 +19,8 @@
 
 
 sma.config.json
-api/controllers/*
-api/models/*
+api/controllers
+api/models
 
 ################################################
 # Local Configuration
