@@ -126,8 +126,7 @@ const modelList = new ModelList('<%= req.params.model %>', <%- JSON.stringify(sa
 }
 
 // Display the data
-modelList.getRecords().then(data => {
-  data.forEach(item => {
+modelList.getRecords().then(data => data.forEach(item => {
     // For loop that run for each record in table
     const deleteTd = document.createElement('td');
     const deleteLink = document.createElement('a');
@@ -175,7 +174,7 @@ modelList.getRecords().then(data => {
       if(attrProperties.model){
         if(value){
           const a = document.createElement('a');
-          a.innerHTML = name;
+          a.innerHTML = `#${value.id} ${name}`;
           a.href = `/models/${attrProperties.model}/${value.id}`;
           a.title = `#${value.id}`; // hover
           td.appendChild(a);
@@ -251,20 +250,24 @@ modelList.getRecords().then(data => {
 
                const clickedTable = elementsClickedOn.filter(element => element.tagName == 'TABLE')[0];
 
+              // The first one has to be manually created
                const newA = document.createElement('a');
-               newA.innerHTML = value[0].name;
-               newA.href = `/models/${attrProperties.collection}/${value[0].id}`;
+               const firstValue = value[0];
+               newA.innerHTML = `#${firstValue.id} ${firstValue.name}`;
+               newA.href = `/models/${attrProperties.collection}/${firstValue.id}`;
                newA.classList.add('value-child');
                tdContainer.insertBefore(newA, tdContainer.firstChild);
                tdContainer.getElementsByClassName('value')[0].style.display = 'none';
 
+              //  Then create the rest
                for(let i = 1; i < value.length; i++){
                  const newTr = document.createElement('tr');
                  const newTD = document.createElement('td');
                  const newA = document.createElement('a');
+                 const currentValue = value[i];
 
-                 newA.innerHTML = value[i].name;
-                 newA.href = `/models/${attrProperties.collection}/${value[i].id}`;
+                 newA.innerHTML = `#${currentValue.id} ${currentValue.name}`;
+                 newA.href = `/models/${attrProperties.collection}/${currentValue.id}`;
                  newTD.appendChild(newA);
                  newTr.appendChild(newTD);
 
@@ -291,7 +294,6 @@ modelList.getRecords().then(data => {
 
     tr.appendChild(deleteTd);
 
-  });
-});
+  }));
 
 </script>
