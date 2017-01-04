@@ -184,7 +184,7 @@ modelList.getRecords().then(data => data.forEach(item => {
       } else {
         // If not a foreign key
 
-        // If the current attribute is a collection (1-to-N relationship)
+        // If the current attribute is a collection (a 1-to-N relationship)
         if(attrProperties.collection){
           const button = document.createElement('button'); // Expand / shrink button
           const container = document.createElement('div');
@@ -195,8 +195,8 @@ modelList.getRecords().then(data => data.forEach(item => {
           container.classList.add('container');
           container.classList.add('container-flex-center');
           button.classList.add('expand-shrink-button');
-
           button.innerHTML = expandCode;
+
           // Handler function for when the button is clicked
           button.addEventListener('click', event => {
             // Convert the button to a shrink icon
@@ -280,7 +280,11 @@ modelList.getRecords().then(data => data.forEach(item => {
           span.classList.add('value');
 
           container.appendChild(span);
-          container.appendChild(button);
+
+          // TODO: Make this more efficient. The button shouldn't exist AT ALL if there's no values
+          if(value.length > 0){
+            container.appendChild(button);
+          }
 
           td.appendChild(container);
         } else {
