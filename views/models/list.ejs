@@ -118,6 +118,7 @@ modelList.getSortedAttributes().forEach(attr => {
   const th = document.createElement('th');
   const thContainer = document.createElement('div');
   const upArrow = document.createElement('span');
+  let initialOrderById = null;
 
   upArrow.innerHTML = '▲';
   downArrow.innerHTML =  '▼';
@@ -139,6 +140,9 @@ modelList.getSortedAttributes().forEach(attr => {
 
     const tbody = document.querySelector('tbody');
     const trs = Array.from(tbody.getElementsByTagName('tr'));
+    if(!initialOrderById){
+       initialOrderById = trs.map(tr => JSON.parse(tr.dataset.value).id);
+   }
 
     // Can be 'ascending', 'descending', or null. Null means not sorted;
     let targetSort = null; // the sort that the user is attempting
@@ -161,8 +165,12 @@ modelList.getSortedAttributes().forEach(attr => {
       upArrow.style.display = 'none';
       downArrow.style.display = 'none';
 
-      // TODO: unsort data
+      initialOrderById
+      .map(id => trs.filter(tr => JSON.parse(tr.dataset.value).id == id)[0]) // convert ids to TRs
+      .forEach(tr => tbody.appendChild(tr)); // append to table
+
     } else {
+
       // They're trying to sort the data
       const trsSorted = trs.sort((tr1, tr2) => {
         // TODO: Fix it so it can sort rows that have expanded collection attribute values
