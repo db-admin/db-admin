@@ -113,7 +113,7 @@ modelList.getSortedAttributes().forEach(attr => {
   const arrowsContainer = document.createElement('div');
   const keys = Object.keys(attr);
   const downArrow = document.createElement('span');
-  const name = document.createElement('span');
+  const nameSpan = document.createElement('span');
   const properties = attr[name];
   const th = document.createElement('th');
   const thContainer = document.createElement('div');
@@ -128,6 +128,8 @@ modelList.getSortedAttributes().forEach(attr => {
   arrowsContainer.classList.add('container-arrows');
   arrowsContainer.appendChild(upArrow);
   arrowsContainer.appendChild(downArrow);
+
+  th.dataset.attribute = keys[0];
 
   // When the user clicks a <th> (to sort)
   th.addEventListener('click', event => {
@@ -166,14 +168,27 @@ modelList.getSortedAttributes().forEach(attr => {
         // TODO: Fix it so it can sort rows that have expanded collection attribute values
         // TODO: Fix so it can sort model values
 
-        let tr1Value = tr1.getElementsByTagName('td')[thNumber].innerHTML;
-        let tr2Value = tr2.getElementsByTagName('td')[thNumber].innerHTML;
+        let winner = null;
+        const tr1Value = JSON.parse(tr1.dataset.value)[clickedTh.dataset.attribute];
+        const tr2Value = JSON.parse(tr2.dataset.value)[clickedTh.dataset.attribute];
 
-        if(Number(tr1Value).toString() != 'NaN') tr1Value = Number(tr1Value);
-        if(Number(tr2Value).toString() != 'NaN') tr2Value = Number(tr2Value);
+        // Number compare
+        if(typeof tr1Value == 'number' && typeof tr2Value == 'number'){
+          if(targetSort == 'ascending') winner = tr1Value - tr2Value;
+          if(targetSort == 'descending') winner = tr2Value - tr1Value;
 
-        if(targetSort == 'ascending') return tr1Value > tr2Value;
-        if(targetSort == 'descending') return tr1Value < tr2Value;
+        // String compare
+        } else if (tr1Value.localeCompare && tr2Value.localeCompare){
+          if(targetSort == 'ascending') winner = tr1Value.localeCompare(tr2Value);
+          if(targetSort == 'descending') winner = tr2Value.localeCompare(tr1Value);
+
+        // Whatever compare
+        } else {
+          if(targetSort == 'ascending') winner = tr1Value > tr2Value;
+          if(targetSort == 'descending') winner = tr2Value < tr1Value;
+        }
+
+        return winner;
 
       });
 
@@ -189,9 +204,9 @@ modelList.getSortedAttributes().forEach(attr => {
     }
   });
 
-  name.innerHTML = keys[0];
+  nameSpan.innerHTML = keys[0];
 
-  thContainer.appendChild(name);
+  thContainer.appendChild(nameSpan);
   thContainer.appendChild(arrowsContainer);
   thContainer.classList.add('container');
   thContainer.classList.add('container-th');
@@ -376,6 +391,7 @@ modelList.getRecords().then(data => data.forEach(item => {
       document.querySelector('table tbody').appendChild(tr);
     });
 
+    tr.dataset.value = JSON.stringify(item);
     tr.appendChild(deleteTd);
 
   }));
