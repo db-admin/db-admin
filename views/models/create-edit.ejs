@@ -152,7 +152,7 @@ form.addEventListener('submit', event => {
 
   // Convert all emptry strings to null. They're empty strings by default which errors in postgres for non-string attributes (like datetime).
 
-  const dateTimeInputs = Array.from(document.querySelectorAll('input[type=datetime-local]'));
+  const dateTimeInputs = Array.from(document.querySelectorAll('input[type=datetime-local], input[type=number]'));
   dateTimeInputs.forEach(input => input.value == '' ? input.name = '' : null); // So it wont be sent to the server
 
   fetch(`/${table}` + (recordId ? `/${recordId}` : ''), {
