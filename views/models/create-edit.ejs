@@ -1,3 +1,26 @@
+<style media="screen">
+  form div{
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+  }
+  form div *{
+    margin: 1px;
+  }
+  form div label {
+    flex: 10;
+    text-align: right;
+    text-transform: capitalize;
+  }
+  form div input, form div select{
+    padding: 2px;
+    flex: 90;
+    font-family: consolas;
+  }
+  form div input:focus, form div select:focus{
+    outline-style: solid;
+  }
+</style>
 <h1 id="title"></h1>
 <hr>
 <form method="post"></form>
@@ -55,7 +78,7 @@ for(let key in attributes){
 
   // create the label
   label.for = input.id;
-  label.innerHTML = `${key} `;
+  label.innerHTML = `${key}: `;
 
   if(attributes[key].type == 'datetime'){
     label.innerHTML += '(UTC) '
