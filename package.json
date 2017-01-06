@@ -1,9 +1,9 @@
 {
-  "name": "sails-my-admin",
-  "private": true,
+  "name": "db-admin",
+  "private": false,
   "version": "0.0.0",
-  "description": "a Sails application",
-  "keywords": [],
+  "description": "Sails My Admin is a web data manager for any database supported by Sails.",
+  "keywords": ["db", "admin"],
   "dependencies": {
     "ejs": "2.3.4",
     "grunt": "1.0.1",
@@ -30,8 +30,8 @@
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/anonymous node/sails user/sails-my-admin.git"
+    "url": "https://github.com/AskYous/db-admin"
   },
-  "author": "anonymous node/sails user",
-  "license": ""
+  "author": "Yousef Shanawany <AskYous@gmail.com>",
+  "license": "MIT"
 }
