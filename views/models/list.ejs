@@ -1,25 +1,108 @@
-<h1 id="title"></h1>
-<div class="actions">
-  <a href="/"><- Back</a>
-  <a id="add-new" style="float:right">Add new</a>
+<div class="list-container">
+
+  <!-- Main -->
+  <div class="main">
+    <h1 id="title"></h1>
+    <div class="actions">
+      <a href="/"><- Back</a>
+      <a id="add-new" style="float:right">Add new</a>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <!-- Generated Code -->
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- sidebar -->
+  <div class="sidebar">
+    <h3>Control Panel</h3>
+    <hr>
+    <form id='form-control-panel' method="post">
+
+      <!-- Search -->
+      <label for="search">Name search:</label> <br />
+      <input id="search" type="text" name="search" value="" placeholder="Click or press / to search">
+
+      <hr>
+
+      <!-- Submit -->
+      <input type="submit" />
+    </form>
+  </div>
 </div>
-<table>
-  <thead>
-    <tr>
-      <!-- Generated Code -->
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+
+<style media="screen">
+  html, body{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .list-container{
+    display: flex;
+    height: 100%;
+  }
+
+  .main {
+    flex: 85;
+  }
+
+  .sidebar {
+    flex: 15;
+    border-width: 1px;
+    border-style: solid;
+    padding: 0px 25px;
+    margin: 10px;
+  }
+
+  .sidebar input[type=text]{
+    margin: 3px 0;
+    width: 100%;
+  }
+</style>
+
 <script type="text/javascript">
 
+document.getElementById('form-control-panel').addEventListener('submit', function(event){
+  event.preventDefault();
+
+  const query = document.getElementById('search').value.toLowerCase();
+  const trs = Array.from(document.querySelectorAll('table tbody tr'));
+
+  // Search filter algorithm
+  const searchResults = trs.filter(tr => {
+    const value = JSON.parse(tr.dataset.value);
+    const name = value.name.toLowerCase();
+    return name.indexOf(query) != -1;
+  });
+
+  // Display the ones that pass the test
+  debugger;
+  trs.forEach(tr => {
+    if(searchResults.indexOf(tr) != -1){
+      tr.style.display = null;
+    } else {
+      tr.style.display = 'none'; // invisible
+    }
+  });
+
+});
+
 // Keyboard shortcuts for page
-document.querySelector('body').addEventListener('keydown', function(event){
+document.querySelector('body').addEventListener('keyup', function(event){
 
   // If they press the 'N' key
-  if(event.key == 'n'){
-    document.getElementById('add-new').click();
+  switch (event.key) {
+    case 'n':
+      document.getElementById('add-new').click();
+      break;
+    case '/':
+      document.getElementById('search').focus();
   }
 });
 
