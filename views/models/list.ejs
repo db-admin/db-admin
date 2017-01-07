@@ -14,6 +14,15 @@
 </table>
 <script type="text/javascript">
 
+// Keyboard shortcuts for page
+document.querySelector('body').addEventListener('keydown', function(event){
+
+  // If they press the 'N' key
+  if(event.key == 'n'){
+    document.getElementById('add-new').click();
+  }
+});
+
 const ModelList = class {
   constructor(modelName, attributes) {
     this.modelName = modelName;
