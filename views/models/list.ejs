@@ -33,6 +33,9 @@
       <!-- Submit -->
       <input type="submit" />
     </form>
+    <fieldset>
+      <legend>Attributes</legend>
+    </fieldset>
   </div>
 </div>
 
@@ -190,6 +193,26 @@ const ModelList = class {
 
 // Instantiate the class
 const modelList = new ModelList('<%= req.params.model %>', <%- JSON.stringify(sails.models[req.params.model].attributes) %>);
+
+// Output checkboxes for each attribute
+modelList.getSortedAttributes().forEach(attribute => {
+  attribute = Object.keys(attribute)[0];
+  const fieldset = document.querySelector('.sidebar fieldset');
+  const container = document.createElement('div');
+  const checkbox = document.createElement('input');
+  const label = document.createElement('label');
+
+  checkbox.type = 'checkbox';
+  checkbox.id = `attr-${attribute}`;
+
+  label.innerHTML = attribute;
+  label.setAttribute('for', checkbox.id);
+
+  container.appendChild(checkbox);
+  container.appendChild(label);
+
+  fieldset.appendChild(container);
+});
 
 // Create table headers
 const theadTr = document.querySelector('table thead tr');
