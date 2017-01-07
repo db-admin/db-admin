@@ -1,17 +1,54 @@
-<h1 id="title"></h1>
-<div class="actions">
-  <a href="/"><- Back</a>
-  <a id="add-new" style="float:right">Add new</a>
+<div class="list-container">
+
+  <!-- Main -->
+  <div class="main">
+    <h1 id="title"></h1>
+    <div class="actions">
+      <a href="/"><- Back</a>
+      <a id="add-new" style="float:right">Add new</a>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <!-- Generated Code -->
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- sidebar -->
+  <div class="sidebar">
+    <h3>Control Panel</h3>
+  </div>
 </div>
-<table>
-  <thead>
-    <tr>
-      <!-- Generated Code -->
-    </tr>
-  </thead>
-  <tbody>
-  </tbody>
-</table>
+
+<style media="screen">
+  html, body{
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .list-container{
+    display: flex;
+    height: 100%;
+  }
+
+  .main {
+    flex: 85;
+  }
+
+  .sidebar {
+    flex: 15;
+    border-width: 1px;
+    border-style: solid;
+    padding: 0px 25px;
+    margin: 10px;
+  }
+</style>
+
 <script type="text/javascript">
 
 // Keyboard shortcuts for page
