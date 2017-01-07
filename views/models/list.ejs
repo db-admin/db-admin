@@ -26,7 +26,7 @@
 
       <!-- Search -->
       <label for="search">Name search:</label> <br />
-      <input id="search" type="text" name="search" value="">
+      <input id="search" type="text" name="search" value="" placeholder="Click or press / to search">
 
       <hr>
 
@@ -94,11 +94,15 @@ document.getElementById('form-control-panel').addEventListener('submit', functio
 });
 
 // Keyboard shortcuts for page
-document.querySelector('body').addEventListener('keydown', function(event){
+document.querySelector('body').addEventListener('keyup', function(event){
 
   // If they press the 'N' key
-  if(event.key == 'n'){
-    document.getElementById('add-new').click();
+  switch (event.key) {
+    case 'n':
+      document.getElementById('add-new').click();
+      break;
+    case '/':
+      document.getElementById('search').focus();
   }
 });
 
