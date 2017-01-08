@@ -23,16 +23,27 @@
     <h3>Control Panel</h3>
     <hr>
     <form id='form-control-panel' method="post">
-
       <!-- Search -->
-      <label for="search">Name search:</label> <br />
-      <input id="search" type="text" name="search" value="" placeholder="Click or press / to search">
+      <fieldset id='fieldset-search'>
+        <legend>Name search</legend>
 
-      <hr>
+        <input id="search" type="text" name="search" value="" placeholder="Click or press / to search">
 
-      <!-- Submit -->
-      <input type="submit" />
+        <!-- Submit -->
+        <input type="submit" />
+      </fieldset>
+
+      <!-- Attributes -->
+      <fieldset id='fieldset-attributes'>
+        <legend>Attributes</legend>
+        <div>
+          <input id="toggle-attributes" type="checkbox" checked="checked"><label for="toggle-attributes">Toggle all</label>
+        </div>
+        <hr>
+        <!-- Generated code goes here -->
+      </fieldset>
     </form>
+
   </div>
 </div>
 
@@ -68,44 +79,7 @@
 
 <script type="text/javascript">
 
-document.getElementById('form-control-panel').addEventListener('submit', function(event){
-  event.preventDefault();
-
-  const query = document.getElementById('search').value.toLowerCase();
-  const trs = Array.from(document.querySelectorAll('table tbody tr'));
-
-  // Search filter algorithm
-  const searchResults = trs.filter(tr => {
-    const value = JSON.parse(tr.dataset.value);
-    const name = value.name.toLowerCase();
-    return name.indexOf(query) != -1;
-  });
-
-  // Display the ones that pass the test
-  debugger;
-  trs.forEach(tr => {
-    if(searchResults.indexOf(tr) != -1){
-      tr.style.display = null;
-    } else {
-      tr.style.display = 'none'; // invisible
-    }
-  });
-
-});
-
-// Keyboard shortcuts for page
-document.querySelector('body').addEventListener('keyup', function(event){
-
-  // If they press the 'N' key
-  switch (event.key) {
-    case 'n':
-      document.getElementById('add-new').click();
-      break;
-    case '/':
-      document.getElementById('search').focus();
-  }
-});
-
+// Helper class
 const ModelList = class {
   constructor(modelName, attributes) {
     this.modelName = modelName;
@@ -191,134 +165,215 @@ const ModelList = class {
 // Instantiate the class
 const modelList = new ModelList('<%= req.params.model %>', <%- JSON.stringify(sails.models[req.params.model].attributes) %>);
 
-// Create table headers
-const theadTr = document.querySelector('table thead tr');
-const editTh = document.createElement('th');
+// When user submits search query
+document.getElementById('form-control-panel').addEventListener('submit', function(event){
+  event.preventDefault();
 
-document.getElementById('title').innerHTML = `${modelList.modelName}`;
-document.getElementById('add-new').href = `/models/${modelList.modelName}/create`;
-editTh.innerHTML = 'Edit';
-theadTr.appendChild(editTh);
+  const query = document.getElementById('search').value.toLowerCase();
+  const trs = Array.from(document.querySelectorAll('table tbody tr'));
 
-// convert attributes to th
-modelList.getSortedAttributes().forEach(attr => {
-  const arrowsContainer = document.createElement('div');
-  const keys = Object.keys(attr);
-  const downArrow = document.createElement('span');
-  const nameSpan = document.createElement('span');
-  const properties = attr[name];
-  const th = document.createElement('th');
-  const thContainer = document.createElement('div');
-  const upArrow = document.createElement('span');
-  let initialOrderById = null;
+  // Search filter algorithm
+  const searchResults = trs.filter(tr => {
+    const value = JSON.parse(tr.dataset.value);
+    const name = value.name.toLowerCase();
+    return name.indexOf(query) != -1;
+  });
 
-  upArrow.innerHTML = '▲';
-  downArrow.innerHTML =  '▼';
-  upArrow.style.display = 'none'; // invisible
-  downArrow.style.display = 'none'; // invisible
-
-  arrowsContainer.classList.add('container');
-  arrowsContainer.classList.add('container-arrows');
-  arrowsContainer.appendChild(upArrow);
-  arrowsContainer.appendChild(downArrow);
-
-  th.dataset.attribute = keys[0];
-
-  // When the user clicks a <th> (to sort)
-  th.addEventListener('click', event => {
-    const attributeName = th.innerHTML;
-    const clickedTh = event.path.filter(element => element.tagName == 'TH')[0];
-    const thNumber = Array.from(clickedTh.parentNode.children).indexOf(clickedTh); // get the number of the clicked TH
-
-    const tbody = document.querySelector('tbody');
-    const trs = Array.from(tbody.getElementsByTagName('tr'));
-    if(!initialOrderById){
-       initialOrderById = trs.map(tr => JSON.parse(tr.dataset.value).id);
-   }
-
-    // Can be 'ascending', 'descending', or null. Null means not sorted;
-    let targetSort = null; // the sort that the user is attempting
-
-    if(upArrow.style.display == 'none'){
-      if(downArrow.style.display == 'none'){
-        targetSort = 'ascending';
-      } else {
-        // downArrow.style.opacity == 1
-        targetSort = null;
-      }
+  // Display the ones that pass the test
+  trs.forEach(tr => {
+    if(searchResults.indexOf(tr) != -1){
+      tr.style.display = null;
     } else {
-      // upArrow.style.opacity == 1
-      targetSort = 'descending';
-    }
-
-    if(!targetSort){
-      // Then they're trying to unsort the data
-
-      upArrow.style.display = 'none';
-      downArrow.style.display = 'none';
-
-      initialOrderById
-      .map(id => trs.filter(tr => JSON.parse(tr.dataset.value).id == id)[0]) // convert ids to TRs
-      .forEach(tr => tbody.appendChild(tr)); // append to table
-
-    } else {
-
-      // They're trying to sort the data
-      const trsSorted = trs.sort((tr1, tr2) => {
-        // TODO: Fix it so it can sort rows that have expanded collection attribute values
-        // TODO: Fix so it can sort model values
-
-        let winner = null;
-        const tr1Value = JSON.parse(tr1.dataset.value)[clickedTh.dataset.attribute];
-        const tr2Value = JSON.parse(tr2.dataset.value)[clickedTh.dataset.attribute];
-
-        // Number compare
-        if(typeof tr1Value == 'number' && typeof tr2Value == 'number'){
-          if(targetSort == 'ascending') winner = tr1Value - tr2Value;
-          if(targetSort == 'descending') winner = tr2Value - tr1Value;
-
-        // String compare
-        } else if (tr1Value.localeCompare && tr2Value.localeCompare){
-          if(targetSort == 'ascending') winner = tr1Value.localeCompare(tr2Value);
-          if(targetSort == 'descending') winner = tr2Value.localeCompare(tr1Value);
-
-        // Whatever compare
-        } else {
-          if(targetSort == 'ascending') winner = tr1Value > tr2Value;
-          if(targetSort == 'descending') winner = tr2Value < tr1Value;
-        }
-
-        return winner;
-
-      });
-
-      // Show the <tr>s sorted
-      tbody.innerHTML = '';
-      trsSorted.forEach(tr => {
-        tbody.appendChild(tr);
-      });
-
-      // Toggle arrows
-      upArrow.style.display = targetSort == 'ascending' ? 'initial' : 'none';
-      downArrow.style.display = targetSort == 'ascending' ? 'none' : 'initial';
+      tr.style.display = 'none'; // invisible
     }
   });
 
-  nameSpan.innerHTML = keys[0];
-
-  thContainer.appendChild(nameSpan);
-  thContainer.appendChild(arrowsContainer);
-  thContainer.classList.add('container');
-  thContainer.classList.add('container-th');
-
-  th.appendChild(thContainer)
-  theadTr.appendChild(th);
 });
 
-const deleteTh = document.createElement('th');
-deleteTh.innerHTML = 'Delete';
-theadTr.appendChild(deleteTh);
-// End table headers
+// Keyboard shortcuts for page
+document.querySelector('body').addEventListener('keyup', function(event){
+
+  if(document.getElementById('search') == document.activeElement) return;
+
+  // If they press the 'N' key
+  switch (event.key) {
+    case 'n':
+      document.getElementById('add-new').click();
+      break;
+    case '/':
+      document.getElementById('search').focus();
+  }
+});
+
+(function createAttributeCheckboxes() {
+  const fieldset = document.getElementById('fieldset-attributes');
+  const toggleAllCheckbox = document.getElementById('toggle-attributes');
+
+  toggleAllCheckbox.addEventListener('change', event => {
+    const checked = event.target.checked;
+    Array.from(
+      document.getElementsByClassName('checkbox-attribute')
+    ).forEach(checkbox => checkbox.checked != checked ? checkbox.click() : null);
+  });
+
+  // Output checkboxes for each attribute
+  modelList.getSortedAttributes().forEach(attribute => {
+    attribute = Object.keys(attribute)[0];
+    const container = document.createElement('div');
+    const checkbox = document.createElement('input');
+    const label = document.createElement('label');
+
+    checkbox.type = 'checkbox';
+    checkbox.setAttribute('checked', 'checked'); // Check all the boxes
+    checkbox.classList.add('checkbox-attribute');
+    checkbox.id = `attr-${attribute}`;
+
+    checkbox.addEventListener('change', event =>{
+      const checked = event.target.checked;
+      Array.from(
+        document.querySelectorAll(`th[data-attribute=${attribute}], td[data-attribute=${attribute}]`)
+      ).forEach(cell => cell.style.display = checked ? null : 'none');
+    });
+
+    label.innerHTML = attribute;
+    label.setAttribute('for', checkbox.id);
+
+    container.appendChild(checkbox);
+    container.appendChild(label);
+
+    fieldset.appendChild(container);
+  });
+})();
+
+// Create table headers
+(function createTableHeaders(){
+    const theadTr = document.querySelector('table thead tr');
+    const editTh = document.createElement('th');
+
+    document.getElementById('title').innerHTML = `${modelList.modelName}`;
+    document.getElementById('add-new').href = `/models/${modelList.modelName}/create`;
+    editTh.innerHTML = 'Edit';
+    theadTr.appendChild(editTh);
+
+    // convert attributes to th
+    modelList.getSortedAttributes().forEach(attr => {
+      const arrowsContainer = document.createElement('div');
+      const keys = Object.keys(attr);
+      const downArrow = document.createElement('span');
+      const nameSpan = document.createElement('span');
+      const properties = attr[name];
+      const th = document.createElement('th');
+      const thContainer = document.createElement('div');
+      const upArrow = document.createElement('span');
+      let initialOrderById = null;
+
+      upArrow.innerHTML = '▲';
+      downArrow.innerHTML =  '▼';
+      upArrow.style.display = 'none'; // invisible
+      downArrow.style.display = 'none'; // invisible
+
+      arrowsContainer.classList.add('container');
+      arrowsContainer.classList.add('container-arrows');
+      arrowsContainer.appendChild(upArrow);
+      arrowsContainer.appendChild(downArrow);
+
+      th.dataset.attribute = keys[0];
+
+      // When the user clicks a <th> (to sort)
+      th.addEventListener('click', event => {
+        const attributeName = th.innerHTML;
+        const clickedTh = event.path.filter(element => element.tagName == 'TH')[0];
+        const thNumber = Array.from(clickedTh.parentNode.children).indexOf(clickedTh); // get the number of the clicked TH
+
+        const tbody = document.querySelector('tbody');
+        const trs = Array.from(tbody.getElementsByTagName('tr'));
+        if(!initialOrderById){
+          initialOrderById = trs.map(tr => JSON.parse(tr.dataset.value).id);
+        }
+
+        // Can be 'ascending', 'descending', or null. Null means not sorted;
+        let targetSort = null; // the sort that the user is attempting
+
+        if(upArrow.style.display == 'none'){
+          if(downArrow.style.display == 'none'){
+            targetSort = 'ascending';
+          } else {
+            // downArrow.style.opacity == 1
+            targetSort = null;
+          }
+        } else {
+          // upArrow.style.opacity == 1
+          targetSort = 'descending';
+        }
+
+        if(!targetSort){
+          // Then they're trying to unsort the data
+
+          upArrow.style.display = 'none';
+          downArrow.style.display = 'none';
+
+          initialOrderById
+          .map(id => trs.filter(tr => JSON.parse(tr.dataset.value).id == id)[0]) // convert ids to TRs
+          .forEach(tr => tbody.appendChild(tr)); // append to table
+
+        } else {
+
+          // They're trying to sort the data
+          const trsSorted = trs.sort((tr1, tr2) => {
+            // TODO: Fix it so it can sort rows that have expanded collection attribute values
+            // TODO: Fix so it can sort model values
+
+            let winner = null;
+            const tr1Value = JSON.parse(tr1.dataset.value)[clickedTh.dataset.attribute];
+            const tr2Value = JSON.parse(tr2.dataset.value)[clickedTh.dataset.attribute];
+
+            // Number compare
+            if(typeof tr1Value == 'number' && typeof tr2Value == 'number'){
+              if(targetSort == 'ascending') winner = tr1Value - tr2Value;
+              if(targetSort == 'descending') winner = tr2Value - tr1Value;
+
+              // String compare
+            } else if (tr1Value.localeCompare && tr2Value.localeCompare){
+              if(targetSort == 'ascending') winner = tr1Value.localeCompare(tr2Value);
+              if(targetSort == 'descending') winner = tr2Value.localeCompare(tr1Value);
+
+              // Whatever compare
+            } else {
+              if(targetSort == 'ascending') winner = tr1Value > tr2Value;
+              if(targetSort == 'descending') winner = tr2Value < tr1Value;
+            }
+
+            return winner;
+
+          });
+
+          // Show the <tr>s sorted
+          tbody.innerHTML = '';
+          trsSorted.forEach(tr => {
+            tbody.appendChild(tr);
+          });
+
+          // Toggle arrows
+          upArrow.style.display = targetSort == 'ascending' ? 'initial' : 'none';
+          downArrow.style.display = targetSort == 'ascending' ? 'none' : 'initial';
+        }
+      });
+
+      nameSpan.innerHTML = keys[0];
+
+      thContainer.appendChild(nameSpan);
+      thContainer.appendChild(arrowsContainer);
+      thContainer.classList.add('container');
+      thContainer.classList.add('container-th');
+
+      th.appendChild(thContainer)
+      theadTr.appendChild(th);
+    });
+
+    const deleteTh = document.createElement('th');
+    deleteTh.innerHTML = 'Delete';
+    theadTr.appendChild(deleteTh);
+})();
 
 // Display the data
 modelList.getRecords().then(data => data.forEach(item => {
@@ -355,6 +410,8 @@ modelList.getRecords().then(data => data.forEach(item => {
       const value = item[attrName];
       const td = document.createElement('td');
       let name = modelList.getFriendlyValueName(value, attrProperties);
+
+      td.dataset.attribute = keys[0];
 
       if(attrProperties == undefined) {
         // if the user forgets to add the name to a model, inform the user, then skip the rest of the code.
