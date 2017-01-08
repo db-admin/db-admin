@@ -59,7 +59,7 @@ module.exports.routes = {
 
   '/models/:model/create': (req, res) => {
     const title = `New ${req.params.model} | ${sails.config.globals.title}`;
-    res.view('models/create-edit', { 'title': title });
+    res.view('models/create-edit', { title });
   },
 
   '/models/:model/:id': (req, res) => {
@@ -69,7 +69,7 @@ module.exports.routes = {
 
       const title = `Editing #${found.id} ${found.name} | ${sails.config.globals.title}`;
 
-      res.view('models/create-edit', { 'title': title });
+      res.view('models/create-edit', { title });
     });
   },
 
