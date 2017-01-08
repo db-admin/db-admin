@@ -28,11 +28,12 @@
       <label for="search">Name search:</label> <br />
       <input id="search" type="text" name="search" value="" placeholder="Click or press / to search">
 
-      <hr>
-
       <!-- Submit -->
       <input type="submit" />
     </form>
+
+    <hr>
+
     <fieldset>
       <legend>Attributes</legend>
     </fieldset>
@@ -98,6 +99,8 @@ document.getElementById('form-control-panel').addEventListener('submit', functio
 
 // Keyboard shortcuts for page
 document.querySelector('body').addEventListener('keyup', function(event){
+
+  if(document.getElementById('search') == document.activeElement) return;
 
   // If they press the 'N' key
   switch (event.key) {
@@ -203,6 +206,7 @@ modelList.getSortedAttributes().forEach(attribute => {
   const label = document.createElement('label');
 
   checkbox.type = 'checkbox';
+  checkbox.setAttribute('checked', 'checked'); // Check all the boxes
   checkbox.id = `attr-${attribute}`;
 
   label.innerHTML = attribute;
