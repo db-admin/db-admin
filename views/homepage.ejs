@@ -16,7 +16,7 @@
 fetch('/_config').then(response => response.json().then(config => {
 
   // set title
-  document.getElementById('title').innerHTML = config.title;
+  document.getElementById('title').innerHTML = `${config.title}'s Database`;
 
   // set models
   config.models.forEach(model => {

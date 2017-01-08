@@ -32,13 +32,9 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  '/': {
-    view: 'homepage'
+  '/': (req, res) => {
+    res.view('homepage', { 'title': sails.config.globals.title });
   },
-
-  // '/:model/:id': (req, res) => {
-  //   console.log(req.allParams());
-  // },
 
   // returns the configuration for sails-my-admin
   '/_config': (req, res) => {
