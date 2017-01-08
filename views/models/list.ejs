@@ -21,8 +21,9 @@
   <!-- sidebar -->
   <div class="sidebar">
     <h3>Control Panel</h3>
-    <form id='form-control-panel' method="post">
-      <!-- Search -->
+
+    <!-- Search Form -->
+    <form id='form-search'>
       <fieldset id='fieldset-search'>
         <legend>Name search</legend>
 
@@ -31,16 +32,28 @@
         <!-- Submit -->
         <input type="submit" />
       </fieldset>
-      <br>
+      <br />
+    </form>
 
-      <!-- Attributes -->
-      <fieldset id='fieldset-attributes'>
-        <legend>Attributes</legend>
-        <div>
-          <input id="toggle-attributes" type="checkbox" checked="checked"><label for="toggle-attributes">Toggle all</label>
-        </div>
-        <hr>
-        <!-- Generated code goes here -->
+    <!-- Toggle Attributes -->
+    <fieldset id='fieldset-attributes'>
+      <legend>Attributes</legend>
+      <div>
+        <input id="toggle-attributes" type="checkbox" checked="checked"><label for="toggle-attributes">Toggle all</label>
+      </div>
+      <hr>
+      <!-- Generated code goes here -->
+    </fieldset>
+    <br />
+
+    <!-- Sort Attributes -->
+    <form id='form-sort-attributes'>
+      <fieldset id='fieldset-sort-attributes'>
+        <legend>Sort</legend>
+        <select id='select-sort-attributes'>
+          <!-- Generate code here -->
+        </select>
+        <input type="submit" />
       </fieldset>
     </form>
 
@@ -57,10 +70,12 @@
   .list-container{
     display: flex;
     height: 100%;
+    padding: 0px 10px;
   }
 
   .main {
     flex: 85;
+    overflow-x: auto;
   }
 
   .sidebar {
@@ -68,10 +83,10 @@
     border-width: 1px;
     border-style: solid;
     padding: 0px 25px;
-    margin: 10px;
+    margin: 10px 0px 10px 10px;
   }
 
-  .sidebar input[type=text]{
+  .sidebar input[type=text], .sidebar select{
     margin: 3px 0;
     width: 100%;
   }
@@ -166,7 +181,7 @@ const ModelList = class {
 const modelList = new ModelList('<%= req.params.model %>', <%- JSON.stringify(sails.models[req.params.model].attributes) %>);
 
 // When user submits search query
-document.getElementById('form-control-panel').addEventListener('submit', function(event){
+document.getElementById('form-search').addEventListener('submit', event => {
   event.preventDefault();
 
   const query = document.getElementById('search').value.toLowerCase();
@@ -190,6 +205,14 @@ document.getElementById('form-control-panel').addEventListener('submit', functio
 
 });
 
+// When the user submits the sort attribute <form>
+document.getElementById('form-sort-attributes').addEventListener('submit', event => {
+  event.preventDefault(); // prevent the default action of the submit button (because by default, it wil refresh the page)
+  const attribute = document.getElementById('select-sort-attributes').value;
+  const thForAttribute = document.querySelector(`th[data-attribute=${attribute}]`);
+  thForAttribute.click();
+});
+
 // Keyboard shortcuts for page
 document.querySelector('body').addEventListener('keyup', function(event){
 
@@ -205,6 +228,7 @@ document.querySelector('body').addEventListener('keyup', function(event){
   }
 });
 
+// Created the table's headers
 (function createAttributeCheckboxes() {
   const fieldset = document.getElementById('fieldset-attributes');
   const toggleAllCheckbox = document.getElementById('toggle-attributes');
@@ -242,6 +266,18 @@ document.querySelector('body').addEventListener('keyup', function(event){
     container.appendChild(label);
 
     fieldset.appendChild(container);
+  });
+})();
+
+// Create <option> for sort select box
+(function createAttributeSortOptions() {
+  const select = document.getElementById('select-sort-attributes');
+  modelList.getSortedAttributes().forEach(attribute => {
+    const attributeName = Object.keys(attribute)[0];
+    const option = document.createElement('option');
+
+    option.innerHTML = attributeName;
+    select.appendChild(option);
   });
 })();
 
