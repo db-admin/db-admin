@@ -23,20 +23,22 @@
     <h3>Control Panel</h3>
     <hr>
     <form id='form-control-panel' method="post">
-
       <!-- Search -->
-      <label for="search">Name search:</label> <br />
-      <input id="search" type="text" name="search" value="" placeholder="Click or press / to search">
+      <fieldset id='fieldset-search'>
+        <legend>Name search</legend>
 
-      <!-- Submit -->
-      <input type="submit" />
+        <input id="search" type="text" name="search" value="" placeholder="Click or press / to search">
+        
+        <!-- Submit -->
+        <input type="submit" />
+      </fieldset>
+
+      <!-- Attributes -->
+      <fieldset id='fieldset-attributes'>
+        <legend>Attributes</legend>
+      </fieldset>
     </form>
 
-    <hr>
-
-    <fieldset>
-      <legend>Attributes</legend>
-    </fieldset>
   </div>
 </div>
 
@@ -173,7 +175,6 @@ document.getElementById('form-control-panel').addEventListener('submit', functio
   });
 
   // Display the ones that pass the test
-  debugger;
   trs.forEach(tr => {
     if(searchResults.indexOf(tr) != -1){
       tr.style.display = null;
@@ -202,7 +203,7 @@ document.querySelector('body').addEventListener('keyup', function(event){
 // Output checkboxes for each attribute
 modelList.getSortedAttributes().forEach(attribute => {
   attribute = Object.keys(attribute)[0];
-  const fieldset = document.querySelector('.sidebar fieldset');
+  const fieldset = document.getElementById('fieldset-attributes');
   const container = document.createElement('div');
   const checkbox = document.createElement('input');
   const label = document.createElement('label');
