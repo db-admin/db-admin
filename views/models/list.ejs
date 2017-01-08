@@ -28,7 +28,7 @@
         <legend>Name search</legend>
 
         <input id="search" type="text" name="search" value="" placeholder="Click or press / to search">
-        
+
         <!-- Submit -->
         <input type="submit" />
       </fieldset>
@@ -36,6 +36,11 @@
       <!-- Attributes -->
       <fieldset id='fieldset-attributes'>
         <legend>Attributes</legend>
+        <div>
+          <input id="toggle-attributes" type="checkbox" checked="checked"><label for="toggle-attributes">Toggle all</label>
+        </div>
+        <hr>
+        <!-- Generated code goes here -->
       </fieldset>
     </form>
 
@@ -200,33 +205,45 @@ document.querySelector('body').addEventListener('keyup', function(event){
   }
 });
 
-// Output checkboxes for each attribute
-modelList.getSortedAttributes().forEach(attribute => {
-  attribute = Object.keys(attribute)[0];
+(function createAttributeCheckboxes() {
   const fieldset = document.getElementById('fieldset-attributes');
-  const container = document.createElement('div');
-  const checkbox = document.createElement('input');
-  const label = document.createElement('label');
+  const toggleAllCheckbox = document.getElementById('toggle-attributes');
 
-  checkbox.type = 'checkbox';
-  checkbox.setAttribute('checked', 'checked'); // Check all the boxes
-  checkbox.id = `attr-${attribute}`;
-
-  checkbox.addEventListener('change', event =>{
+  toggleAllCheckbox.addEventListener('change', event => {
     const checked = event.target.checked;
     Array.from(
-      document.querySelectorAll(`th[data-attribute=${attribute}], td[data-attribute=${attribute}]`)
-    ).forEach(cell => cell.style.display = checked ? null : 'none');
+      document.getElementsByClassName('checkbox-attribute')
+    ).forEach(checkbox => checkbox.checked != checked ? checkbox.click() : null);
   });
 
-  label.innerHTML = attribute;
-  label.setAttribute('for', checkbox.id);
+  // Output checkboxes for each attribute
+  modelList.getSortedAttributes().forEach(attribute => {
+    attribute = Object.keys(attribute)[0];
+    const container = document.createElement('div');
+    const checkbox = document.createElement('input');
+    const label = document.createElement('label');
 
-  container.appendChild(checkbox);
-  container.appendChild(label);
+    checkbox.type = 'checkbox';
+    checkbox.setAttribute('checked', 'checked'); // Check all the boxes
+    checkbox.classList.add('checkbox-attribute');
+    checkbox.id = `attr-${attribute}`;
 
-  fieldset.appendChild(container);
-});
+    checkbox.addEventListener('change', event =>{
+      const checked = event.target.checked;
+      Array.from(
+        document.querySelectorAll(`th[data-attribute=${attribute}], td[data-attribute=${attribute}]`)
+      ).forEach(cell => cell.style.display = checked ? null : 'none');
+    });
+
+    label.innerHTML = attribute;
+    label.setAttribute('for', checkbox.id);
+
+    container.appendChild(checkbox);
+    container.appendChild(label);
+
+    fieldset.appendChild(container);
+  });
+})();
 
 // Create table headers
 (function createTableHeaders(){
