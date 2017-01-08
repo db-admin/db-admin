@@ -44,8 +44,8 @@ module.exports.routes = {
     });
   },
 
-  'get /models/:model': {
-    'view': 'models/list'
+  'get /models/:model': (req, res) => {
+    res.view('models/list', { 'title': `${req.params.model} | ${sails.config.globals.title}`});
   },
 
   // End point to get the count of a model
@@ -57,12 +57,20 @@ module.exports.routes = {
     });
   },
 
-  '/models/:model/create': {
-    'view': 'models/create-edit'
+  '/models/:model/create': (req, res) => {
+    const title = `New ${req.params.model} | ${sails.config.globals.title}`;
+    res.view('models/create-edit', { 'title': title });
   },
 
-  '/models/:model/:id': {
-    'view': 'models/create-edit'
+  '/models/:model/:id': (req, res) => {
+    let model = null;
+    sails.models[req.params.model].findOne(req.params.id).exec((err, found) => {
+      if(err) return console.error(err);
+
+      const title = `Editing #${found.id} ${found.name} | ${sails.config.globals.title}`;
+
+      res.view('models/create-edit', { 'title': title });
+    });
   },
 
   /***************************************************************************
