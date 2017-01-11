@@ -20,41 +20,45 @@
 
   <!-- sidebar (Control panel)-->
   <div class="sidebar">
-    <h3>Control Panel</h3>
-<hr>
-    <!-- Search Form -->
-    <form id='form-search'>
-      <fieldset id='fieldset-search'>
-        <legend>Name search</legend>
+    <div class="top">
+      <h3>Control Panel</h3>
+      <button class='toggle-control-panel'></button>
+    </div>
+    <hr>
+    <div class="bottom">
+      <!-- Search Form -->
+      <form id='form-search'>
+        <fieldset id='fieldset-search'>
+          <legend>Name search</legend>
 
-        <input id="search" type="text" name="search" value="" placeholder="Click or press / to search">
+          <input id="search" type="text" name="search" value="" placeholder="Click or press / to search">
 
-        <!-- Submit -->
-        <input type="submit" />
+          <!-- Submit -->
+          <input type="submit" />
+        </fieldset>
+      </form>
+
+      <!-- Toggle Attributes -->
+      <fieldset id='fieldset-attributes'>
+        <legend>Attributes</legend>
+        <div>
+          <input id="toggle-attributes" type="checkbox" checked="checked"><label for="toggle-attributes">Toggle all</label>
+        </div>
+        <hr>
+        <!-- Generated code goes here -->
       </fieldset>
-    </form>
 
-    <!-- Toggle Attributes -->
-    <fieldset id='fieldset-attributes'>
-      <legend>Attributes</legend>
-      <div>
-        <input id="toggle-attributes" type="checkbox" checked="checked"><label for="toggle-attributes">Toggle all</label>
-      </div>
-      <hr>
-      <!-- Generated code goes here -->
-    </fieldset>
-
-    <!-- Sort Attributes -->
-    <form id='form-sort-attributes'>
-      <fieldset id='fieldset-sort-attributes'>
-        <legend>Sort</legend>
-        <select id='select-sort-attributes'>
-          <!-- Generate code here -->
-        </select>
-        <input type="submit" />
-      </fieldset>
-    </form>
-
+      <!-- Sort Attributes -->
+      <form id='form-sort-attributes'>
+        <fieldset id='fieldset-sort-attributes'>
+          <legend>Sort</legend>
+          <select id='select-sort-attributes'>
+            <!-- Generate code here -->
+          </select>
+          <input type="submit" />
+        </fieldset>
+      </form>
+    </div>
   </div>
 </div>
 
@@ -83,8 +87,34 @@
     padding-left: 10px;
     margin-left: 10px;
   }
+  .sidebar .top{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .sidebar button.toggle-control-panel{
+    padding: 0px 6px;
+    line-height: 17px;
+  }
   .sidebar h3{
     margin-bottom: 0;
+  }
+  .sidebar.minimized{
+    flex: 1;
+    padding-top: 20px;
+  }
+  .sidebar.minimized .top,
+  .sidebar.minimized button.toggle-control-panel {
+    display: inherit;
+  }
+  .sidebar.minimized button.toggle-control-panel:after{
+    content: "◀"
+  }
+  .sidebar button.toggle-control-panel:after{
+    content: "▶"
+  }
+  .sidebar.minimized *{
+    display: none;
   }
   .sidebar fieldset{
     margin-bottom: 10px;
@@ -231,6 +261,12 @@ document.querySelector('body').addEventListener('keyup', function(event){
     case '/':
       document.getElementById('search').focus();
   }
+});
+
+// Handles the control panel toggle button
+document.getElementsByClassName('toggle-control-panel')[0].addEventListener('click', event => {
+  const controlPanel = document.getElementsByClassName('sidebar')[0];
+  controlPanel.classList.toggle('minimized');
 });
 
 // Created the table's headers
