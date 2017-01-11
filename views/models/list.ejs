@@ -32,7 +32,6 @@
         <!-- Submit -->
         <input type="submit" />
       </fieldset>
-      <br />
     </form>
 
     <!-- Toggle Attributes -->
@@ -44,7 +43,6 @@
       <hr>
       <!-- Generated code goes here -->
     </fieldset>
-    <br />
 
     <!-- Sort Attributes -->
     <form id='form-sort-attributes'>
@@ -81,9 +79,13 @@
   .sidebar {
     flex: 15;
     border-width: 1px;
-    border-style: solid;
-    padding: 0px 10px;
-    margin: 10px 0px 10px 10px;
+    border-left-style: solid;
+    padding-left: 10px;
+    margin-left: 10px;
+  }
+
+  .sidebar fieldset{
+    margin-bottom: 10px;
   }
 
   .sidebar input[type=text], .sidebar select{
