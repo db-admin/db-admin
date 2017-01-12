@@ -176,7 +176,7 @@ const ModelList = class {
   * @param attribute the attribute object itself, specifying its properties
   */
   getFriendlyValueName(attributeValue, attribute){
-    if(!attributeValue) {
+    if(attributeValue == null) {
       return null;
     } else if (attribute.collection) {
       return `${attributeValue.length} ${attribute.collection}`;
