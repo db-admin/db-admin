@@ -116,6 +116,12 @@ if(form.getElementsByTagName('select').length != 0){
     // gets the options for selected boxes (remember, this can run multiple times)
     fetch(`/${foreignTable}`).then(response => response.json().then(results => {
 
+      // Add empty options for single selects
+      if(inputType != 'multiselect'){
+        const nullOption = document.createElement('option');
+        input.appendChild(nullOption);
+      }
+
       // Populate the select box with the foreign table records
       results.forEach(result => {
         const option = document.createElement('option');
@@ -163,7 +169,12 @@ function loadEditingModel(){
             }
           }
         } else if(input.tagName == 'SELECT') {
-          input.value = currentValue.id;
+          const options = Array.from(input.childNodes);
+          if(!currentValue){
+            options.filter(x => !x.value)[0].setAttribute('selected', 'selected');
+          } else {
+            options.filter(x => x.value == currentValue.id)[0].setAttribute('selected', 'selected');
+          }
         } else if(input.type == 'datetime-local') {
           input.setAttribute('value', new Date(currentValue).toISOString().slice(0, 22));
         } else {
@@ -182,10 +193,16 @@ form.addEventListener('submit', event => {
 
   event.preventDefault();
 
-  // Convert all emptry strings to null. They're empty strings by default which errors in postgres for non-string attributes (like datetime).
-
+  // Convert all empty strings to null. They're empty strings by default which errors in postgres for non-string attributes (like datetime).
   const dateTimeInputs = Array.from(document.querySelectorAll('input[type=datetime-local], input[type=number]'));
   dateTimeInputs.forEach(input => input.value == '' ? input.name = '' : null); // So it wont be sent to the server
+
+  // Convert selects that have no value and are not multiple to nulls
+  Array.from(document.getElementsByTagName('select')).forEach(select => {
+    if(select.multiple) return;
+    if(select.value != '') return;
+    select.name = null;
+  });
 
   fetch(`/${table}` + (recordId ? `/${recordId}` : ''), {
     'method': recordId ? 'PUT' :'POST',
