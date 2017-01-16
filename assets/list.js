@@ -87,6 +87,21 @@ class ModelList {
       'body': record
     });
   }
+
+  /**
+   * Checks whether is value is empty. My empty, what is meant is null,
+   * undefined, empty string, or whitespace.
+   * @param value {string} The value to check.
+   * @return isEmpty {boolean} Whether the value is empty.
+   */
+  isEmpty(value){
+    const emptyValues = [null, undefined, ''];
+    if(typeof value == 'string'){
+      value = value.replace(' ', '');
+    }
+
+    return emptyValues.indexOf(value) != -1;
+  }
 }
 
 const modelName = currentModel.name; // inherited from list.ejs
@@ -268,13 +283,13 @@ document.getElementsByClassName('toggle-control-panel')[0].addEventListener('cli
         upArrow.style.display = 'none';
         downArrow.style.display = 'none';
 
-        initialOrderById
-        .map(id => trs.filter(tr => JSON.parse(tr.dataset.value).id == id)[0]) // convert ids to TRs
+        initialOrderById.map(id => trs.filter(tr => JSON.parse(tr.dataset.value).id == id)[0]) // convert ids to TRs
         .forEach(tr => tbody.appendChild(tr)); // append to table
 
       } else {
-
         // They're trying to sort the data
+
+        // The sorted table rows
         const trsSorted = trs.sort((tr1, tr2) => {
           // TODO: Fix it so it can sort rows that have expanded collection attribute values
           // TODO: Fix so it can sort model values
@@ -283,10 +298,13 @@ document.getElementsByClassName('toggle-control-panel')[0].addEventListener('cli
           let tr1Value = JSON.parse(tr1.dataset.value)[th.dataset.attribute];
           let tr2Value = JSON.parse(tr2.dataset.value)[th.dataset.attribute];
 
+          const tr1ValIsEmpty = modelList.isEmpty(tr1Value);
+          const tr2ValIsEmpty = modelList.isEmpty(tr2Value);
+
           // If one is undefined
-          if(tr1Value === undefined && tr2Value !== undefined) return targetSort == 'ascending' ? 1 : -1;
-          if(tr2Value === undefined && tr1Value !== undefined) return targetSort == 'ascending' ? -1 : 1;
-          if(tr1Value === undefined && tr2Value === undefined) return;
+          if(tr1ValIsEmpty && !tr2ValIsEmpty) return targetSort == 'ascending' ? 1 : -1;
+          if(tr2ValIsEmpty && !tr1ValIsEmpty) return targetSort == 'ascending' ? -1 : 1;
+          if(tr1ValIsEmpty && tr2ValIsEmpty) return;
 
           // If the values are foreign models
           if(attributeProperties.model){
