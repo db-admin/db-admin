@@ -238,12 +238,11 @@ document.getElementsByClassName('toggle-control-panel')[0].addEventListener('cli
 
     // When the user clicks a <th> (to sort)
     th.addEventListener('click', event => {
-      const attributeName = th.innerHTML;
-      const clickedTh = event.path.filter(element => element.tagName == 'TH')[0];
-      const thNumber = Array.from(clickedTh.parentNode.children).indexOf(clickedTh); // get the number of the clicked TH
-
+      const attributeName = th.dataset.attribute;
+      const attributeProperties = attributes[attributeName];
       const tbody = document.querySelector('tbody');
       const trs = Array.from(tbody.getElementsByTagName('tr'));
+
       if(!initialOrderById){
         initialOrderById = trs.map(tr => JSON.parse(tr.dataset.value).id);
       }
@@ -281,19 +280,27 @@ document.getElementsByClassName('toggle-control-panel')[0].addEventListener('cli
           // TODO: Fix so it can sort model values
 
           let winner = null;
-          const tr1Value = JSON.parse(tr1.dataset.value)[clickedTh.dataset.attribute];
-          const tr2Value = JSON.parse(tr2.dataset.value)[clickedTh.dataset.attribute];
+          let tr1Value = JSON.parse(tr1.dataset.value)[th.dataset.attribute];
+          let tr2Value = JSON.parse(tr2.dataset.value)[th.dataset.attribute];
 
+          // If one is undefined
           if(tr1Value === undefined && tr2Value !== undefined) return targetSort == 'ascending' ? 1 : -1;
           if(tr2Value === undefined && tr1Value !== undefined) return targetSort == 'ascending' ? -1 : 1;
           if(tr1Value === undefined && tr2Value === undefined) return;
+
+          // If the values are foreign models
+          if(attributeProperties.model){
+            // convert the values to their foreign model's 'name'
+            tr1Value = tr1Value.name;
+            tr2Value = tr2Value.name;
+          }
 
           // Number compare
           if(typeof tr1Value == 'number' && typeof tr2Value == 'number'){
             if(targetSort == 'ascending') winner = tr1Value - tr2Value;
             if(targetSort == 'descending') winner = tr2Value - tr1Value;
 
-            // String compare
+            // String compare (and foreign model compare)
           } else if (tr1Value.localeCompare && tr2Value.localeCompare){
             if(targetSort == 'ascending') winner = tr1Value.localeCompare(tr2Value);
             if(targetSort == 'descending') winner = tr2Value.localeCompare(tr1Value);
