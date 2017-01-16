@@ -124,6 +124,7 @@
 </style>
 
 <script type="text/javascript">
+<% console.log(req.params.modelName) %>
   // Convert server variables to front-end variables
   const currentModel = {
     'name': '<%= req.params.modelName %>',
@@ -131,3 +132,4 @@
   };
 </script>
 
+<script src="/list.js" charset="utf-8"></script>
