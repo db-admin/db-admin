@@ -284,6 +284,10 @@ document.getElementsByClassName('toggle-control-panel')[0].addEventListener('cli
           const tr1Value = JSON.parse(tr1.dataset.value)[clickedTh.dataset.attribute];
           const tr2Value = JSON.parse(tr2.dataset.value)[clickedTh.dataset.attribute];
 
+          if(tr1Value === undefined && tr2Value !== undefined) return targetSort == 'ascending' ? 1 : -1;
+          if(tr2Value === undefined && tr1Value !== undefined) return targetSort == 'ascending' ? -1 : 1;
+          if(tr1Value === undefined && tr2Value === undefined) return;
+
           // Number compare
           if(typeof tr1Value == 'number' && typeof tr2Value == 'number'){
             if(targetSort == 'ascending') winner = tr1Value - tr2Value;
