@@ -329,7 +329,6 @@ document.getElementsByClassName('toggle-control-panel')[0].addEventListener('cli
 
             // Whatever compare
           } else {
-            debugger;
             if(targetSort == 'ascending') winner = tr1Value > tr2Value;
             if(targetSort == 'descending') winner = tr2Value < tr1Value;
           }

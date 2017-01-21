@@ -208,7 +208,9 @@ form.addEventListener('submit', event => {
     'method': recordId ? 'PUT' :'POST',
     'body': new FormData(form) // this is cool!
   }).then(response => {
-    if(response.ok) location.href = `/models/${table}`;
+    response.json().then(jsonResults => {
+      location.href = `/models/${table}?highlight=${jsonResults.id}`;
+    }, error => console.log(error));
   }, error => {
     console.log('didnt work because idk');
   });
