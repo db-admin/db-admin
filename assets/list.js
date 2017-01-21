@@ -4,8 +4,10 @@
 class ModelList {
 
   /**
-   * Represents a ModelList helper object.
-   * @constructor
+   * Crates a ModelList helper object.
+   *
+   * @param {string} modelName The name of the model.
+   * @param {Object} attributes The attributes of the model.
    */
   constructor(modelName, attributes) {
     this.modelName = modelName;
@@ -162,11 +164,9 @@ document.getElementsByClassName('toggle-control-panel')[0].addEventListener('cli
   controlPanel.classList.toggle('minimized');
 });
 
-/** This creates the sort options that users can select in the control bar */
+/** This creates the sort options (in the control panel) that users can select in the control bar */
 (function createAttributeSortOptions() {
-
   const select = document.getElementById('select-sort-attributes');
-
   modelList.getSortedAttributes().forEach(attribute => {
     const attributeName = Object.keys(attribute)[0];
     const option = document.createElement('option');
@@ -176,7 +176,7 @@ document.getElementsByClassName('toggle-control-panel')[0].addEventListener('cli
   });
 })();
 
-/** Creates the table's headers */
+/** Creates the attribute's check boxes */
 (function createAttributeCheckboxes() {
   const fieldset = document.getElementById('fieldset-attributes');
   const toggleAllCheckbox = document.getElementById('toggle-attributes');
@@ -308,9 +308,9 @@ document.getElementsByClassName('toggle-control-panel')[0].addEventListener('cli
 
           // If the values are foreign models
           if(attributeProperties.model){
-            // convert the values to their foreign model's 'name'
-            tr1Value = tr1Value.name;
-            tr2Value = tr2Value.name;
+            // convert the values to their foreign model's id
+            tr1Value = tr1Value.id;
+            tr2Value = tr2Value.id;
           }
 
           // Number compare
