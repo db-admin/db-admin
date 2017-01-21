@@ -4,11 +4,11 @@
 class ModelList {
 
   /**
-   * Crates a ModelList helper object.
-   *
-   * @param {string} modelName The name of the model.
-   * @param {Object} attributes The attributes of the model.
-   */
+  * Crates a ModelList helper object.
+  *
+  * @param {string} modelName The name of the model.
+  * @param {Object} attributes The attributes of the model.
+  */
   constructor(modelName, attributes) {
     this.modelName = modelName;
     this.attributes = attributes;
@@ -91,11 +91,11 @@ class ModelList {
   }
 
   /**
-   * Checks whether is value is empty. My empty, what is meant is null,
-   * undefined, empty string, or whitespace.
-   * @param value {string} The value to check.
-   * @return isEmpty {boolean} Whether the value is empty.
-   */
+  * Checks whether is value is empty. My empty, what is meant is null,
+  * undefined, empty string, or whitespace.
+  * @param value {string} The value to check.
+  * @return isEmpty {boolean} Whether the value is empty.
+  */
   isEmpty(value){
     const emptyValues = [null, undefined, ''];
     if(typeof value == 'string'){
@@ -366,139 +366,147 @@ document.getElementsByClassName('toggle-control-panel')[0].addEventListener('cli
 })();
 
 /** Display the data */
-modelList.getRecords().then(data => data.forEach(item => {
-  // For loop that run for each record in table
-  const deleteTd = document.createElement('td');
-  const deleteLink = document.createElement('a');
-  const editTd = document.createElement('td');
-  const editLink = document.createElement('a');
-  const tr = document.createElement('tr');
+modelList.getRecords().then(data => {
+  data.forEach(item => {
+    // For loop that run for each record in table
+    const deleteTd = document.createElement('td');
+    const deleteLink = document.createElement('a');
+    const editTd = document.createElement('td');
+    const editLink = document.createElement('a');
+    const tr = document.createElement('tr');
 
-  editLink.innerHTML = 'Edit';
-  editLink.href = `/models/${modelList.modelName}/${item.id}`;
-  editTd.appendChild(editLink);
+    editLink.innerHTML = 'Edit';
+    editLink.href = `/models/${modelList.modelName}/${item.id}`;
+    editTd.appendChild(editLink);
 
-  deleteLink.innerHTML = 'Delete';
-  deleteLink.href = `/models/${modelList.modelName}`;
-  deleteLink.onclick = event => {
-    event.preventDefault();
-    const warningMessage = `Are you sure you want to delete this item?\n\n${JSON.stringify(item)}`;
-    if(confirm(warningMessage)){
-      modelList.deleteRecord(item).then(response => {
-        location.href = deleteLink.href;
-      });
-    }
-  };
-  deleteTd.appendChild(deleteLink);
-  tr.appendChild(editTd);
+    deleteLink.innerHTML = 'Delete';
+    deleteLink.href = `/models/${modelList.modelName}`;
+    deleteLink.onclick = event => {
+      event.preventDefault();
+      const warningMessage = `Are you sure you want to delete this item?\n\n${JSON.stringify(item)}`;
+      if(confirm(warningMessage)){
+        modelList.deleteRecord(item).then(response => {
+          location.href = deleteLink.href;
+        });
+      }
+    };
+    deleteTd.appendChild(deleteLink);
+    tr.appendChild(editTd);
 
-  // For loop that runs for each attrubte of a record
-  modelList.getSortedAttributes().forEach(attr => {
-    const keys = Object.keys(attr);
-    const attrName = keys[0];
-    const attrProperties = attr[attrName];
-    const value = item[attrName];
-    const td = document.createElement('td');
-    let name = modelList.getFriendlyValueName(value, attrProperties);
+    // For loop that runs for each attrubte of a record
+    modelList.getSortedAttributes().forEach(attr => {
+      const keys = Object.keys(attr);
+      const attrName = keys[0];
+      const attrProperties = attr[attrName];
+      const value = item[attrName];
+      const td = document.createElement('td');
+      let name = modelList.getFriendlyValueName(value, attrProperties);
 
-    td.dataset.attribute = keys[0];
+      td.dataset.attribute = keys[0];
 
-    if(attrProperties === undefined) {
-      // if the user forgets to add the name to a model, inform the user, then skip the rest of the code.
-      alert("Missing property '" + attrName + "' in model '" + modelList.modelName + "'");
-      td.innerHTML = "";
+      if(attrProperties === undefined) {
+        // if the user forgets to add the name to a model, inform the user, then skip the rest of the code.
+        console.log("Missing property '" + attrName + "' in model '" + modelList.modelName + "'");
+        td.innerHTML = "";
+        tr.appendChild(td);
+        document.querySelector('table tbody').appendChild(tr);
+        return;
+      }
+
+      // If the attribute is a foreign model, make it a link to that model.
+      if(attrProperties.model){
+        if(value){
+          const a = document.createElement('a');
+          a.innerHTML = `#${value.id} ${name}`;
+          a.href = `/models/${attrProperties.model}/${value.id}`;
+          a.title = `#${value.id}`; // hover
+          td.appendChild(a);
+        } else {
+          td.title = 'null';
+        }
+      } else {
+        // If not a foreign key
+
+        // If the current attribute is a collection (a 1-to-N relationship)
+        if(attrProperties.collection){
+          const button = document.createElement('button'); // Expand / shrink button
+          const container = document.createElement('div');
+          const expandCode = '▼';
+          const shrinkCode = '▲';
+          const span = document.createElement('span'); // The value (the text)
+          const expandedTable = document.createElement('table');
+
+          container.classList.add('container');
+          container.classList.add('container-flex-center');
+          button.classList.add('expand-shrink-button');
+          button.innerHTML = expandCode;
+
+          expandedTable.classList.add('collection-table');
+          // table.style.display = 'none';
+
+          // Handler function for when the button is clicked
+          button.addEventListener('click', event => {
+            // Convert the button to a shrink icon
+            let isExpanded = button.innerHTML == shrinkCode;
+            button.innerHTML = isExpanded ? expandCode : shrinkCode;
+            button.style.flex = 10;
+
+            const elementsClickedOn = event.path;
+            const clickedTd = elementsClickedOn.filter(element => element.tagName == 'TD')[0];
+            const tdContainer = clickedTd.getElementsByClassName('container')[0];
+            const clickedTr = elementsClickedOn.filter(element => element.tagName == 'TR')[0];
+            const tds = clickedTr.getElementsByTagName('td');
+
+            if(isExpanded){
+              expandedTable.style.display = 'none';
+            } else {
+              // Show the table (and create it if it's not already created)
+              if(expandedTable.getElementsByTagName('tr').length === 0){
+                value.forEach(val => {
+                  const tr = document.createElement('tr');
+                  const td = document.createElement('td');
+                  const a = document.createElement('a');
+
+                  a.innerHTML = `#${val.id} - ${val.name}`;
+                  a.href = `/models/${attrProperties.collection}/${val.id}`;
+
+                  td.appendChild(a);
+                  tr.appendChild(td);
+                  expandedTable.appendChild(tr);
+                });
+              }
+              expandedTable.style.display = 'block';
+            }
+          });
+          span.innerHTML = name;
+          span.classList.add('value');
+          span.style.flex = 90;
+
+          container.appendChild(span);
+
+          // TODO: Make this more efficient. The button shouldn't exist AT ALL if there's no values
+          if(value.length > 0){
+            container.appendChild(button);
+          }
+
+          td.appendChild(container);
+          td.appendChild(expandedTable);
+        } else {
+          td.innerHTML = name;
+        }
+      }
       tr.appendChild(td);
       document.querySelector('table tbody').appendChild(tr);
-      return;
-    }
+    });
 
-    // If the attribute is a foreign model, make it a link to that model.
-    if(attrProperties.model){
-      if(value){
-        const a = document.createElement('a');
-        a.innerHTML = `#${value.id} ${name}`;
-        a.href = `/models/${attrProperties.model}/${value.id}`;
-        a.title = `#${value.id}`; // hover
-        td.appendChild(a);
-      } else {
-        td.title = 'null';
-      }
-    } else {
-      // If not a foreign key
-
-      // If the current attribute is a collection (a 1-to-N relationship)
-      if(attrProperties.collection){
-        const button = document.createElement('button'); // Expand / shrink button
-        const container = document.createElement('div');
-        const expandCode = '▼';
-        const shrinkCode = '▲';
-        const span = document.createElement('span'); // The value (the text)
-        const expandedTable = document.createElement('table');
-
-        container.classList.add('container');
-        container.classList.add('container-flex-center');
-        button.classList.add('expand-shrink-button');
-        button.innerHTML = expandCode;
-
-        expandedTable.classList.add('collection-table');
-        // table.style.display = 'none';
-
-        // Handler function for when the button is clicked
-        button.addEventListener('click', event => {
-          // Convert the button to a shrink icon
-          let isExpanded = button.innerHTML == shrinkCode;
-          button.innerHTML = isExpanded ? expandCode : shrinkCode;
-          button.style.flex = 10;
-
-          const elementsClickedOn = event.path;
-          const clickedTd = elementsClickedOn.filter(element => element.tagName == 'TD')[0];
-          const tdContainer = clickedTd.getElementsByClassName('container')[0];
-          const clickedTr = elementsClickedOn.filter(element => element.tagName == 'TR')[0];
-          const tds = clickedTr.getElementsByTagName('td');
-
-          if(isExpanded){
-            expandedTable.style.display = 'none';
-          } else {
-            // Show the table (and create it if it's not already created)
-            if(expandedTable.getElementsByTagName('tr').length === 0){
-              value.forEach(val => {
-                const tr = document.createElement('tr');
-                const td = document.createElement('td');
-                const a = document.createElement('a');
-
-                a.innerHTML = `#${val.id} - ${val.name}`;
-                a.href = `/models/${attrProperties.collection}/${val.id}`;
-
-                td.appendChild(a);
-                tr.appendChild(td);
-                expandedTable.appendChild(tr);
-              });
-            }
-            expandedTable.style.display = 'block';
-          }
-        });
-        span.innerHTML = name;
-        span.classList.add('value');
-        span.style.flex = 90;
-
-        container.appendChild(span);
-
-        // TODO: Make this more efficient. The button shouldn't exist AT ALL if there's no values
-        if(value.length > 0){
-          container.appendChild(button);
-        }
-
-        td.appendChild(container);
-        td.appendChild(expandedTable);
-      } else {
-        td.innerHTML = name;
-      }
-    }
-    tr.appendChild(td);
-    document.querySelector('table tbody').appendChild(tr);
+    tr.dataset.value = JSON.stringify(item);
+    tr.appendChild(deleteTd);
   });
-
-  tr.dataset.value = JSON.stringify(item);
-  tr.appendChild(deleteTd);
-
-}));
+  if(highlight){
+    const tr = Array.from(document.querySelectorAll('tbody tr')).find(tr => {
+      const id = JSON.parse(tr.dataset.value).id;
+      return id == highlight;
+    });
+    tr.classList.add('highlighted');
+  }
+});

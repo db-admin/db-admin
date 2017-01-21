@@ -45,7 +45,10 @@ module.exports.routes = {
   },
 
   'get /models/:modelName': (req, res) => {
-    res.view('models/list', { 'title': `${req.params.modelName} | ${sails.config.globals.title}`});
+    res.view('models/list', {
+      'title': `${req.params.modelName} | ${sails.config.globals.title}`,
+      'highlight': req.query.highlight
+    });
   },
 
   // End point to get the count of a model
