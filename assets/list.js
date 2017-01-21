@@ -256,7 +256,7 @@ document.getElementsByClassName('toggle-control-panel')[0].addEventListener('cli
       const attributeName = th.dataset.attribute;
       const attributeProperties = attributes[attributeName];
       const tbody = document.querySelector('tbody');
-      const trs = Array.from(tbody.getElementsByTagName('tr'));
+      const trs = Array.from(tbody.querySelectorAll('table#table-list > tbody > tr'));
 
       if(!initialOrderById){
         initialOrderById = trs.map(tr => JSON.parse(tr.dataset.value).id);
@@ -311,6 +311,10 @@ document.getElementsByClassName('toggle-control-panel')[0].addEventListener('cli
             // convert the values to their foreign model's id
             tr1Value = tr1Value.id;
             tr2Value = tr2Value.id;
+          } else if (attributeProperties.collection){
+            // Convert the values to just their lengths (since I'm sorting by length)
+            tr1Value = tr1Value.length;
+            tr2Value = tr2Value.length;
           }
 
           // Number compare
@@ -325,6 +329,7 @@ document.getElementsByClassName('toggle-control-panel')[0].addEventListener('cli
 
             // Whatever compare
           } else {
+            debugger;
             if(targetSort == 'ascending') winner = tr1Value > tr2Value;
             if(targetSort == 'descending') winner = tr2Value < tr1Value;
           }
@@ -429,17 +434,22 @@ modelList.getRecords().then(data => data.forEach(item => {
         const expandCode = '▼';
         const shrinkCode = '▲';
         const span = document.createElement('span'); // The value (the text)
+        const expandedTable = document.createElement('table');
 
         container.classList.add('container');
         container.classList.add('container-flex-center');
         button.classList.add('expand-shrink-button');
         button.innerHTML = expandCode;
 
+        expandedTable.classList.add('collection-table');
+        // table.style.display = 'none';
+
         // Handler function for when the button is clicked
         button.addEventListener('click', event => {
           // Convert the button to a shrink icon
           let isExpanded = button.innerHTML == shrinkCode;
           button.innerHTML = isExpanded ? expandCode : shrinkCode;
+          button.style.flex = 10;
 
           const elementsClickedOn = event.path;
           const clickedTd = elementsClickedOn.filter(element => element.tagName == 'TD')[0];
@@ -448,74 +458,29 @@ modelList.getRecords().then(data => data.forEach(item => {
           const tds = clickedTr.getElementsByTagName('td');
 
           if(isExpanded){
-            /**
-            * 1. Delete the newly created TRs
-            * 2. Convert the TDs to rowspan == 1
-            * 3. Fix the value being displayed
-            */
-
-            // Step 1
-            for(let i = 1; i < value.length; i++){
-              const trToDelete = clickedTr.nextSibling;
-              clickedTr.parentNode.removeChild(trToDelete);
-            }
-
-            // Step 2
-            for(let i = 0; i < tds.length; i++){
-              tds[i].setAttribute('rowspan', 1);
-            }
-
-            // Step 3
-            const childToDelete = tdContainer.getElementsByClassName('value-child')[0];
-            childToDelete.parentNode.removeChild(childToDelete);
-            tdContainer.getElementsByClassName('value')[0].style.display = 'initial';
-
+            expandedTable.style.display = 'none';
           } else {
-            /**
-            * 1. Convert the other TDs into rowspan = the number of items
-            * 2. Split the td (with the collection) into multiple tds (specifically, into the amount of items)
-            */
+            // Show the table (and create it if it's not already created)
+            if(expandedTable.getElementsByTagName('tr').length === 0){
+              value.forEach(val => {
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                const a = document.createElement('a');
 
-            //  For each td in the tr
-            for(let i = 0; i < tds.length; i++){
-              const td = tds[i];
+                a.innerHTML = `#${val.id} - ${val.name}`;
+                a.href = `/models/${attrProperties.collection}/${val.id}`;
 
-              // If the current td is not the one they clicked on
-              if(td != clickedTd){
-                td.setAttribute('rowspan', value.length); // value.length == number of items in collection
-              }
+                td.appendChild(a);
+                tr.appendChild(td);
+                expandedTable.appendChild(tr);
+              });
             }
-
-            const clickedTable = elementsClickedOn.filter(element => element.tagName == 'TABLE')[0];
-
-            // The first one has to be manually created
-            const newA = document.createElement('a');
-            const firstValue = value[0];
-            newA.innerHTML = `#${firstValue.id} ${firstValue.name}`;
-            newA.href = `/models/${attrProperties.collection}/${firstValue.id}`;
-            newA.classList.add('value-child');
-            tdContainer.insertBefore(newA, tdContainer.firstChild);
-            tdContainer.getElementsByClassName('value')[0].style.display = 'none';
-
-            //  Then create the rest
-            for(let i = 1; i < value.length; i++){
-              const newTr = document.createElement('tr');
-              const newTD = document.createElement('td');
-              const newA = document.createElement('a');
-              const currentValue = value[i];
-
-              newA.innerHTML = `#${currentValue.id} ${currentValue.name}`;
-              newA.href = `/models/${attrProperties.collection}/${currentValue.id}`;
-              newTD.appendChild(newA);
-              newTr.appendChild(newTD);
-
-              clickedTr.parentNode.insertBefore(newTr, clickedTr.nextSibling);
-            }
+            expandedTable.style.display = 'block';
           }
-
         });
         span.innerHTML = name;
         span.classList.add('value');
+        span.style.flex = 90;
 
         container.appendChild(span);
 
@@ -525,10 +490,10 @@ modelList.getRecords().then(data => data.forEach(item => {
         }
 
         td.appendChild(container);
+        td.appendChild(expandedTable);
       } else {
         td.innerHTML = name;
       }
-
     }
     tr.appendChild(td);
     document.querySelector('table tbody').appendChild(tr);
