@@ -53,7 +53,8 @@ for(let key in attributes){
   const inputType = getInputType(attributes[key]);
   const formHelpers = attributes[key].formHelpers;
 
-  let input; // the input for this attribute
+  let addAnchor;  // The add button for <select>s
+  let input;      // the input for this attribute
 
   // if is select box (if requires foreign table)
   if(['select', 'multiselect'].indexOf(inputType) != -1){
@@ -68,6 +69,14 @@ for(let key in attributes){
       input.disabled = 'disabled';
       input.setAttribute('title', 'This attribute uses the "through" property which is currently not supported to do a SailsJS bug. See the SailsJS GitHub issue #3946')
     }
+
+    // Create add button
+    let otherModel = attributes[key].model ? attributes[key].model : attributes[key].collection;
+    addAnchor = document.createElement('a');
+    addAnchor.href = `/models/${otherModel}/create`;
+    addAnchor.target = '_blank';
+    addAnchor.innerHTML = `Add new ${otherModel}`;
+    addAnchor.classList.add('button-add');
 
   } else {
     // regular input
@@ -96,6 +105,11 @@ for(let key in attributes){
   // Append to the input container
   container.appendChild(label);
   container.appendChild(input);
+  if(addAnchor) {
+    input.style.flex = 80;
+    addAnchor.style.flex = 10;
+    container.appendChild(addAnchor);
+  }
 
   // Append to the form
   form.appendChild(container);
