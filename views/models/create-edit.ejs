@@ -29,6 +29,7 @@
 
 const form = document.querySelector('form'); // the form HTML elements
 const submitButton = document.createElement('input'); // the sumbit button
+const cancelButton = document.createElement('button'); // the cancel button
 const table = '<%- req.params.model %>'; // the model table name
 const recordId = <%- req.params.id || 'null' %>;
 const attributes = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
@@ -228,12 +229,20 @@ form.addEventListener('submit', event => {
   }, error => {
     console.log('didnt work because idk');
   });
-
 });
 
 // add submit button
 submitButton.type = 'submit';
 form.appendChild(submitButton);
+
+// on cancel clicked
+cancelButton.addEventListener('click', event => {
+  location.href = `/models/${table}`;
+});
+
+// add cancel button
+cancelButton.innerHTML = 'Cancel';
+form.appendChild(cancelButton);
 
 function getInputType(attribute){
   if(attribute.model) return 'select';
