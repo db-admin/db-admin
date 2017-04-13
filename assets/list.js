@@ -429,68 +429,47 @@ modelList.getRecords().then(data => {
 
         // If the current attribute is a collection (a 1-to-N relationship)
         if(attrProperties.collection){
-          const button = document.createElement('button'); // Expand / shrink button
           const container = document.createElement('div');
-          const expandCode = '▼';
-          const shrinkCode = '▲';
-          const span = document.createElement('span'); // The value (the text)
+          const details = document.createElement('details');
+          const summary = document.createElement('summary'); // The value (when collection has data)
+          const span = document.createElement('span'); // The value (when collection does not have data)
           const expandedTable = document.createElement('table');
 
           container.classList.add('container');
           container.classList.add('container-flex-center');
-          button.classList.add('expand-shrink-button');
-          button.innerHTML = expandCode;
 
-          expandedTable.classList.add('collection-table');
-          // table.style.display = 'none';
-
-          // Handler function for when the button is clicked
-          button.addEventListener('click', event => {
-            // Convert the button to a shrink icon
-            let isExpanded = button.innerHTML == shrinkCode;
-            button.innerHTML = isExpanded ? expandCode : shrinkCode;
-            button.style.flex = 10;
-
-            const elementsClickedOn = event.path;
-            const clickedTd = elementsClickedOn.filter(element => element.tagName == 'TD')[0];
-            const tdContainer = clickedTd.getElementsByClassName('container')[0];
-            const clickedTr = elementsClickedOn.filter(element => element.tagName == 'TR')[0];
-            const tds = clickedTr.getElementsByTagName('td');
-
-            if(isExpanded){
-              expandedTable.style.display = 'none';
-            } else {
-              // Show the table (and create it if it's not already created)
-              if(expandedTable.getElementsByTagName('tr').length === 0){
-                value.forEach(val => {
-                  const tr = document.createElement('tr');
-                  const td = document.createElement('td');
-                  const a = document.createElement('a');
-
-                  a.innerHTML = `#${val.id} - ${val.name}`;
-                  a.href = `/models/${attrProperties.collection}/${val.id}`;
-
-                  td.appendChild(a);
-                  tr.appendChild(td);
-                  expandedTable.appendChild(tr);
-                });
-              }
-              expandedTable.style.display = 'block';
-            }
-          });
-          span.innerHTML = name;
-          span.classList.add('value');
-          span.style.flex = 90;
-
-          container.appendChild(span);
-
-          // TODO: Make this more efficient. The button shouldn't exist AT ALL if there's no values
           if(value.length > 0){
-            container.appendChild(button);
-          }
+            summary.innerHTML = name;
+            summary.classList.add('value');
+            summary.style.flex = 90;
 
-          td.appendChild(container);
-          td.appendChild(expandedTable);
+            expandedTable.classList.add('collection-table');
+
+            value.forEach(val => {
+              const tr = document.createElement('tr');
+              const td = document.createElement('td');
+              const a = document.createElement('a');
+
+              a.innerHTML = `#${val.id} - ${val.name}`;
+              a.href = `/models/${attrProperties.collection}/${val.id}`;
+
+              td.appendChild(a);
+              tr.appendChild(td);
+              expandedTable.appendChild(tr);
+            });
+            expandedTable.style.display = 'block';
+
+            details.appendChild(summary);
+            details.appendChild(expandedTable);
+            td.appendChild(details);
+          } else {
+            span.innerHTML = name;
+            span.classList.add('value');
+            span.style.flex = 90;
+
+            container.appendChild(span);
+            td.appendChild(container);
+          }
         } else {
           td.innerHTML = name;
         }
