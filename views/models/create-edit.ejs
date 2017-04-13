@@ -66,10 +66,10 @@ for(let key in attributes){
 
     // See https://github.com/balderdashy/sails/issues/3946
     // Therefore, disabled
-    if(attributes[key].through){
-      input.disabled = 'disabled';
-      input.setAttribute('title', 'This attribute uses the "through" property which is currently not supported to do a SailsJS bug. See the SailsJS GitHub issue #3946')
-    }
+    // if(attributes[key].through){
+    //   input.disabled = 'disabled';
+    //   input.setAttribute('title', 'This attribute uses the "through" property which is currently not supported to do a SailsJS bug. See the SailsJS GitHub issue #3946')
+    // }
 
     // Create add button
     let otherModel = attributes[key].model ? attributes[key].model : attributes[key].collection;
