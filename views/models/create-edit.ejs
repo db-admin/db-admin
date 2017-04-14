@@ -54,8 +54,10 @@ for(let key in attributes){
   const inputType = getInputType(attributes[key]);
   const formHelpers = attributes[key].formHelpers;
 
-  let addAnchor;  // The add button for <select>s
+  let addAnchor;  // The container for buttons for <select>
   let input;      // the input for this attribute
+  let addSelect;// The add button for <select>
+  let refreshSelect;// The add button for <select>
 
   // if is select box (if requires foreign table)
   if(['select', 'multiselect'].indexOf(inputType) != -1){
@@ -73,11 +75,48 @@ for(let key in attributes){
 
     // Create add button
     let otherModel = attributes[key].model ? attributes[key].model : attributes[key].collection;
-    addAnchor = document.createElement('a');
-    addAnchor.href = `/models/${otherModel}/create`;
-    addAnchor.target = '_blank';
-    addAnchor.innerHTML = `Add new ${otherModel}`;
-    addAnchor.classList.add('button-add');
+    addAnchor = document.createElement('div');
+
+    addSelect = document.createElement('a');
+    addSelect.href = `/models/${otherModel}/create`;
+    addSelect.target = '_blank';
+    addSelect.innerHTML = `Add new ${otherModel}`;
+    addSelect.classList.add('button-add');
+    addAnchor.appendChild(addSelect);
+    addAnchor.appendChild(document.createElement("br"));
+
+    // Create Refresh Button
+    refreshSelect = document.createElement('a');
+    refreshSelect.href = 'javascript:;';
+    refreshSelect.classList.add('button-add');
+    refreshSelect.innerHTML = `Refresh ${key}`;
+    addAnchor.appendChild(refreshSelect);
+    addAnchor.style.display = 'block';
+
+    refreshSelect.addEventListener('click',event=>{
+      let otherModel = attributes[key].model ? attributes[key].model : attributes[key].collection;
+      let input = document.querySelector(`form select[name=${key}]`);
+      input.innerHTML = '';
+
+      // gets the options for selected boxes (remember, this can run multiple times)
+      fetch(`/${otherModel}`).then(response => response.json().then(results => {
+        // Populate the select box with the foreign table records
+        if(inputType != 'multiselect'){
+          const nullOption = document.createElement('option');
+          input.appendChild(nullOption);
+        }
+        results.forEach(result => {
+          const option = document.createElement('option');
+          option.value = result.id;
+          option.innerHTML = `#${result.id} ${result.name}`;
+          //console.log(option);
+          input.appendChild(option);
+        });
+        loadEditingModel();
+      }));
+    });
+
+
 
   } else {
     // regular input
@@ -120,23 +159,59 @@ for(let key in attributes){
 if(form.getElementsByTagName('select').length != 0){
   // if there are some select inputs
   for(let key in attributes){
+    const otherModel = attributes[key].model ? attributes[key].model : attributes[key].collection;
+    const inputType = getInputType(attributes[key]);
     const input = document.querySelector(`form select[name=${key}]`);
     if(!input) continue; // the current element is not a <select> skip
-
-    const inputType = getInputType(attributes[key]);
-    const foreignTable = inputType == 'multiselect' ? attributes[key].collection : attributes[key].model;
 
     numOfSelects++;
 
     // gets the options for selected boxes (remember, this can run multiple times)
-    fetch(`/${foreignTable}`).then(response => response.json().then(results => {
+    fetch(`/${otherModel}`).then(response => response.json().then(results => {
 
       // Add empty options for single selects
       if(inputType != 'multiselect'){
         const nullOption = document.createElement('option');
         input.appendChild(nullOption);
-      }
+      }// else {
+        // Populate the select box with the foreign table records
+        results.forEach(result => {
+          const option = document.createElement('option');
+          option.value = result.id;
+          console.log(result);
+          option.innerHTML = `#${result.id} ${result.name}`;
+          input.appendChild(option);
+        });
 
+        numOfSelectsPopulated++;
+
+        // If finished populating all the <selects>
+        if(numOfSelectsPopulated == numOfSelects){
+          loadEditingModel();
+        }
+      //}
+    })); // End fetch
+  }
+} else {
+  // There's no select inputs
+  loadEditingModel();
+}
+
+function loadAttributeData(attributes, key){
+  const input = document.querySelector(`form select[name=${key}]`);
+  if(!input) continue; // the current element is not a <select> skip
+
+  const inputType = getInputType(attributes[key]);
+  const foreignTable = inputType == 'multiselect' ? attributes[key].collection : attributes[key].model;
+
+  numOfSelects++;
+  fetch(`/${foreignTable}`).then(response => response.json().then(results => {
+
+    // Add empty options for single selects
+    if(inputType != 'multiselect'){
+      const nullOption = document.createElement('option');
+      input.appendChild(nullOption);
+    } else {
       // Populate the select box with the foreign table records
       results.forEach(result => {
         const option = document.createElement('option');
@@ -151,11 +226,8 @@ if(form.getElementsByTagName('select').length != 0){
       if(numOfSelectsPopulated == numOfSelects){
         loadEditingModel();
       }
-    })); // End fetch
-  }
-} else {
-  // There's no select inputs
-  loadEditingModel();
+    }
+  })); // End fetch
 }
 
 // 3. Populate form elements
@@ -171,6 +243,7 @@ function loadEditingModel(){
       for(let i = 0; i < form.elements.length; i++){
         const input = form.elements[i]; // get the current item
         const currentValue = modelEditing[input.name]; // The value of the current record attribute
+        //console.log(input.name);
         if(!currentValue) continue; // skip ones with no value
 
         // If is <select multiple> element
@@ -238,9 +311,11 @@ form.appendChild(submitButton);
 // on cancel clicked
 cancelButton.addEventListener('click', event => {
   location.href = `/models/${table}`;
+  return false;
 });
 
 // add cancel button
+cancelButton.type = 'button';
 cancelButton.innerHTML = 'Cancel';
 form.appendChild(cancelButton);
 
