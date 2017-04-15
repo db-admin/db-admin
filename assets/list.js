@@ -434,7 +434,7 @@ modelList.getRecords().then(data => {
           const details = document.createElement('details');
           const summary = document.createElement('summary'); // The value (when collection has data)
           const span = document.createElement('span'); // The value (when collection does not have data)
-          const expandedTable = document.createElement('table');
+          const expandedTable = document.createElement('div');
 
           container.classList.add('container');
           container.classList.add('container-flex-center');
@@ -447,21 +447,26 @@ modelList.getRecords().then(data => {
             expandedTable.classList.add('collection-table');
 
             value.forEach(val => {
-              const tr = document.createElement('tr');
-              const td = document.createElement('td');
+              const label = document.createElement('label');
               const a = document.createElement('a');
+              const br = document.createElement('br');
 
               a.innerHTML = `#${val.id} - ${val.name}`;
               a.href = `/models/${attrProperties.collection}/${val.id}`;
 
-              td.appendChild(a);
-              tr.appendChild(td);
-              expandedTable.appendChild(tr);
+              label.appendChild(a);
+              expandedTable.appendChild(label);
+              expandedTable.appendChild(br);
             });
             expandedTable.style.display = 'block';
 
             details.appendChild(summary);
             details.appendChild(expandedTable);
+
+            summary.addEventListener("focus",event=>{
+              document.querySelector('summary').blur();
+            });
+
             td.appendChild(details);
           } else {
             span.innerHTML = name;
