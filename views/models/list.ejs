@@ -139,4 +139,4 @@ const currentModel = {
 const highlight = <%= highlight %>;
 </script>
 
-<script src="/list.js" charset="utf-8"></script>
+<script src="/list.js?<%- new Date().toISOString().replace(/[-:T]/g,"").slice(0,14) -%>" charset="utf-8"></script>

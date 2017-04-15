@@ -119,6 +119,7 @@ document.getElementById('form-search').addEventListener('submit', event => {
 
   // Search filter algorithm
   const searchResults = trs.filter(tr => {
+    if(!tr.dataset.value) return false;
     const value = JSON.parse(tr.dataset.value);
     const name = value.name.toLowerCase();
     return name.indexOf(query) != -1;
@@ -483,6 +484,7 @@ modelList.getRecords().then(data => {
   });
   if(highlight){
     const tr = Array.from(document.querySelectorAll('tbody tr')).find(tr => {
+      if(!tr.dataset.value) return false;
       const id = JSON.parse(tr.dataset.value).id;
       return id == highlight;
     });
