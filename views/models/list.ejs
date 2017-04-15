@@ -31,8 +31,8 @@
         <fieldset id='fieldset-search'>
           <legend>Name search</legend>
 
-          <input id="search" type="text" name="search" value="" placeholder="Click or press / to search">
-
+          <input id="search" type="search" name="search" class="search" value="" placeholder="Click or press / to search" autofocus>
+          <br>
           <!-- Submit -->
           <input type="submit" />
         </fieldset>
@@ -68,6 +68,11 @@ html, body{
   margin: 0;
   padding: 0;
 }
+
+.search{
+  width:100%;
+}
+
 .list-container{
   display: flex;
   flex-wrap: wrap;
