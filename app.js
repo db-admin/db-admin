@@ -19,4 +19,5 @@ sails.lift(rc, function (error) {
         return console.error(error);
     console.log('Ready at localhost:1337');
 });
+console.log('done');
 //# sourceMappingURL=app.js.map

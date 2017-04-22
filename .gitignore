@@ -21,7 +21,7 @@
 sma.config.json
 api/controllers
 api/models
-**.js
+**/**.js
 
 ################################################
 # Local Configuration
