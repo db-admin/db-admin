@@ -22,4 +22,3 @@ sails.lift(rc, error => {
   if (error) return console.error(error);
   console.log('Ready at localhost:1337');
 });
-console.log('done')
