@@ -36,5 +36,8 @@
     "url": "https://github.com/AskYous/db-admin"
   },
   "author": "Yousef Shanawany <AskYous@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "tsc": "^1.20150623.0"
+  }
 }
