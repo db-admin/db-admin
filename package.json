@@ -38,6 +38,7 @@
   "author": "Yousef Shanawany <AskYous@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^7.0.13",
     "tsc": "^1.20150623.0"
   }
 }
