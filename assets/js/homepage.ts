@@ -33,7 +33,6 @@ fetch("/_config").then(response => response.json().then(config => {
             });
 
         tr.appendChild(nameTd);
-
         document.querySelector("#models tbody").appendChild(tr);
     });
 
