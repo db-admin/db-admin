@@ -9,7 +9,7 @@ rc = rc('sails');
 
 // Sails My Admin
 const fs = require('fs');
-const config = JSON.parse(fs.readFileSync('sma.config.json'));
+const config = JSON.parse(fs.readFileSync('dba.config.json'));
 
 rc.connections = {
   'userSpecified': config.connections[config.connection]
@@ -19,6 +19,6 @@ rc.globals = {
 };
 
 sails.lift(rc, error => {
-  if(error) return console.error(error);
+  if (error) return console.error(error);
   console.log('Ready at localhost:1337');
 });
