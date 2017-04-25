@@ -107,7 +107,7 @@ class ModelList {
 }
 
 const modelName = currentModel.name; // inherited from list.ejs
-const attributes = currentModel.attributes; // inherited from list.ejs
+const attributes: Object = currentModel.attributes; // inherited from list.ejs
 const modelList = new ModelList(modelName, attributes);
 
 // when user submits search query
