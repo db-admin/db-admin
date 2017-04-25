@@ -9,7 +9,7 @@ rc = rc("sails");
 
 // sails My Admin
 const fs: any = require("fs");
-const config: any = JSON.parse(fs.readFileSync("sma.config.json"));
+const config: any = JSON.parse(fs.readFileSync("dba.config.json"));
 
 rc.connections = {
   "userSpecified": config.connections[config.connection]
