@@ -2,15 +2,12 @@
 // no matter where we actually lift from.
 // > Note: This is not required in order to lift, but it is a convenient default.
 process.chdir(__dirname);
-
-const sails = require('sails');
-let rc = require('rc');
-rc = rc('sails');
-
-// Sails My Admin
-const fs = require('fs');
-const config = JSON.parse(fs.readFileSync('dba.config.json'));
-
+var sails = require("sails");
+var rc = require("rc");
+rc = rc("sails");
+// sails My Admin
+var fs = require("fs");
+var config = JSON.parse(fs.readFileSync("dba.config.json"));
 rc.connections = {
     "userSpecified": config.connections[config.connection]
 };
