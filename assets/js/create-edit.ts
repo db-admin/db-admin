@@ -182,43 +182,8 @@ if (form.getElementsByTagName("select").length !== 0) {
     loadEditingModel();
 }
 
-function loadAttributeData(attributes, key) {
-    const input = document.querySelector(`form select[name=${key}]`);
-    if (!input) {
-        continue;
-    } // the current element is not a <select> skip
-
-    const inputType: string = getInputType(attributes[key]);
-    const foreignTable: string = inputType === "multiselect" ? attributes[key].collection : attributes[key].model;
-
-    numOfSelects++;
-    fetch(`/${foreignTable}`).then(response => response.json().then(results => {
-
-        // add empty options for single selects
-        if (inputType !== "multiselect") {
-            const nullOption = document.createElement("option");
-            input.appendChild(nullOption);
-        } else {
-            // populate the select box with the foreign table records
-            results.forEach(result => {
-                const option: HTMLOptionElement = document.createElement("option");
-                option.value = result.id;
-                option.innerHTML = `#${result.id} ${result.name}`;
-                input.appendChild(option);
-            });
-
-            numOfSelectsPopulated++;
-
-            // if finished populating all the <selects>
-            if (numOfSelectsPopulated === numOfSelects) {
-                loadEditingModel();
-            }
-        }
-    })); // end fetch
-}
-
 // 3. Populate form elements
-function loadEditingModel() {
+function loadEditingModel(): void {
     // gets the current editing model (if editing). (And this needs to finish first!)
     if (isEditing) {
         fetch(`/${table}/${recordId}`).then(results => results.json().then(result => {

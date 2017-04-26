@@ -157,36 +157,6 @@ else {
     // there's no select inputs
     loadEditingModel();
 }
-function loadAttributeData(attributes, key) {
-    var input = document.querySelector("form select[name=" + key + "]");
-    if (!input) {
-        continue;
-    } // the current element is not a <select> skip
-    var inputType = getInputType(attributes[key]);
-    var foreignTable = inputType === "multiselect" ? attributes[key].collection : attributes[key].model;
-    numOfSelects++;
-    fetch("/" + foreignTable).then(function (response) { return response.json().then(function (results) {
-        // add empty options for single selects
-        if (inputType !== "multiselect") {
-            var nullOption = document.createElement("option");
-            input.appendChild(nullOption);
-        }
-        else {
-            // populate the select box with the foreign table records
-            results.forEach(function (result) {
-                var option = document.createElement("option");
-                option.value = result.id;
-                option.innerHTML = "#" + result.id + " " + result.name;
-                input.appendChild(option);
-            });
-            numOfSelectsPopulated++;
-            // if finished populating all the <selects>
-            if (numOfSelectsPopulated === numOfSelects) {
-                loadEditingModel();
-            }
-        }
-    }); }); // end fetch
-}
 // 3. Populate form elements
 function loadEditingModel() {
     // gets the current editing model (if editing). (And this needs to finish first!)
