@@ -7,7 +7,7 @@ var modelEditing; // what the user is currently editing (initially as null)
 var numOfSelects = 0; // the number of <select> HTML elements
 var numOfSelectsPopulated = 0; // the number of <select> HTML elements
 var _loop_1 = function (key) {
-    if (attributes.hasOwnProperty(key)) {
+    if (!attributes.hasOwnProperty(key)) {
         return "continue";
     }
     var container = document.createElement("div"); // container for the current for input

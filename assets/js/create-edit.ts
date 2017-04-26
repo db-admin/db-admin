@@ -19,7 +19,7 @@ let numOfSelectsPopulated: number = 0; // the number of <select> HTML elements
 
 // 1. Create input for each attribute
 for (let key in attributes) {
-    if (attributes.hasOwnProperty(key)) {
+    if (!attributes.hasOwnProperty(key)) {
         continue;
     }
     const container: HTMLDivElement = document.createElement("div"); // container for the current for input
