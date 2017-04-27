@@ -29,5 +29,4 @@ fetch("/_config").then(function (response) { return response.json().then(functio
         document.querySelector("#models tbody").appendChild(tr);
     });
 }); });
-// close fetch 
 //# sourceMappingURL=homepage.js.map

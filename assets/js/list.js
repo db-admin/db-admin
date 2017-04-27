@@ -27,41 +27,40 @@ var ModelList = (function () {
         var _this = this;
         var firstItems = ["id", "name"];
         var secondItems = ["createdAt", "updatedAt"];
-        var sortedAttributes = [];
+        var sortedAttributesWithProperties;
+        var sortedAttributes;
         // sort attributes in a user friendly order
         sortedAttributes = Object.keys(this.attributes) // get array of keys
             .filter(// take out pre-indexed items
-        function (// take out pre-indexed items
-            item) { return firstItems.indexOf(item) === -1 &&
-            secondItems.indexOf(item) === -1; })
-            .sort();
+        function (item) {
+            return firstItems.indexOf(item) === -1 &&
+                secondItems.indexOf(item) === -1;
+        }).sort();
         // prepend first items and append last items
         sortedAttributes = firstItems.concat(sortedAttributes, secondItems);
         // convert the attributes back to their objects
-        sortedAttributes = sortedAttributes.map(function (attr) {
+        sortedAttributesWithProperties = sortedAttributes.map(function (attr) {
             var thingToReturn = {};
             thingToReturn[attr] = _this.attributes[attr];
             return thingToReturn;
         });
-        return sortedAttributes;
+        return sortedAttributesWithProperties;
     };
     /**
      * Converts the value given to a user friendly string.
-     * @param {string} attributeValue The value to convert.
-     * @param {Object} attribute The attribute object itself, specifying its properties.
      * @return {string} The friendly attribute name
      */
-    ModelList.prototype.getFriendlyValueName = function (attributeValue, attribute) {
+    ModelList.prototype.getFriendlyValueName = function (attributeValue, attributeProperties) {
         if (attributeValue === null || attributeValue === undefined) {
             return null;
         }
-        else if (attribute.collection) {
-            return attributeValue.length + " " + attribute.collection;
+        else if (attributeProperties.collection) {
+            return attributeValue.length + " " + attributeProperties.collection;
         }
-        else if (attribute.model) {
+        else if (attributeProperties.model) {
             return attributeValue.name;
         }
-        else if (["datetime"].indexOf(attribute.type) !== -1) {
+        else if (["datetime"].indexOf(attributeProperties.type) !== -1) {
             var pad = function (number) {
                 number = number.toString();
                 return number.length === 1 ? "0" + number : number;

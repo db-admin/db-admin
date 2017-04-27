@@ -37,4 +37,3 @@ fetch("/_config").then(response => response.json().then(config => {
     });
 
 }));
-// close fetch

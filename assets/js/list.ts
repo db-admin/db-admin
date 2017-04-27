@@ -2,6 +2,8 @@
  * helper class for the list page
  */
 class ModelList {
+  private modelName: string;
+  private attributes: any;
 
   /**
    * creates a ModelList helper object.
@@ -9,7 +11,7 @@ class ModelList {
    * @param {string} modelName The name of the model.
    * @param {Object} attributes The attributes of the model.
    */
-  constructor(modelName, attributes) {
+  constructor(modelName: string, attributes: any) {
     this.modelName = modelName;
     this.attributes = attributes;
   }
@@ -18,7 +20,7 @@ class ModelList {
    * Gets The data for the current model.
    * @return {promise} A promise to use to get the records.
    */
-  getRecords() {
+  public getRecords(): Promise<Response> {
     return fetch(`/${this.modelName}`).then(response => response.json());
   }
 
@@ -26,52 +28,51 @@ class ModelList {
    * Sorts the attributes of the attributes object in a user friendly order.
    * @return {[Object]} An array with the attributes sorted alphabetically.
    */
-  getSortedAttributes() {
-    const firstItems = ["id", "name"];
-    const secondItems = ["createdAt", "updatedAt"];
-    let sortedAttributes = [];
+  public getSortedAttributes(): {}[] {
+    const firstItems: string[] = ["id", "name"];
+    const secondItems: string[] = ["createdAt", "updatedAt"];
+    let sortedAttributesWithProperties: {}[];
+    let sortedAttributes: string[];
 
     // sort attributes in a user friendly order
     sortedAttributes = Object.keys(this.attributes) // get array of keys
       .filter( // take out pre-indexed items
-      item => firstItems.indexOf(item) === -1 &&
-        secondItems.indexOf(item) === -1
-      )
-      .sort();
+      (item: string) => {
+        return firstItems.indexOf(item) === -1 &&
+          secondItems.indexOf(item) === -1;
+      }).sort();
 
     // prepend first items and append last items
     sortedAttributes = firstItems.concat(sortedAttributes, secondItems);
 
     // convert the attributes back to their objects
-    sortedAttributes = sortedAttributes.map(attr => {
-      const thingToReturn = {};
+    sortedAttributesWithProperties = sortedAttributes.map((attr: string) => {
+      const thingToReturn: any = {};
       thingToReturn[attr] = this.attributes[attr];
       return thingToReturn;
     });
 
-    return sortedAttributes;
+    return sortedAttributesWithProperties;
   }
 
   /**
    * Converts the value given to a user friendly string.
-   * @param {string} attributeValue The value to convert.
-   * @param {Object} attribute The attribute object itself, specifying its properties.
    * @return {string} The friendly attribute name
    */
-  getFriendlyValueName(attributeValue, attribute) {
+  public getFriendlyValueName(attributeValue: any, attributeProperties: any): any {
     if (attributeValue === null || attributeValue === undefined) {
       return null;
-    } else if (attribute.collection) {
-      return `${attributeValue.length} ${attribute.collection}`;
-    } else if (attribute.model) {
+    } else if (attributeProperties.collection) {
+      return `${attributeValue.length} ${attributeProperties.collection}`;
+    } else if (attributeProperties.model) {
       return attributeValue.name;
-    } else if (["datetime"].indexOf(attribute.type) !== -1) {
+    } else if (["datetime"].indexOf(attributeProperties.type) !== -1) {
 
       const pad = number => {
         number = number.toString();
         return number.length === 1 ? `0${number}` : number;
       };
-      const date = new Date(attributeValue);
+      const date: Date = new Date(attributeValue);
       return date.toUTCString();
 
     } else {
@@ -83,7 +84,7 @@ class ModelList {
    * Deletes A record from the database.
    * @return A promise for the delete event.
    */
-  deleteRecord(record) {
+  public deleteRecord(record: any): Promise<Response> {
     return fetch(`/${modelList.modelName}/${record.id}`, {
       "method": "DELETE",
       "body": record
