@@ -106,7 +106,7 @@ class ModelList {
    *
    * @memberOf ModelList
    */
-  public isEmpty(value: any) {
+  public isEmpty(value: any): boolean {
     const emptyValues: any[] = [null, undefined, ""];
     if (typeof value === "string") {
       value = value.replace(" ", "");
@@ -115,28 +115,46 @@ class ModelList {
     return emptyValues.indexOf(value) !== -1;
   }
 }
+interface IModel {
+  /**
+   * The name of the model.
+   *
+   * @type {string}
+   * @memberOf IModel
+   */
+  name: string;
+  /**
+   * The attributes of the model in JSON format.
+   *
+   * @type {*}
+   * @memberOf IModel
+   */
+  attributes: any;
+}
 
-const modelName = currentModel.name; // inherited from list.ejs
-const attributes: Object = currentModel.attributes; // inherited from list.ejs
-const modelList = new ModelList(modelName, attributes);
+declare const currentModel: IModel;
+
+const modelName: string = currentModel.name; // inherited from list.ejs
+const attributes: any = currentModel.attributes; // inherited from list.ejs
+const modelList: ModelList = new ModelList(modelName, attributes);
 
 // when user submits search query
 document.getElementById("form-search").addEventListener("submit", event => {
   event.preventDefault(); // prevents the page from reloading
 
-  const query = document.getElementById("search").value.toLowerCase();
-  const trs = Array.from(document.querySelectorAll("table tbody tr"));
+  const query: string = (<HTMLInputElement>document.getElementById("intput#search")).value.toLowerCase();
+  const trs: HTMLTableRowElement[] = Array.from(document.querySelectorAll("table tbody tr"));
 
   // search filter algorithm
-  const searchResults = trs.filter(tr => {
-    if (!tr.dataset.value) return false;
-    const value = JSON.parse(tr.dataset.value);
-    const name = value.name.toLowerCase();
+  const searchResults: HTMLTableRowElement[] = trs.filter((tr: HTMLTableRowElement) => {
+    if (!tr.dataset.value) { return false; }
+    const value: any = JSON.parse(tr.dataset.value);
+    const name: string = value.name.toLowerCase();
     return name.indexOf(query) !== -1;
   });
 
   // display the ones that pass the test
-  trs.forEach(tr => {
+  trs.forEach((tr: HTMLTableRowElement) => {
     if (searchResults.indexOf(tr) !== -1) {
       tr.style.display = null;
     } else {
@@ -149,17 +167,14 @@ document.getElementById("form-search").addEventListener("submit", event => {
 // when the user submits the sort attribute <form>
 document.getElementById("form-sort-attributes").addEventListener("submit", event => {
   event.preventDefault(); // prevent the default action of the submit button (because by default, it wil refresh the page)
-  const attribute = document.getElementById("select-sort-attributes").value;
-  const thForAttribute = document.querySelector(`th[data-attribute=${attribute}]`);
+  const attribute: string = (<HTMLSelectElement>document.getElementById("select-sort-attributes")).value;
+  const thForAttribute: HTMLTableHeaderCellElement = <HTMLTableHeaderCellElement>document.querySelector(`th[data-attribute=${attribute}]`);
   thForAttribute.click();
 });
 
 // keyboard shortcuts for page
-document.querySelector("body").addEventListener("keyup", function (event) {
-
-  if (document.getElementById("search") === document.activeElement) return;
-
-  // if they press the 'N' key
+document.querySelector("body").addEventListener("keyup", (event: KeyboardEvent) => {
+  if (document.getElementById("search") === document.activeElement) { return; }
   switch (event.key) {
     case "n":
       document.getElementById("add-new").click();
@@ -171,16 +186,16 @@ document.querySelector("body").addEventListener("keyup", function (event) {
 
 // handles the control panel toggle button
 document.getElementsByClassName("toggle-control-panel")[0].addEventListener("click", event => {
-  const controlPanel = document.getElementsByClassName("sidebar")[0];
+  const controlPanel: HTMLDivElement = <HTMLDivElement>document.getElementsByClassName("sidebar")[0];
   controlPanel.classList.toggle("minimized");
 });
 
 /** This creates the sort options (in the control panel) that users can select in the control bar */
-(function createAttributeSortOptions() {
-  const select = document.getElementById("select-sort-attributes");
-  modelList.getSortedAttributes().forEach(attribute => {
-    const attributeName = Object.keys(attribute)[0];
-    const option = document.createElement("option");
+(function createAttributeSortOptions(): void {
+  const select: HTMLSelectElement = <HTMLSelectElement>document.getElementById("select-sort-attributes");
+  modelList.getSortedAttributes().forEach((attribute: any) => {
+    const attributeName: string = Object.keys(attribute)[0];
+    const option: HTMLOptionElement = document.createElement("option");
 
     option.innerHTML = attributeName;
     select.appendChild(option);
@@ -188,12 +203,12 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
 })();
 
 /** Creates the attribute's check boxes */
-(function createAttributeCheckboxes() {
-  const fieldset = document.getElementById("fieldset-attributes");
-  const toggleAllCheckbox = document.getElementById("toggle-attributes");
+(function createAttributeCheckboxes(): void {
+  const fieldset: HTMLFieldSetElement = <HTMLFieldSetElement>document.getElementById("fieldset-attributes");
+  const toggleAllCheckbox: HTMLInputElement = <HTMLInputElement>document.getElementById("toggle-attributes");
 
-  toggleAllCheckbox.addEventListener("change", event => {
-    const checked = event.target.checked;
+  toggleAllCheckbox.addEventListener("change", (event: Event) => {
+    const checked: boolean = (<HTMLInputElement>event.target).checked;
     Array.from(
       document.getElementsByClassName("checkbox-attribute")
     ).forEach(checkbox => checkbox.checked !== checked ? checkbox.click() : null);
@@ -212,7 +227,7 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
     checkbox.id = `attr-${attribute}`;
 
     checkbox.addEventListener("change", event => {
-      const checked = event.target.checked;
+      const checked: boolean = (<HTMLInputElement>event.target).checked;
       Array.from(
         document.querySelectorAll(`th[data-attribute=${attribute}], td[data-attribute=${attribute}]`)
       ).forEach(cell => cell.style.display = checked ? null : "none");
@@ -230,8 +245,8 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
 
 /** Create table headers */
 (function createTableHeaders() {
-  const theadTr = document.querySelector("table thead tr");
-  const editTh = document.createElement("th");
+  const theadTr: HTMLTableRowElement = <HTMLTableRowElement>document.querySelector("table thead tr");
+  const editTh: HTMLTableHeaderCellElement = document.createElement("th");
 
   document.getElementById("title").innerHTML = `${modelList.modelName}`;
   document.getElementById("add-new").href = `/models/${modelList.modelName}/create`;

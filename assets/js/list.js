@@ -114,12 +114,13 @@ var modelList = new ModelList(modelName, attributes);
 // when user submits search query
 document.getElementById("form-search").addEventListener("submit", function (event) {
     event.preventDefault(); // prevents the page from reloading
-    var query = document.getElementById("search").value.toLowerCase();
+    var query = document.getElementById("intput#search").value.toLowerCase();
     var trs = Array.from(document.querySelectorAll("table tbody tr"));
     // search filter algorithm
     var searchResults = trs.filter(function (tr) {
-        if (!tr.dataset.value)
+        if (!tr.dataset.value) {
             return false;
+        }
         var value = JSON.parse(tr.dataset.value);
         var name = value.name.toLowerCase();
         return name.indexOf(query) !== -1;
@@ -143,9 +144,9 @@ document.getElementById("form-sort-attributes").addEventListener("submit", funct
 });
 // keyboard shortcuts for page
 document.querySelector("body").addEventListener("keyup", function (event) {
-    if (document.getElementById("search") === document.activeElement)
+    if (document.getElementById("search") === document.activeElement) {
         return;
-    // if they press the 'N' key
+    }
     switch (event.key) {
         case "n":
             document.getElementById("add-new").click();
