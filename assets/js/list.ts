@@ -26,12 +26,15 @@ class ModelList {
 
   /**
    * Sorts the attributes of the attributes object in a user friendly order.
-   * @return {[Object]} An array with the attributes sorted alphabetically.
+   *
+   * @returns {any[]} An array with the attributes sorted alphabetically.
+   *
+   * @memberOf ModelList
    */
-  public getSortedAttributes(): {}[] {
+  public getSortedAttributes(): any[] {
     const firstItems: string[] = ["id", "name"];
     const secondItems: string[] = ["createdAt", "updatedAt"];
-    let sortedAttributesWithProperties: {}[];
+    let sortedAttributesWithProperties: any[];
     let sortedAttributes: string[];
 
     // sort attributes in a user friendly order
@@ -57,7 +60,12 @@ class ModelList {
 
   /**
    * Converts the value given to a user friendly string.
-   * @return {string} The friendly attribute name
+   *
+   * @param {any} attributeValue The value of the attribute
+   * @param {any} attributeProperties The properties of the attribute. This is used to determine the friendly name.
+   * @returns {string} The friendly attribute name
+   *
+   * @memberOf ModelList
    */
   public getFriendlyValueName(attributeValue: any, attributeProperties: any): any {
     if (attributeValue === null || attributeValue === undefined) {
@@ -67,14 +75,8 @@ class ModelList {
     } else if (attributeProperties.model) {
       return attributeValue.name;
     } else if (["datetime"].indexOf(attributeProperties.type) !== -1) {
-
-      const pad = number => {
-        number = number.toString();
-        return number.length === 1 ? `0${number}` : number;
-      };
       const date: Date = new Date(attributeValue);
       return date.toUTCString();
-
     } else {
       return attributeValue;
     }
@@ -82,7 +84,11 @@ class ModelList {
 
   /**
    * Deletes A record from the database.
-   * @return A promise for the delete event.
+   *
+   * @param {*} record The record to delete.
+   * @returns {Promise<Response>} A promise for the delete event.
+   *
+   * @memberOf ModelList
    */
   public deleteRecord(record: any): Promise<Response> {
     return fetch(`/${modelList.modelName}/${record.id}`, {
@@ -92,13 +98,16 @@ class ModelList {
   }
 
   /**
-   * Checks whether is value is empty. My empty, what is meant is null,
+   * Checks whether is value is empty. By empty, what is meant is null,
    * undefined, empty string, or whitespace.
-   * @param value {string} The value to check.
-   * @return isEmpty {boolean} Whether the value is empty.
+   *
+   * @param {*} value The value to check if empty
+   * @returns Whether the value is empty.
+   *
+   * @memberOf ModelList
    */
-  isEmpty(value) {
-    const emptyValues = [null, undefined, ""];
+  public isEmpty(value: any) {
+    const emptyValues: any[] = [null, undefined, ""];
     if (typeof value === "string") {
       value = value.replace(" ", "");
     }

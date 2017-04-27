@@ -21,7 +21,10 @@ var ModelList = (function () {
     };
     /**
      * Sorts the attributes of the attributes object in a user friendly order.
-     * @return {[Object]} An array with the attributes sorted alphabetically.
+     *
+     * @returns {any[]} An array with the attributes sorted alphabetically.
+     *
+     * @memberOf ModelList
      */
     ModelList.prototype.getSortedAttributes = function () {
         var _this = this;
@@ -48,7 +51,12 @@ var ModelList = (function () {
     };
     /**
      * Converts the value given to a user friendly string.
-     * @return {string} The friendly attribute name
+     *
+     * @param {any} attributeValue The value of the attribute
+     * @param {any} attributeProperties The properties of the attribute. This is used to determine the friendly name.
+     * @returns {string} The friendly attribute name
+     *
+     * @memberOf ModelList
      */
     ModelList.prototype.getFriendlyValueName = function (attributeValue, attributeProperties) {
         if (attributeValue === null || attributeValue === undefined) {
@@ -61,10 +69,6 @@ var ModelList = (function () {
             return attributeValue.name;
         }
         else if (["datetime"].indexOf(attributeProperties.type) !== -1) {
-            var pad = function (number) {
-                number = number.toString();
-                return number.length === 1 ? "0" + number : number;
-            };
             var date = new Date(attributeValue);
             return date.toUTCString();
         }
@@ -74,7 +78,11 @@ var ModelList = (function () {
     };
     /**
      * Deletes A record from the database.
-     * @return A promise for the delete event.
+     *
+     * @param {*} record The record to delete.
+     * @returns {Promise<Response>} A promise for the delete event.
+     *
+     * @memberOf ModelList
      */
     ModelList.prototype.deleteRecord = function (record) {
         return fetch("/" + modelList.modelName + "/" + record.id, {
@@ -83,10 +91,13 @@ var ModelList = (function () {
         });
     };
     /**
-     * Checks whether is value is empty. My empty, what is meant is null,
+     * Checks whether is value is empty. By empty, what is meant is null,
      * undefined, empty string, or whitespace.
-     * @param value {string} The value to check.
-     * @return isEmpty {boolean} Whether the value is empty.
+     *
+     * @param {*} value The value to check if empty
+     * @returns Whether the value is empty.
+     *
+     * @memberOf ModelList
      */
     ModelList.prototype.isEmpty = function (value) {
         var emptyValues = [null, undefined, ""];
