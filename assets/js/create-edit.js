@@ -162,6 +162,7 @@ function loadEditingModel() {
     // gets the current editing model (if editing). (And this needs to finish first!)
     if (isEditing) {
         fetch("/" + table + "/" + recordId).then(function (results) { return results.json().then(function (result) {
+            var title = document.getElementById("title");
             console.log("Model editing:", result);
             modelEditing = result;
             title.innerHTML = result.name;
