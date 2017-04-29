@@ -42,14 +42,6 @@ for (let key in attributes) {
             input.multiple = inputType === "multiselect";
         }
 
-        // see https://github.com/balderdashy/sails/issues/3946
-        // therefore, disabled
-        // if(attributes[key].through){
-        //   input.disabled = 'disabled';
-        //   input.setAttribute('title', 'This attribute uses the "through" property which is currently not' +
-        //      'supported to do a SailsJS bug. See the SailsJS GitHub issue #3946')
-        // }
-
         // create add button
         let otherModel: string = attributes[key].model ? attributes[key].model : attributes[key].collection;
         addAnchor = <HTMLDivElement>document.createElement("div");
@@ -210,7 +202,7 @@ function loadEditingModel(): void {
                         }
                     }
                 } else if (input instanceof HTMLSelectElement) {
-                    const options: HTMLOptionElement[] = Array.from(input.childNodes);
+                    const options: Node[] = Array.from(input.childNodes);
                     if (!currentValue) {
                         options.filter(x => !x.value)[0].setAttribute("selected", "selected");
                     } else {

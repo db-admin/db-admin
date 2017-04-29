@@ -1,14 +1,14 @@
 /**
  * helper class for the list page
  */
-var ModelList = (function () {
+class ModelList {
     /**
      * creates a ModelList helper object.
      *
      * @param {string} modelName The name of the model.
      * @param {Object} attributes The attributes of the model.
      */
-    function ModelList(modelName, attributes) {
+    constructor(modelName, attributes) {
         this.modelName = modelName;
         this.attributes = attributes;
     }
@@ -16,9 +16,9 @@ var ModelList = (function () {
      * Gets The data for the current model.
      * @return {promise} A promise to use to get the records.
      */
-    ModelList.prototype.getRecords = function () {
-        return fetch("/" + this.modelName).then(function (response) { return response.json(); });
-    };
+    getRecords() {
+        return fetch(`/${this.modelName}`).then(response => response.json());
+    }
     /**
      * Sorts the attributes of the attributes object in a user friendly order.
      *
@@ -26,29 +26,28 @@ var ModelList = (function () {
      *
      * @memberOf ModelList
      */
-    ModelList.prototype.getSortedAttributes = function () {
-        var _this = this;
-        var firstItems = ["id", "name"];
-        var secondItems = ["createdAt", "updatedAt"];
-        var sortedAttributesWithProperties;
-        var sortedAttributes;
+    getSortedAttributes() {
+        const firstItems = ["id", "name"];
+        const secondItems = ["createdAt", "updatedAt"];
+        let sortedAttributesWithProperties;
+        let sortedAttributes;
         // sort attributes in a user friendly order
         sortedAttributes = Object.keys(this.attributes) // get array of keys
             .filter(// take out pre-indexed items
-        function (item) {
+        (item) => {
             return firstItems.indexOf(item) === -1 &&
                 secondItems.indexOf(item) === -1;
         }).sort();
         // prepend first items and append last items
         sortedAttributes = firstItems.concat(sortedAttributes, secondItems);
         // convert the attributes back to their objects
-        sortedAttributesWithProperties = sortedAttributes.map(function (attr) {
-            var thingToReturn = {};
-            thingToReturn[attr] = _this.attributes[attr];
+        sortedAttributesWithProperties = sortedAttributes.map((attr) => {
+            const thingToReturn = {};
+            thingToReturn[attr] = this.attributes[attr];
             return thingToReturn;
         });
         return sortedAttributesWithProperties;
-    };
+    }
     /**
      * Converts the value given to a user friendly string.
      *
@@ -58,24 +57,24 @@ var ModelList = (function () {
      *
      * @memberOf ModelList
      */
-    ModelList.prototype.getFriendlyValueName = function (attributeValue, attributeProperties) {
+    getFriendlyValueName(attributeValue, attributeProperties) {
         if (attributeValue === null || attributeValue === undefined) {
             return null;
         }
         else if (attributeProperties.collection) {
-            return attributeValue.length + " " + attributeProperties.collection;
+            return `${attributeValue.length} ${attributeProperties.collection}`;
         }
         else if (attributeProperties.model) {
             return attributeValue.name;
         }
         else if (["datetime"].indexOf(attributeProperties.type) !== -1) {
-            var date = new Date(attributeValue);
+            const date = new Date(attributeValue);
             return date.toUTCString();
         }
         else {
             return attributeValue;
         }
-    };
+    }
     /**
      * Deletes A record from the database.
      *
@@ -84,12 +83,12 @@ var ModelList = (function () {
      *
      * @memberOf ModelList
      */
-    ModelList.prototype.deleteRecord = function (record) {
-        return fetch("/" + modelList.modelName + "/" + record.id, {
+    deleteRecord(record) {
+        return fetch(`/${modelList.modelName}/${record.id}`, {
             "method": "DELETE",
             "body": record
         });
-    };
+    }
     /**
      * Checks whether is value is empty. By empty, what is meant is null,
      * undefined, empty string, or whitespace.
@@ -99,34 +98,33 @@ var ModelList = (function () {
      *
      * @memberOf ModelList
      */
-    ModelList.prototype.isEmpty = function (value) {
-        var emptyValues = [null, undefined, ""];
+    isEmpty(value) {
+        const emptyValues = [null, undefined, ""];
         if (typeof value === "string") {
             value = value.replace(" ", "");
         }
         return emptyValues.indexOf(value) !== -1;
-    };
-    return ModelList;
-}());
-var modelName = currentModel.name; // inherited from list.ejs
-var attributes = currentModel.attributes; // inherited from list.ejs
-var modelList = new ModelList(modelName, attributes);
+    }
+}
+const modelName = currentModel.name; // inherited from list.ejs
+const attributes = currentModel.attributes; // inherited from list.ejs
+const modelList = new ModelList(modelName, attributes);
 // when user submits search query
-document.getElementById("form-search").addEventListener("submit", function (event) {
+document.getElementById("form-search").addEventListener("submit", event => {
     event.preventDefault(); // prevents the page from reloading
-    var query = document.getElementById("intput#search").value.toLowerCase();
-    var trs = Array.from(document.querySelectorAll("table tbody tr"));
+    const query = document.getElementById("intput#search").value.toLowerCase();
+    const trs = Array.from(document.querySelectorAll("table tbody tr"));
     // search filter algorithm
-    var searchResults = trs.filter(function (tr) {
+    const searchResults = trs.filter((tr) => {
         if (!tr.dataset.value) {
             return false;
         }
-        var value = JSON.parse(tr.dataset.value);
-        var name = value.name.toLowerCase();
+        const value = JSON.parse(tr.dataset.value);
+        const name = value.name.toLowerCase();
         return name.indexOf(query) !== -1;
     });
     // display the ones that pass the test
-    trs.forEach(function (tr) {
+    trs.forEach((tr) => {
         if (searchResults.indexOf(tr) !== -1) {
             tr.style.display = null;
         }
@@ -136,14 +134,14 @@ document.getElementById("form-search").addEventListener("submit", function (even
     });
 });
 // when the user submits the sort attribute <form>
-document.getElementById("form-sort-attributes").addEventListener("submit", function (event) {
+document.getElementById("form-sort-attributes").addEventListener("submit", event => {
     event.preventDefault(); // prevent the default action of the submit button (because by default, it wil refresh the page)
-    var attribute = document.getElementById("select-sort-attributes").value;
-    var thForAttribute = document.querySelector("th[data-attribute=" + attribute + "]");
+    const attribute = document.getElementById("select-sort-attributes").value;
+    const thForAttribute = document.querySelector(`th[data-attribute=${attribute}]`);
     thForAttribute.click();
 });
 // keyboard shortcuts for page
-document.querySelector("body").addEventListener("keyup", function (event) {
+document.querySelector("body").addEventListener("keyup", (event) => {
     if (document.getElementById("search") === document.activeElement) {
         return;
     }
@@ -156,41 +154,41 @@ document.querySelector("body").addEventListener("keyup", function (event) {
     }
 });
 // handles the control panel toggle button
-document.getElementsByClassName("toggle-control-panel")[0].addEventListener("click", function (event) {
-    var controlPanel = document.getElementsByClassName("sidebar")[0];
+document.getElementsByClassName("toggle-control-panel")[0].addEventListener("click", event => {
+    const controlPanel = document.getElementsByClassName("sidebar")[0];
     controlPanel.classList.toggle("minimized");
 });
 /** This creates the sort options (in the control panel) that users can select in the control bar */
 (function createAttributeSortOptions() {
-    var select = document.getElementById("select-sort-attributes");
-    modelList.getSortedAttributes().forEach(function (attribute) {
-        var attributeName = Object.keys(attribute)[0];
-        var option = document.createElement("option");
+    const select = document.getElementById("select-sort-attributes");
+    modelList.getSortedAttributes().forEach((attribute) => {
+        const attributeName = Object.keys(attribute)[0];
+        const option = document.createElement("option");
         option.innerHTML = attributeName;
         select.appendChild(option);
     });
 })();
 /** Creates the attribute's check boxes */
 (function createAttributeCheckboxes() {
-    var fieldset = document.getElementById("fieldset-attributes");
-    var toggleAllCheckbox = document.getElementById("toggle-attributes");
-    toggleAllCheckbox.addEventListener("change", function (event) {
-        var checked = event.target.checked;
-        Array.from(document.getElementsByClassName("checkbox-attribute")).forEach(function (checkbox) { return checkbox.checked !== checked ? checkbox.click() : null; });
+    const fieldset = document.getElementById("fieldset-attributes");
+    const toggleAllCheckbox = document.getElementById("toggle-attributes");
+    toggleAllCheckbox.addEventListener("change", (event) => {
+        const checked = event.target.checked;
+        Array.from(document.getElementsByClassName("checkbox-attribute")).forEach(checkbox => checkbox.checked !== checked ? checkbox.click() : null);
     });
     // output checkboxes for each attribute
-    modelList.getSortedAttributes().forEach(function (attribute) {
+    modelList.getSortedAttributes().forEach(attribute => {
         attribute = Object.keys(attribute)[0];
-        var container = document.createElement("div");
-        var checkbox = document.createElement("input");
-        var label = document.createElement("label");
+        const container = document.createElement("div");
+        const checkbox = document.createElement("input");
+        const label = document.createElement("label");
         checkbox.type = "checkbox";
         checkbox.setAttribute("checked", "checked"); // check all the boxes
         checkbox.classList.add("checkbox-attribute");
-        checkbox.id = "attr-" + attribute;
-        checkbox.addEventListener("change", function (event) {
-            var checked = event.target.checked;
-            Array.from(document.querySelectorAll("th[data-attribute=" + attribute + "], td[data-attribute=" + attribute + "]")).forEach(function (cell) { return cell.style.display = checked ? null : "none"; });
+        checkbox.id = `attr-${attribute}`;
+        checkbox.addEventListener("change", event => {
+            const checked = event.target.checked;
+            Array.from(document.querySelectorAll(`th[data-attribute=${attribute}], td[data-attribute=${attribute}]`)).forEach(cell => cell.style.display = checked ? null : "none");
         });
         label.innerHTML = attribute;
         label.setAttribute("for", checkbox.id);
@@ -201,23 +199,23 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
 })();
 /** Create table headers */
 (function createTableHeaders() {
-    var theadTr = document.querySelector("table thead tr");
-    var editTh = document.createElement("th");
-    document.getElementById("title").innerHTML = "" + modelList.modelName;
-    document.getElementById("add-new").href = "/models/" + modelList.modelName + "/create";
+    const theadTr = document.querySelector("table thead tr");
+    const editTh = document.createElement("th");
+    document.getElementById("title").innerHTML = `${modelList.modelName}`;
+    document.getElementById("add-new").href = `/models/${modelList.modelName}/create`;
     editTh.innerHTML = "Edit";
     theadTr.appendChild(editTh);
     // convert attributes to th
-    modelList.getSortedAttributes().forEach(function (attr) {
-        var arrowsContainer = document.createElement("div");
-        var keys = Object.keys(attr);
-        var downArrow = document.createElement("span");
-        var nameSpan = document.createElement("span");
+    modelList.getSortedAttributes().forEach((attr) => {
+        const arrowsContainer = document.createElement("div");
+        const keys = Object.keys(attr);
+        const downArrow = document.createElement("span");
+        const nameSpan = document.createElement("span");
         // const properties = attr[name];
-        var th = document.createElement("th");
-        var thContainer = document.createElement("div");
-        var upArrow = document.createElement("span");
-        var initialOrderById;
+        const th = document.createElement("th");
+        const thContainer = document.createElement("div");
+        const upArrow = document.createElement("span");
+        let initialOrderById;
         upArrow.innerHTML = "▲";
         downArrow.innerHTML = "▼";
         upArrow.style.display = "none"; // invisible
@@ -228,16 +226,16 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
         arrowsContainer.appendChild(downArrow);
         th.dataset.attribute = keys[0];
         // when the user clicks a <th> (to sort)
-        th.addEventListener("click", function (event) {
-            var attributeName = th.dataset.attribute;
-            var attributeProperties = attributes[attributeName];
-            var tbody = document.querySelector("tbody");
-            var trs = Array.from(tbody.querySelectorAll("table#table-list > tbody > tr"));
+        th.addEventListener("click", event => {
+            const attributeName = th.dataset.attribute;
+            const attributeProperties = attributes[attributeName];
+            const tbody = document.querySelector("tbody");
+            const trs = Array.from(tbody.querySelectorAll("table#table-list > tbody > tr"));
             if (!initialOrderById) {
-                initialOrderById = trs.map(function (tr) { return JSON.parse(tr.dataset.value).id; });
+                initialOrderById = trs.map(tr => JSON.parse(tr.dataset.value).id);
             }
             // can be 'ascending', 'descending', or null. Null means not sorted;
-            var targetSort = null; // the sort that the user is attempting
+            let targetSort = null; // the sort that the user is attempting
             if (upArrow.style.display === "none") {
                 if (downArrow.style.display === "none") {
                     targetSort = "ascending";
@@ -255,20 +253,20 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
                 // then they're trying to unsort the data
                 upArrow.style.display = "none";
                 downArrow.style.display = "none";
-                initialOrderById.map(function (id) { return trs.filter(function (tr) { return JSON.parse(tr.dataset.value).id === id; })[0]; }) // convert ids to TRs
-                    .forEach(function (tr) { return tbody.appendChild(tr); }); // append to table
+                initialOrderById.map(id => trs.filter(tr => JSON.parse(tr.dataset.value).id === id)[0]) // convert ids to TRs
+                    .forEach(tr => tbody.appendChild(tr)); // append to table
             }
             else {
                 // they're trying to sort the data
                 // the sorted table rows
-                var trsSorted = trs.sort(function (tr1, tr2) {
+                const trsSorted = trs.sort((tr1, tr2) => {
                     // tODO: Fix it so it can sort rows that have expanded collection attribute values
                     // tODO: Fix so it can sort model values
-                    var winner = null;
-                    var tr1Value = JSON.parse(tr1.dataset.value)[th.dataset.attribute];
-                    var tr2Value = JSON.parse(tr2.dataset.value)[th.dataset.attribute];
-                    var tr1ValIsEmpty = modelList.isEmpty(tr1Value);
-                    var tr2ValIsEmpty = modelList.isEmpty(tr2Value);
+                    let winner = null;
+                    let tr1Value = JSON.parse(tr1.dataset.value)[th.dataset.attribute];
+                    let tr2Value = JSON.parse(tr2.dataset.value)[th.dataset.attribute];
+                    const tr1ValIsEmpty = modelList.isEmpty(tr1Value);
+                    const tr2ValIsEmpty = modelList.isEmpty(tr2Value);
                     // if one is undefined
                     if (tr1ValIsEmpty && !tr2ValIsEmpty) {
                         return targetSort === "ascending" ? 1 : -1;
@@ -321,7 +319,7 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
                 });
                 // show the <tr>s sorted
                 tbody.innerHTML = "";
-                trsSorted.forEach(function (tr) {
+                trsSorted.forEach(tr => {
                     tbody.appendChild(tr);
                 });
                 // toggle arrows
@@ -337,29 +335,29 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
         th.appendChild(thContainer);
         theadTr.appendChild(th);
     });
-    var deleteTh = document.createElement("th");
+    const deleteTh = document.createElement("th");
     deleteTh.innerHTML = "Delete";
     theadTr.appendChild(deleteTh);
 })();
 /** Display the data */
-modelList.getRecords().then(function (data) {
-    data.forEach(function (item) {
+modelList.getRecords().then((data) => {
+    data.forEach(item => {
         // for loop that run for each record in table
-        var deleteTd = document.createElement("td");
-        var deleteLink = document.createElement("a");
-        var editTd = document.createElement("td");
-        var editLink = document.createElement("a");
-        var tr = document.createElement("tr");
+        const deleteTd = document.createElement("td");
+        const deleteLink = document.createElement("a");
+        const editTd = document.createElement("td");
+        const editLink = document.createElement("a");
+        const tr = document.createElement("tr");
         editLink.innerHTML = "Edit";
-        editLink.href = "/models/" + modelList.modelName + "/" + item.id;
+        editLink.href = `/models/${modelList.modelName}/${item.id}`;
         editTd.appendChild(editLink);
         deleteLink.innerHTML = "Delete";
-        deleteLink.href = "/models/" + modelList.modelName;
-        deleteLink.onclick = function (event) {
+        deleteLink.href = `/models/${modelList.modelName}`;
+        deleteLink.onclick = event => {
             event.preventDefault();
-            var warningMessage = "Are you sure you want to delete this item?\n\n" + JSON.stringify(item);
+            const warningMessage = `Are you sure you want to delete this item?\n\n${JSON.stringify(item)}`;
             if (confirm(warningMessage)) {
-                modelList.deleteRecord(item).then(function (response) {
+                modelList.deleteRecord(item).then(response => {
                     location.href = deleteLink.href;
                 });
             }
@@ -367,13 +365,13 @@ modelList.getRecords().then(function (data) {
         deleteTd.appendChild(deleteLink);
         tr.appendChild(editTd);
         // for loop that runs for each attrubte of a record
-        modelList.getSortedAttributes().forEach(function (attr) {
-            var keys = Object.keys(attr);
-            var attrName = keys[0];
-            var attrProperties = attr[attrName];
-            var value = item[attrName];
-            var td = document.createElement("td");
-            var name = modelList.getFriendlyValueName(value, attrProperties);
+        modelList.getSortedAttributes().forEach(attr => {
+            const keys = Object.keys(attr);
+            const attrName = keys[0];
+            const attrProperties = attr[attrName];
+            const value = item[attrName];
+            const td = document.createElement("td");
+            let name = modelList.getFriendlyValueName(value, attrProperties);
             td.dataset.attribute = keys[0];
             if (attrProperties === undefined) {
                 // if the user forgets to add the name to a model, inform the user, then skip the rest of the code.
@@ -386,10 +384,10 @@ modelList.getRecords().then(function (data) {
             // if the attribute is a foreign model, make it a link to that model.
             if (attrProperties.model) {
                 if (value) {
-                    var a = document.createElement("a");
-                    a.innerHTML = "#" + value.id + " " + name;
-                    a.href = "/models/" + attrProperties.model + "/" + value.id;
-                    a.title = "#" + value.id; // hover
+                    const a = document.createElement("a");
+                    a.innerHTML = `#${value.id} ${name}`;
+                    a.href = `/models/${attrProperties.model}/${value.id}`;
+                    a.title = `#${value.id}`; // hover
                     td.appendChild(a);
                 }
                 else {
@@ -400,32 +398,32 @@ modelList.getRecords().then(function (data) {
                 // if not a foreign key
                 // if the current attribute is a collection (a 1-to-N relationship)
                 if (attrProperties.collection) {
-                    var container = document.createElement("div");
-                    var details = document.createElement("details");
-                    var summary = document.createElement("summary"); // the value (when collection has data)
-                    var span = document.createElement("span"); // the value (when collection does not have data)
-                    var expandedTable_1 = document.createElement("div");
+                    const container = document.createElement("div");
+                    const details = document.createElement("details");
+                    const summary = document.createElement("summary"); // the value (when collection has data)
+                    const span = document.createElement("span"); // the value (when collection does not have data)
+                    const expandedTable = document.createElement("div");
                     container.classList.add("container");
                     container.classList.add("container-flex-center");
                     if (value.length > 0) {
                         summary.innerHTML = name;
                         summary.classList.add("value");
                         summary.style.flex = "90";
-                        expandedTable_1.classList.add("collection-table");
-                        value.forEach(function (val) {
-                            var label = document.createElement("label");
-                            var a = document.createElement("a");
-                            var br = document.createElement("br");
-                            a.innerHTML = "#" + val.id + " - " + val.name;
-                            a.href = "/models/" + attrProperties.collection + "/" + val.id;
+                        expandedTable.classList.add("collection-table");
+                        value.forEach(val => {
+                            const label = document.createElement("label");
+                            const a = document.createElement("a");
+                            const br = document.createElement("br");
+                            a.innerHTML = `#${val.id} - ${val.name}`;
+                            a.href = `/models/${attrProperties.collection}/${val.id}`;
                             label.appendChild(a);
-                            expandedTable_1.appendChild(label);
-                            expandedTable_1.appendChild(br);
+                            expandedTable.appendChild(label);
+                            expandedTable.appendChild(br);
                         });
-                        expandedTable_1.style.display = "block";
+                        expandedTable.style.display = "block";
                         details.appendChild(summary);
-                        details.appendChild(expandedTable_1);
-                        summary.addEventListener("focus", function (event) {
+                        details.appendChild(expandedTable);
+                        summary.addEventListener("focus", event => {
                             document.querySelector("summary").blur();
                         });
                         td.appendChild(details);
@@ -449,11 +447,11 @@ modelList.getRecords().then(function (data) {
         tr.appendChild(deleteTd);
     });
     if (highlight) {
-        var tr = Array.from(document.querySelectorAll("tbody tr")).find(function (tr) {
+        const tr = Array.from(document.querySelectorAll("tbody tr")).find(tr => {
             if (!tr.dataset.value) {
                 return false;
             }
-            var id = JSON.parse(tr.dataset.value).id;
+            const id = JSON.parse(tr.dataset.value).id;
             return id === highlight;
         });
         tr.classList.add("highlighted");

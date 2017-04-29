@@ -21,7 +21,6 @@
 dba.config.json
 api/controllers
 api/models
-**/**.js
 
 ################################################
 # Local Configuration
@@ -117,3 +116,6 @@ npm-debug.log
 nbproject
 .idea
 .node_history
+*.js
+*.js
+*.map
