@@ -264,7 +264,7 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
     const th: HTMLTableHeaderCellElement = document.createElement("th");
     const thContainer: HTMLDivElement = document.createElement("div");
     const upArrow: HTMLSpanElement = document.createElement("span");
-    let initialOrderById = null;
+    let initialOrderById: HTMLTableRowElement[];
 
     upArrow.innerHTML = "▲";
     downArrow.innerHTML = "▼";
@@ -514,7 +514,7 @@ modelList.getRecords().then((data) => {
     tr.appendChild(deleteTd);
   });
   if (highlight) {
-    const tr: HTMLTableRowElement[] = Array.from(document.querySelectorAll("tbody tr")).find(tr => {
+    const tr: HTMLTableRowElement = Array.from(document.querySelectorAll("tbody tr")).find(tr => {
       if (!tr.dataset.value) { return false; }
       const id: number = JSON.parse(tr.dataset.value).id;
       return id === highlight;

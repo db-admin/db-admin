@@ -217,7 +217,7 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
         var th = document.createElement("th");
         var thContainer = document.createElement("div");
         var upArrow = document.createElement("span");
-        var initialOrderById = null;
+        var initialOrderById;
         upArrow.innerHTML = "▲";
         downArrow.innerHTML = "▼";
         upArrow.style.display = "none"; // invisible
