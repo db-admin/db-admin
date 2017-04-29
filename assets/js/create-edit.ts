@@ -242,13 +242,9 @@ form.addEventListener("submit", event => {
     dateTimeInputs.forEach(input => input.value === "" ? input.name = "" : null); // so it wont be sent to the server
 
     // convert selects that have no value and are not multiple to nulls
-    Array.from(document.getElementsByTagName("select")).forEach(select => {
-        if (select.multiple) {
-            return;
-        }
-        if (select.value !== "") {
-            return;
-        }
+    Array.from(document.getElementsByTagName("select")).forEach((select: HTMLSelectElement) => {
+        if (select.multiple) { return; }
+        if (select.value !== "") { return; }
         select.name = null;
     });
 
