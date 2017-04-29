@@ -194,30 +194,27 @@ function loadEditingModel(): void {
 
             // for each form item
             for (let i: number = 0; i < form.elements.length; i++) {
-                const input: HTMLElement = <HTMLElement>form.elements[i]; // get the current item
+                // get the current item
+                const input: HTMLInputElement | HTMLTextAreaElement = <HTMLInputElement | HTMLTextAreaElement>form.elements[i];
                 const currentValue: any = modelEditing[input.name]; // the value of the current record attribute
-                // console.log(input.name);
-                if (!currentValue) {
-                    // skip ones with no value
-                    continue;
-                }
 
-                // if is <select multiple> element
-                if (input.tagName === "SELECT" && input.multiple) {
-                    const options = input.getElementsByTagName("option");
-                    for (let j = 0; j < options.length; j++) {
-                        const valueIds = currentValue.map(item => item.id);
-                        const option = options[j];
+                if (!currentValue) { continue; }
+
+                if (input instanceof HTMLSelectElement && input.multiple) {
+                    const options: NodeListOf<HTMLOptionElement> = <NodeListOf<HTMLOptionElement>>input.getElementsByTagName("option");
+                    for (let j: number = 0; j < options.length; j++) {
+                        const valueIds: any = currentValue.map(item => item.id);
+                        const option: HTMLOptionElement = options[j];
                         if (valueIds.indexOf(Number(option.value)) !== -1) {
                             option.selected = true;
                         }
                     }
-                } else if (input.tagName === "SELECT") {
-                    const options = Array.from(input.childNodes);
+                } else if (input instanceof HTMLSelectElement) {
+                    const options: HTMLOptionElement[] = Array.from(input.childNodes);
                     if (!currentValue) {
                         options.filter(x => !x.value)[0].setAttribute("selected", "selected");
                     } else {
-                        options.filter(x => x.value === currentValue.id)[0].setAttribute("selected", "selected");
+                        options.filter(x => Number(x.value) === currentValue.id)[0].setAttribute("selected", "selected");
                     }
                 } else if (input.type === "datetime-local") {
                     input.setAttribute("value", new Date(currentValue).toISOString().slice(0, 22));
@@ -233,7 +230,7 @@ function loadEditingModel(): void {
 
 // on form submit
 form.addEventListener("submit", event => {
-    const data = {};
+    const data: any = {};
 
     event.preventDefault();
 
@@ -281,7 +278,7 @@ cancelButton.innerHTML = "Cancel";
 cancelButton.type = "button";
 form.appendChild(cancelButton);
 
-function getInputType(attribute): string {
+function getInputType(attribute: any): string {
     if (attribute.model) {
         return "select";
     }

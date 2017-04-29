@@ -167,14 +167,13 @@ function loadEditingModel() {
             modelEditing = result;
             title.innerHTML = result.name;
             var _loop_3 = function (i) {
-                var input = form.elements[i]; // get the current item
+                // get the current item
+                var input = form.elements[i];
                 var currentValue = modelEditing[input.name]; // the value of the current record attribute
-                // console.log(input.name);
                 if (!currentValue) {
                     return "continue";
                 }
-                // if is <select multiple> element
-                if (input.tagName === "SELECT" && input.multiple) {
+                if (input instanceof HTMLSelectElement && input.multiple) {
                     var options = input.getElementsByTagName("option");
                     for (var j = 0; j < options.length; j++) {
                         var valueIds = currentValue.map(function (item) { return item.id; });
@@ -184,13 +183,13 @@ function loadEditingModel() {
                         }
                     }
                 }
-                else if (input.tagName === "SELECT") {
+                else if (input instanceof HTMLSelectElement) {
                     var options = Array.from(input.childNodes);
                     if (!currentValue) {
                         options.filter(function (x) { return !x.value; })[0].setAttribute("selected", "selected");
                     }
                     else {
-                        options.filter(function (x) { return x.value === currentValue.id; })[0].setAttribute("selected", "selected");
+                        options.filter(function (x) { return Number(x.value) === currentValue.id; })[0].setAttribute("selected", "selected");
                     }
                 }
                 else if (input.type === "datetime-local") {
