@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Chrome",
             "url": "http://localhost:1337",
-            "webRoot": "${workspaceRoot}"
+            "webRoot": "${workspaceRoot}/assets/js"
         },
         {
             "type": "node",

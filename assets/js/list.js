@@ -213,7 +213,7 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
         var keys = Object.keys(attr);
         var downArrow = document.createElement("span");
         var nameSpan = document.createElement("span");
-        var properties = attr[name];
+        // const properties = attr[name];
         var th = document.createElement("th");
         var thContainer = document.createElement("div");
         var upArrow = document.createElement("span");
@@ -270,12 +270,15 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
                     var tr1ValIsEmpty = modelList.isEmpty(tr1Value);
                     var tr2ValIsEmpty = modelList.isEmpty(tr2Value);
                     // if one is undefined
-                    if (tr1ValIsEmpty && !tr2ValIsEmpty)
+                    if (tr1ValIsEmpty && !tr2ValIsEmpty) {
                         return targetSort === "ascending" ? 1 : -1;
-                    if (tr2ValIsEmpty && !tr1ValIsEmpty)
+                    }
+                    if (tr2ValIsEmpty && !tr1ValIsEmpty) {
                         return targetSort === "ascending" ? -1 : 1;
-                    if (tr1ValIsEmpty && tr2ValIsEmpty)
+                    }
+                    if (tr1ValIsEmpty && tr2ValIsEmpty) {
                         return;
+                    }
                     // if the values are foreign models
                     if (attributeProperties.model) {
                         // convert the values to their foreign model's id
@@ -289,24 +292,30 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
                     }
                     // number compare
                     if (typeof tr1Value === "number" && typeof tr2Value === "number") {
-                        if (targetSort === "ascending")
+                        if (targetSort === "ascending") {
                             winner = tr1Value - tr2Value;
-                        if (targetSort === "descending")
+                        }
+                        if (targetSort === "descending") {
                             winner = tr2Value - tr1Value;
+                        }
                         // string compare (and foreign model compare)
                     }
                     else if (tr1Value.localeCompare && tr2Value.localeCompare) {
-                        if (targetSort === "ascending")
+                        if (targetSort === "ascending") {
                             winner = tr1Value.localeCompare(tr2Value);
-                        if (targetSort === "descending")
+                        }
+                        if (targetSort === "descending") {
                             winner = tr2Value.localeCompare(tr1Value);
+                        }
                         // whatever compare
                     }
                     else {
-                        if (targetSort === "ascending")
-                            winner = tr1Value > tr2Value;
-                        if (targetSort === "descending")
-                            winner = tr2Value < tr1Value;
+                        if (targetSort === "ascending") {
+                            winner = tr1Value - tr2Value;
+                        }
+                        if (targetSort === "descending") {
+                            winner = tr2Value - tr1Value;
+                        }
                     }
                     return winner;
                 });
@@ -401,7 +410,7 @@ modelList.getRecords().then(function (data) {
                     if (value.length > 0) {
                         summary.innerHTML = name;
                         summary.classList.add("value");
-                        summary.style.flex = 90;
+                        summary.style.flex = "90";
                         expandedTable_1.classList.add("collection-table");
                         value.forEach(function (val) {
                             var label = document.createElement("label");
@@ -424,7 +433,7 @@ modelList.getRecords().then(function (data) {
                     else {
                         span.innerHTML = name;
                         span.classList.add("value");
-                        span.style.flex = 90;
+                        span.style.flex = "90";
                         container.appendChild(span);
                         td.appendChild(container);
                     }
@@ -441,8 +450,9 @@ modelList.getRecords().then(function (data) {
     });
     if (highlight) {
         var tr = Array.from(document.querySelectorAll("tbody tr")).find(function (tr) {
-            if (!tr.dataset.value)
+            if (!tr.dataset.value) {
                 return false;
+            }
             var id = JSON.parse(tr.dataset.value).id;
             return id === highlight;
         });

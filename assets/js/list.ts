@@ -2,8 +2,8 @@
  * helper class for the list page
  */
 class ModelList {
-  private modelName: string;
-  private attributes: any;
+  public modelName: string;
+  public attributes: any;
 
   /**
    * creates a ModelList helper object.
@@ -67,7 +67,7 @@ class ModelList {
    *
    * @memberOf ModelList
    */
-  public getFriendlyValueName(attributeValue: any, attributeProperties: any): any {
+  public getFriendlyValueName(attributeValue: any, attributeProperties: any): string {
     if (attributeValue === null || attributeValue === undefined) {
       return null;
     } else if (attributeProperties.collection) {
@@ -133,6 +133,7 @@ interface IModel {
 }
 
 declare const currentModel: IModel;
+declare const highlight: number;
 
 const modelName: string = currentModel.name; // inherited from list.ejs
 const attributes: any = currentModel.attributes; // inherited from list.ejs
@@ -217,9 +218,9 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
   // output checkboxes for each attribute
   modelList.getSortedAttributes().forEach(attribute => {
     attribute = Object.keys(attribute)[0];
-    const container = document.createElement("div");
-    const checkbox = document.createElement("input");
-    const label = document.createElement("label");
+    const container: HTMLDivElement = document.createElement("div");
+    const checkbox: HTMLInputElement = document.createElement("input");
+    const label: HTMLLabelElement = document.createElement("label");
 
     checkbox.type = "checkbox";
     checkbox.setAttribute("checked", "checked"); // check all the boxes
@@ -244,25 +245,25 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
 })();
 
 /** Create table headers */
-(function createTableHeaders() {
+(function createTableHeaders(): void {
   const theadTr: HTMLTableRowElement = <HTMLTableRowElement>document.querySelector("table thead tr");
   const editTh: HTMLTableHeaderCellElement = document.createElement("th");
 
   document.getElementById("title").innerHTML = `${modelList.modelName}`;
-  document.getElementById("add-new").href = `/models/${modelList.modelName}/create`;
+  (<HTMLAnchorElement>document.getElementById("add-new")).href = `/models/${modelList.modelName}/create`;
   editTh.innerHTML = "Edit";
   theadTr.appendChild(editTh);
 
   // convert attributes to th
-  modelList.getSortedAttributes().forEach(attr => {
-    const arrowsContainer = document.createElement("div");
-    const keys = Object.keys(attr);
-    const downArrow = document.createElement("span");
-    const nameSpan = document.createElement("span");
-    const properties = attr[name];
-    const th = document.createElement("th");
-    const thContainer = document.createElement("div");
-    const upArrow = document.createElement("span");
+  modelList.getSortedAttributes().forEach((attr: {}) => {
+    const arrowsContainer: HTMLDivElement = document.createElement("div");
+    const keys: string[] = Object.keys(attr);
+    const downArrow: HTMLSpanElement = document.createElement("span");
+    const nameSpan: HTMLSpanElement = document.createElement("span");
+    // const properties = attr[name];
+    const th: HTMLTableHeaderCellElement = document.createElement("th");
+    const thContainer: HTMLDivElement = document.createElement("div");
+    const upArrow: HTMLSpanElement = document.createElement("span");
     let initialOrderById = null;
 
     upArrow.innerHTML = "▲";
@@ -279,17 +280,17 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
 
     // when the user clicks a <th> (to sort)
     th.addEventListener("click", event => {
-      const attributeName = th.dataset.attribute;
-      const attributeProperties = attributes[attributeName];
-      const tbody = document.querySelector("tbody");
-      const trs = Array.from(tbody.querySelectorAll("table#table-list > tbody > tr"));
+      const attributeName: string = th.dataset.attribute;
+      const attributeProperties: any = attributes[attributeName];
+      const tbody: HTMLTableSectionElement = document.querySelector("tbody");
+      const trs: HTMLTableRowElement[] = Array.from(tbody.querySelectorAll("table#table-list > tbody > tr"));
 
       if (!initialOrderById) {
         initialOrderById = trs.map(tr => JSON.parse(tr.dataset.value).id);
       }
 
       // can be 'ascending', 'descending', or null. Null means not sorted;
-      let targetSort = null; // the sort that the user is attempting
+      let targetSort: string = null; // the sort that the user is attempting
 
       if (upArrow.style.display === "none") {
         if (downArrow.style.display === "none") {
@@ -316,21 +317,21 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
         // they're trying to sort the data
 
         // the sorted table rows
-        const trsSorted = trs.sort((tr1, tr2) => {
+        const trsSorted: HTMLTableRowElement[] = trs.sort((tr1: HTMLTableRowElement, tr2: HTMLTableRowElement) => {
           // tODO: Fix it so it can sort rows that have expanded collection attribute values
           // tODO: Fix so it can sort model values
 
-          let winner = null;
-          let tr1Value = JSON.parse(tr1.dataset.value)[th.dataset.attribute];
-          let tr2Value = JSON.parse(tr2.dataset.value)[th.dataset.attribute];
+          let winner: number = null;
+          let tr1Value: any = JSON.parse(tr1.dataset.value)[th.dataset.attribute];
+          let tr2Value: any = JSON.parse(tr2.dataset.value)[th.dataset.attribute];
 
-          const tr1ValIsEmpty = modelList.isEmpty(tr1Value);
-          const tr2ValIsEmpty = modelList.isEmpty(tr2Value);
+          const tr1ValIsEmpty: any = modelList.isEmpty(tr1Value);
+          const tr2ValIsEmpty: any = modelList.isEmpty(tr2Value);
 
           // if one is undefined
-          if (tr1ValIsEmpty && !tr2ValIsEmpty) return targetSort === "ascending" ? 1 : -1;
-          if (tr2ValIsEmpty && !tr1ValIsEmpty) return targetSort === "ascending" ? -1 : 1;
-          if (tr1ValIsEmpty && tr2ValIsEmpty) return;
+          if (tr1ValIsEmpty && !tr2ValIsEmpty) { return targetSort === "ascending" ? 1 : -1; }
+          if (tr2ValIsEmpty && !tr1ValIsEmpty) { return targetSort === "ascending" ? -1 : 1; }
+          if (tr1ValIsEmpty && tr2ValIsEmpty) { return; }
 
           // if the values are foreign models
           if (attributeProperties.model) {
@@ -345,18 +346,18 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
 
           // number compare
           if (typeof tr1Value === "number" && typeof tr2Value === "number") {
-            if (targetSort === "ascending") winner = tr1Value - tr2Value;
-            if (targetSort === "descending") winner = tr2Value - tr1Value;
+            if (targetSort === "ascending") { winner = tr1Value - tr2Value; }
+            if (targetSort === "descending") { winner = tr2Value - tr1Value; }
 
             // string compare (and foreign model compare)
           } else if (tr1Value.localeCompare && tr2Value.localeCompare) {
-            if (targetSort === "ascending") winner = tr1Value.localeCompare(tr2Value);
-            if (targetSort === "descending") winner = tr2Value.localeCompare(tr1Value);
+            if (targetSort === "ascending") { winner = tr1Value.localeCompare(tr2Value); }
+            if (targetSort === "descending") { winner = tr2Value.localeCompare(tr1Value); }
 
             // whatever compare
           } else {
-            if (targetSort === "ascending") winner = tr1Value > tr2Value;
-            if (targetSort === "descending") winner = tr2Value < tr1Value;
+            if (targetSort === "ascending") { winner = tr1Value - tr2Value; }
+            if (targetSort === "descending") { winner = tr2Value - tr1Value; }
           }
 
           return winner;
@@ -386,20 +387,20 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
     theadTr.appendChild(th);
   });
 
-  const deleteTh = document.createElement("th");
+  const deleteTh: HTMLTableHeaderCellElement = document.createElement("th");
   deleteTh.innerHTML = "Delete";
   theadTr.appendChild(deleteTh);
 })();
 
 /** Display the data */
-modelList.getRecords().then(data => {
+modelList.getRecords().then((data) => {
   data.forEach(item => {
     // for loop that run for each record in table
-    const deleteTd = document.createElement("td");
-    const deleteLink = document.createElement("a");
-    const editTd = document.createElement("td");
-    const editLink = document.createElement("a");
-    const tr = document.createElement("tr");
+    const deleteTd: HTMLTableDataCellElement = document.createElement("td");
+    const deleteLink: HTMLAnchorElement = document.createElement("a");
+    const editTd: HTMLTableDataCellElement = document.createElement("td");
+    const editLink: HTMLAnchorElement = document.createElement("a");
+    const tr: HTMLTableRowElement = document.createElement("tr");
 
     editLink.innerHTML = "Edit";
     editLink.href = `/models/${modelList.modelName}/${item.id}`;
@@ -409,7 +410,7 @@ modelList.getRecords().then(data => {
     deleteLink.href = `/models/${modelList.modelName}`;
     deleteLink.onclick = event => {
       event.preventDefault();
-      const warningMessage = `Are you sure you want to delete this item?\n\n${JSON.stringify(item)}`;
+      const warningMessage: string = `Are you sure you want to delete this item?\n\n${JSON.stringify(item)}`;
       if (confirm(warningMessage)) {
         modelList.deleteRecord(item).then(response => {
           location.href = deleteLink.href;
@@ -421,12 +422,12 @@ modelList.getRecords().then(data => {
 
     // for loop that runs for each attrubte of a record
     modelList.getSortedAttributes().forEach(attr => {
-      const keys = Object.keys(attr);
-      const attrName = keys[0];
-      const attrProperties = attr[attrName];
-      const value = item[attrName];
-      const td = document.createElement("td");
-      let name = modelList.getFriendlyValueName(value, attrProperties);
+      const keys: string[] = Object.keys(attr);
+      const attrName: string = keys[0];
+      const attrProperties: any = attr[attrName];
+      const value: any = item[attrName];
+      const td: HTMLTableDataCellElement = document.createElement("td");
+      let name: string = modelList.getFriendlyValueName(value, attrProperties);
 
       td.dataset.attribute = keys[0];
 
@@ -442,7 +443,7 @@ modelList.getRecords().then(data => {
       // if the attribute is a foreign model, make it a link to that model.
       if (attrProperties.model) {
         if (value) {
-          const a = document.createElement("a");
+          const a: HTMLAnchorElement = document.createElement("a");
           a.innerHTML = `#${value.id} ${name}`;
           a.href = `/models/${attrProperties.model}/${value.id}`;
           a.title = `#${value.id}`; // hover
@@ -455,11 +456,11 @@ modelList.getRecords().then(data => {
 
         // if the current attribute is a collection (a 1-to-N relationship)
         if (attrProperties.collection) {
-          const container = document.createElement("div");
-          const details = document.createElement("details");
-          const summary = document.createElement("summary"); // the value (when collection has data)
-          const span = document.createElement("span"); // the value (when collection does not have data)
-          const expandedTable = document.createElement("div");
+          const container: HTMLDivElement = document.createElement("div");
+          const details: HTMLElement = document.createElement("details");
+          const summary: HTMLElement = document.createElement("summary"); // the value (when collection has data)
+          const span: HTMLSpanElement = document.createElement("span"); // the value (when collection does not have data)
+          const expandedTable: HTMLDivElement = document.createElement("div");
 
           container.classList.add("container");
           container.classList.add("container-flex-center");
@@ -467,14 +468,14 @@ modelList.getRecords().then(data => {
           if (value.length > 0) {
             summary.innerHTML = name;
             summary.classList.add("value");
-            summary.style.flex = 90;
+            summary.style.flex = "90";
 
             expandedTable.classList.add("collection-table");
 
             value.forEach(val => {
-              const label = document.createElement("label");
-              const a = document.createElement("a");
-              const br = document.createElement("br");
+              const label: HTMLLabelElement = document.createElement("label");
+              const a: HTMLAnchorElement = document.createElement("a");
+              const br: HTMLBRElement = document.createElement("br");
 
               a.innerHTML = `#${val.id} - ${val.name}`;
               a.href = `/models/${attrProperties.collection}/${val.id}`;
@@ -489,14 +490,14 @@ modelList.getRecords().then(data => {
             details.appendChild(expandedTable);
 
             summary.addEventListener("focus", event => {
-              document.querySelector("summary").blur();
+              (<HTMLElement>document.querySelector("summary")).blur();
             });
 
             td.appendChild(details);
           } else {
             span.innerHTML = name;
             span.classList.add("value");
-            span.style.flex = 90;
+            span.style.flex = "90";
 
             container.appendChild(span);
             td.appendChild(container);
@@ -513,9 +514,9 @@ modelList.getRecords().then(data => {
     tr.appendChild(deleteTd);
   });
   if (highlight) {
-    const tr = Array.from(document.querySelectorAll("tbody tr")).find(tr => {
-      if (!tr.dataset.value) return false;
-      const id = JSON.parse(tr.dataset.value).id;
+    const tr: HTMLTableRowElement[] = Array.from(document.querySelectorAll("tbody tr")).find(tr => {
+      if (!tr.dataset.value) { return false; }
+      const id: number = JSON.parse(tr.dataset.value).id;
       return id === highlight;
     });
     tr.classList.add("highlighted");
