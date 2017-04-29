@@ -9,6 +9,10 @@
         "**/*.js": {
             "when": "$(basename).ts"
         },
-        "**/*.js.map": true,
-    }
+        "**/*.js.map": true
+    },
+    "editor.formatOnType": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "tslint.autoFixOnSave": true
 }

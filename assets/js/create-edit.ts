@@ -202,11 +202,25 @@ function loadEditingModel(): void {
                         }
                     }
                 } else if (input instanceof HTMLSelectElement) {
-                    const options: Node[] = Array.from(input.childNodes);
+                    const options: NodeList = input.childNodes;
                     if (!currentValue) {
-                        options.filter(x => !x.value)[0].setAttribute("selected", "selected");
+                        for (let i = 0; i < options.length; i++) {
+                            let option = options[i];
+                            if (option instanceof HTMLOptionElement) {
+                                if (!option.value) {
+                                    option.setAttribute("selected", "selected");
+                                    break;
+                                }
+                            }
+                        }
                     } else {
-                        options.filter(x => Number(x.value) === currentValue.id)[0].setAttribute("selected", "selected");
+                        let option = options[i];
+                        if (option instanceof HTMLOptionElement) {
+                            if (Number(option.value) === currentValue.id) {
+                                option.setAttribute("selected", "selected");
+                                break;
+                            }
+                        }
                     }
                 } else if (input.type === "datetime-local") {
                     input.setAttribute("value", new Date(currentValue).toISOString().slice(0, 22));
@@ -228,17 +242,27 @@ form.addEventListener("submit", event => {
 
     // convert all empty strings to null. They're empty strings by default
     // which errors in postgres for non- string attributes (like datetime).
-    const dateTimeInputs: HTMLInputElement[] = <HTMLInputElement[]>Array.from(
-        document.querySelectorAll("input[type=datetime-local], input[type=number], input[type=text]")
-    );
-    dateTimeInputs.forEach(input => input.value === "" ? input.name = "" : null); // so it wont be sent to the server
+    const dateTimeInputs: NodeList = document.querySelectorAll("input[type=datetime-local], input[type=number], input[type=text]");
+
+    for (let i = 0; i < dateTimeInputs.length; i++) {
+        let dateTimeInput = dateTimeInputs[i];
+        if (dateTimeInput instanceof HTMLInputElement) {
+            if (dateTimeInput.value === "") {
+                if (dateTimeInput.value === "") dateTimeInput.name = "";
+            }
+        }
+    }
+    //dateTimeInputs.forEach(input => input.value === "" ? input.name = "" : null); // so it wont be sent to the server
 
     // convert selects that have no value and are not multiple to nulls
-    Array.from(document.getElementsByTagName("select")).forEach((select: HTMLSelectElement) => {
-        if (select.multiple) { return; }
-        if (select.value !== "") { return; }
-        select.name = null;
-    });
+    const selectInputs: NodeList = document.getElementsByTagName("select");
+    for (let i = 0; i < selectInputs.length; i++) {
+        let selectInput = selectInputs[i];
+        if (selectInput instanceof HTMLSelectElement) {
+            if (selectInput.multiple || selectInput.value !== "") { continue; }
+            selectInput.name = null;
+        }
+    }
 
     fetch(`/${table}` + (recordId ? `/${recordId}` : ""), {
         "method": recordId ? "PUT" : "POST",
