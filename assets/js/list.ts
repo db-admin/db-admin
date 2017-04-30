@@ -143,8 +143,8 @@ const modelList: ModelList = new ModelList(modelName, attributes);
 document.getElementById("form-search").addEventListener("submit", event => {
   event.preventDefault(); // prevents the page from reloading
 
-  const query: string = (<HTMLInputElement>document.getElementById("intput#search")).value.toLowerCase();
-  const trs: HTMLTableRowElement[] = Array.from(document.querySelectorAll("table tbody tr"));
+  const query: string = (<HTMLInputElement>document.getElementById("search")).value.toLowerCase();
+  const trs: HTMLTableRowElement[] = <HTMLTableRowElement[]>Array.from(document.querySelectorAll("table tbody tr"));
 
   // search filter algorithm
   const searchResults: HTMLTableRowElement[] = trs.filter((tr: HTMLTableRowElement) => {
@@ -212,7 +212,7 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
     const checked: boolean = (<HTMLInputElement>event.target).checked;
     Array.from(
       document.getElementsByClassName("checkbox-attribute")
-    ).forEach(checkbox => checkbox.checked !== checked ? checkbox.click() : null);
+    ).forEach((checkbox: HTMLInputElement) => checkbox.checked !== checked ? checkbox.click() : null);
   });
 
   // output checkboxes for each attribute
@@ -231,7 +231,7 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
       const checked: boolean = (<HTMLInputElement>event.target).checked;
       Array.from(
         document.querySelectorAll(`th[data-attribute=${attribute}], td[data-attribute=${attribute}]`)
-      ).forEach(cell => cell.style.display = checked ? null : "none");
+      ).forEach((cell: HTMLTableCellElement) => cell.style.display = checked ? null : "none");
     });
 
     label.innerHTML = attribute;
@@ -283,7 +283,7 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
       const attributeName: string = th.dataset.attribute;
       const attributeProperties: any = attributes[attributeName];
       const tbody: HTMLTableSectionElement = document.querySelector("tbody");
-      const trs: HTMLTableRowElement[] = Array.from(tbody.querySelectorAll("table#table-list > tbody > tr"));
+      const trs: HTMLTableRowElement[] = <HTMLTableRowElement[]>Array.from(tbody.querySelectorAll("table#table-list > tbody > tr"));
 
       if (!initialOrderById) {
         initialOrderById = trs.map(tr => JSON.parse(tr.dataset.value).id);
@@ -393,7 +393,7 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
 })();
 
 /** Display the data */
-modelList.getRecords().then((data) => {
+modelList.getRecords().then((data: any) => {
   data.forEach(item => {
     // for loop that run for each record in table
     const deleteTd: HTMLTableDataCellElement = document.createElement("td");
@@ -514,11 +514,12 @@ modelList.getRecords().then((data) => {
     tr.appendChild(deleteTd);
   });
   if (highlight) {
-    const tr: HTMLTableRowElement = Array.from(document.querySelectorAll("tbody tr")).find(tr => {
-      if (!tr.dataset.value) { return false; }
-      const id: number = JSON.parse(tr.dataset.value).id;
-      return id === highlight;
-    });
+    const tr: HTMLTableRowElement = <HTMLTableRowElement>Array.from(document.querySelectorAll("tbody tr"))
+      .find((tr: HTMLTableRowElement) => {
+        if (!tr.dataset.value) { return false; }
+        const id: number = JSON.parse(tr.dataset.value).id;
+        return id === highlight;
+      });
     tr.classList.add("highlighted");
   }
 });
