@@ -204,8 +204,8 @@ function loadEditingModel(): void {
                 } else if (input instanceof HTMLSelectElement) {
                     const options: NodeList = input.childNodes;
                     if (!currentValue) {
-                        for (let i = 0; i < options.length; i++) {
-                            let option = options[i];
+                        for (let i: number = 0; i < options.length; i++) {
+                            let option: Node = options[i];
                             if (option instanceof HTMLOptionElement) {
                                 if (!option.value) {
                                     option.setAttribute("selected", "selected");
@@ -214,7 +214,7 @@ function loadEditingModel(): void {
                             }
                         }
                     } else {
-                        let option = options[i];
+                        let option: Node = options[i];
                         if (option instanceof HTMLOptionElement) {
                             if (Number(option.value) === currentValue.id) {
                                 option.setAttribute("selected", "selected");
@@ -244,20 +244,20 @@ form.addEventListener("submit", event => {
     // which errors in postgres for non- string attributes (like datetime).
     const dateTimeInputs: NodeList = document.querySelectorAll("input[type=datetime-local], input[type=number], input[type=text]");
 
-    for (let i = 0; i < dateTimeInputs.length; i++) {
-        let dateTimeInput = dateTimeInputs[i];
+    for (let i: number = 0; i < dateTimeInputs.length; i++) {
+        let dateTimeInput: Node = dateTimeInputs[i];
         if (dateTimeInput instanceof HTMLInputElement) {
             if (dateTimeInput.value === "") {
-                if (dateTimeInput.value === "") dateTimeInput.name = "";
+                if (dateTimeInput.value === "") { dateTimeInput.name = ""; }
             }
         }
     }
-    //dateTimeInputs.forEach(input => input.value === "" ? input.name = "" : null); // so it wont be sent to the server
+    // dateTimeInputs.forEach(input => input.value === "" ? input.name = "" : null); // so it wont be sent to the server
 
     // convert selects that have no value and are not multiple to nulls
-    const selectInputs: NodeList = document.getElementsByTagName("select");
-    for (let i = 0; i < selectInputs.length; i++) {
-        let selectInput = selectInputs[i];
+    const selectInputs: NodeListOf<HTMLSelectElement> = document.getElementsByTagName("select");
+    for (let i: number = 0; i < selectInputs.length; i++) {
+        let selectInput: HTMLSelectElement = selectInputs[i];
         if (selectInput instanceof HTMLSelectElement) {
             if (selectInput.multiple || selectInput.value !== "") { continue; }
             selectInput.name = null;
