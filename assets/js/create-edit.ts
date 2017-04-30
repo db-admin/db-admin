@@ -193,19 +193,17 @@ function loadEditingModel(): void {
                 if (!currentValue) { continue; }
 
                 if (input instanceof HTMLSelectElement && input.multiple) {
-                    const options: NodeListOf<HTMLOptionElement> = <NodeListOf<HTMLOptionElement>>input.getElementsByTagName("option");
+                    const options: NodeListOf<HTMLOptionElement> = input.getElementsByTagName("option");
                     for (let j: number = 0; j < options.length; j++) {
                         const valueIds: any = currentValue.map(item => item.id);
                         const option: HTMLOptionElement = options[j];
-                        if (valueIds.indexOf(Number(option.value)) !== -1) {
-                            option.selected = true;
-                        }
+                        if (valueIds.indexOf(Number(option.value)) !== -1) { option.selected = true; }
                     }
                 } else if (input instanceof HTMLSelectElement) {
                     const options: NodeList = input.childNodes;
                     if (!currentValue) {
-                        for (let i: number = 0; i < options.length; i++) {
-                            let option: Node = options[i];
+                        for (let k: number = 0; k < options.length; k++) {
+                            let option: Node = options[k];
                             if (option instanceof HTMLOptionElement) {
                                 if (!option.value) {
                                     option.setAttribute("selected", "selected");
