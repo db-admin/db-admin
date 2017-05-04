@@ -22,21 +22,16 @@
 import * as Express from "Express";
 module.exports.routes = {
 
-  /***************************************************************************
-  *                                                                          *
-  * Make the view located at `views/homepage.ejs` (or `views/homepage.jade`, *
-  * etc. depending on your default view engine) your home page.              *
-  *                                                                          *
-  * (Alternatively, remove this and add an `index.html` file in your         *
-  * `assets` directory)                                                      *
-  *                                                                          *
-  ***************************************************************************/
-
+  /**
+   * Returns the home page.
+   */
   "/": (req: Express.Request, res: Express.Response) => {
     res.view("homepage", { "title": sails.config.globals.title });
   },
 
-  // returns the configuration for sails-my-admin
+  /**
+   * Returns the configuration for sails-my-admin
+   */
   "/_config": (req: Express.Request, res: Express.Response) => {
     res.send({
       "title": sails.config.globals.title,
@@ -44,6 +39,9 @@ module.exports.routes = {
     });
   },
 
+  /**
+   * Returns the list page for the specified model.
+   */
   "get /models/:modelName": (req: Express.Request, res: Express.Response) => {
     res.view("models/list", {
       "title": `${req.params.modelName} | ${sails.config.globals.title}`,
@@ -51,7 +49,9 @@ module.exports.routes = {
     });
   },
 
-  // end point to get the count of a model
+  /**
+   * Returns the number of rows in a given model.
+   */
   "get /:model/count": (req: Express.Request, res: Express.Response) => {
     const model: any = sails.models[req.params.model];
     model.count().exec((err, count) => {
@@ -60,11 +60,17 @@ module.exports.routes = {
     });
   },
 
+  /**
+   * Returns the create page for the specified model.
+   */
   "/models/:model/create": (req: Express.Request, res: Express.Response) => {
     const title: string = `New ${req.params.model} | ${sails.config.globals.title}`;
     res.view("models/create-edit", { title });
   },
 
+  /**
+   * Returns the edit page (which is really just the create page) for the specified record in the records of the specified model.
+   */
   "/models/:model/:id": (req: Express.Request, res: Express.Response) => {
     let model: string = null;
     sails.models[req.params.model].findOne(req.params.id).exec((err, found) => {
@@ -73,16 +79,6 @@ module.exports.routes = {
 
       res.view("models/create-edit", { title });
     });
-  },
-
-  /***************************************************************************
-  *                                                                          *
-  * Custom routes here...                                                    *
-  *                                                                          *
-  * If a request to a URL doesn't match any of the custom routes above, it   *
-  * is matched against Sails route blueprints. See `config/blueprints.js`    *
-  * for configuration options and examples.                                  *
-  *                                                                          *
-  ***************************************************************************/
+  }
 
 };
