@@ -5,15 +5,28 @@ module.exports.routes = {
      * Returns the home page.
      */
     "/": (req, res) => {
-        res.view("homepage", { "title": sails.config.globals.title });
-    },
-    /**
-     * Returns the configuration for sails-my-admin
-     */
-    "/_config": (req, res) => {
-        res.send({
-            "title": sails.config.globals.title,
-            "models": Object.keys(sails.models),
+        const homePageConfig = {}; // the config for the home page
+        const modelNames = Object.keys(sails.models); // the list of modelnames.
+        homePageConfig.title = sails.config.globals.title;
+        homePageConfig.modelNamesAndRows = [];
+        /**
+         * For each modelName, set the name and the row count, and send it to the view.
+         */
+        modelNames.forEach((modelName, i) => {
+            const modelNameAndRow = {}; // this is to be stored in the homePageConfig.modelNamesAndRows.
+            modelNameAndRow.name = modelName;
+            sails.models[modelName].count().exec((err, count) => {
+                if (err) {
+                    throw err;
+                }
+                modelNameAndRow.rows = count;
+                homePageConfig.modelNamesAndRows.push(modelNameAndRow);
+                // if this is the last model the list of modelNames, then render the page.
+                const isLastModel = i === modelNames.length - 1;
+                if (isLastModel) {
+                    res.view("homepage", homePageConfig);
+                }
+            });
         });
     },
     /**
@@ -23,18 +36,6 @@ module.exports.routes = {
         res.view("models/list", {
             "title": `${req.params.modelName} | ${sails.config.globals.title}`,
             "highlight": req.query.highlight
-        });
-    },
-    /**
-     * Returns the number of rows in a given model.
-     */
-    "get /:model/count": (req, res) => {
-        const model = sails.models[req.params.model];
-        model.count().exec((err, count) => {
-            if (err) {
-                throw err;
-            }
-            res.send(200, count);
         });
     },
     /**

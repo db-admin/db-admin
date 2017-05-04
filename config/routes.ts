@@ -20,22 +20,39 @@
  * http://sailsjs.org/#!/documentation/concepts/Routes/RouteTargetSyntax.html
  */
 import * as Express from "Express";
+
 module.exports.routes = {
 
   /**
    * Returns the home page.
    */
   "/": (req: Express.Request, res: Express.Response) => {
-    res.view("homepage", { "title": sails.config.globals.title });
-  },
+    const homePageConfig: DBAdmin.IHomePageConfig = <DBAdmin.IHomePageConfig>{}; // the config for the home page
+    const modelNames: string[] = Object.keys(sails.models); // the list of modelnames.
 
-  /**
-   * Returns the configuration for sails-my-admin
-   */
-  "/_config": (req: Express.Request, res: Express.Response) => {
-    res.send({
-      "title": sails.config.globals.title,
-      "models": Object.keys(sails.models),
+    homePageConfig.title = sails.config.globals.title;
+    homePageConfig.modelNamesAndRows = [];
+
+    /**
+     * For each modelName, set the name and the row count, and send it to the view.
+     */
+    modelNames.forEach((modelName: string, i: number) => {
+
+      const modelNameAndRow: any = {}; // this is to be stored in the homePageConfig.modelNamesAndRows.
+      modelNameAndRow.name = modelName;
+
+      sails.models[modelName].count().exec((err, count) => {
+        if (err) { throw err; }
+
+        modelNameAndRow.rows = count;
+        homePageConfig.modelNamesAndRows.push(modelNameAndRow);
+
+        // if this is the last model the list of modelNames, then render the page.
+        const isLastModel: boolean = i === modelNames.length - 1;
+        if (isLastModel) {
+          res.view("homepage", homePageConfig);
+        }
+      });
     });
   },
 
@@ -46,17 +63,6 @@ module.exports.routes = {
     res.view("models/list", {
       "title": `${req.params.modelName} | ${sails.config.globals.title}`,
       "highlight": req.query.highlight
-    });
-  },
-
-  /**
-   * Returns the number of rows in a given model.
-   */
-  "get /:model/count": (req: Express.Request, res: Express.Response) => {
-    const model: any = sails.models[req.params.model];
-    model.count().exec((err, count) => {
-      if (err) { throw err; }
-      res.send(200, count);
     });
   },
 

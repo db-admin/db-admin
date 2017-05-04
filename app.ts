@@ -9,13 +9,13 @@ rc = rc("sails");
 
 // sails My Admin
 const fs: any = require("fs");
-const config: any = JSON.parse(fs.readFileSync("dba.config.json"));
+const dbaConfig: any = JSON.parse(fs.readFileSync("dba.config.json"));
 
 rc.connections = {
-  "userSpecified": config.connections[config.connection]
+  "userSpecified": dbaConfig.connections[dbaConfig.connection]
 };
 rc.globals = {
-  "title": config.title
+  "title": dbaConfig.title
 };
 
 sails.lift(rc, error => {
