@@ -11,13 +11,17 @@ rc = rc("sails");
 const fs: any = require("fs");
 const dbaConfig: any = JSON.parse(fs.readFileSync("dba.config.json"));
 
+// set sails settings to what is found in the dba.config.json file
 rc.connections = {
   "userSpecified": dbaConfig.connections[dbaConfig.connection]
 };
+
+// make the 'title' available via sails.globals.title
 rc.globals = {
   "title": dbaConfig.title
 };
 
+// run the app!
 sails.lift(rc, error => {
   if (error) {
     return console.error(error);
