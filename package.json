@@ -26,11 +26,13 @@
     "rc": "1.0.1",
     "sails": "^0.12.11",
     "sails-disk": "~0.10.9",
-    "tsc": "^1.20150623.0"
+    "tsc": "^1.20150623.0",
+    "jasmine": "2.1"
   },
   "scripts": {
     "debug": "node debug app.js",
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "test": "jasmine"
   },
   "main": "app.js",
   "repository": {
