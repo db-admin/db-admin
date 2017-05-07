@@ -1,7 +1,9 @@
 /**
- * helper class for the list page
+ * A helper class for the list page
+ *
+ * @class ModelList
  */
-class ModelList {
+class ModelHelper {
   public modelName: string;
   public attributes: any;
 
@@ -91,7 +93,7 @@ class ModelList {
    * @memberOf ModelList
    */
   public deleteRecord(record: any): Promise<Response> {
-    return fetch(`/${modelList.modelName}/${record.id}`, {
+    return fetch(`/${modelHelper.modelName}/${record.id}`, {
       "method": "DELETE",
       "body": record
     });
@@ -114,6 +116,26 @@ class ModelList {
 
     return emptyValues.indexOf(value) !== -1;
   }
+
+  /**
+   * Given a list of table rows that represent the record in the current model's database, this will filter those table rows to only the
+   * ones that satisfy the given query.
+   *
+   * @param {string} query The query string to use for filtering.
+   * @param {HTMLTableRowElement[]} unfilteredTableRows The HTML table rows that need to be filtered.
+   * @returns {HTMLTableRowElement[]} The filtered HTML table rows.
+   *
+   * @memberof ModelHelper
+   */
+  public filterTableRows(query: string, unfilteredTableRows: HTMLTableRowElement[]): HTMLTableRowElement[] {
+    const filteredTableRows: HTMLTableRowElement[] = unfilteredTableRows.filter((tr: HTMLTableRowElement) => {
+      if (!tr.dataset.value) { return false; }
+      const value: any = JSON.parse(tr.dataset.value);
+      const name: string = value.name.toLowerCase();
+      return name.indexOf(query) !== -1;
+    });
+    return filteredTableRows;
+  }
 }
 interface IModel {
   /**
@@ -132,130 +154,138 @@ interface IModel {
   attributes: any;
 }
 
+// the following declared variables were defined in /views/models/list.ejs
 declare const currentModel: IModel;
 declare const highlight: number;
-
-const modelName: string = currentModel.name; // inherited from list.ejs
-const attributes: any = currentModel.attributes; // inherited from list.ejs
-const modelList: ModelList = new ModelList(modelName, attributes);
+const modelHelper: ModelHelper = new ModelHelper(currentModel.name, currentModel.attributes);
 
 // when user submits search query
-document.getElementById("form-search").addEventListener("submit", event => {
-  event.preventDefault(); // prevents the page from reloading
+(function (): void {
+  document.getElementById("form-search").addEventListener("submit", event => {
+    event.preventDefault(); // prevents the page from reloading
 
-  const query: string = (<HTMLInputElement>document.getElementById("search")).value.toLowerCase();
-  const trs: HTMLTableRowElement[] = <HTMLTableRowElement[]>Array.from(document.querySelectorAll("table tbody tr"));
+    const query: string = (<HTMLInputElement>document.getElementById("search")).value.toLowerCase();
+    const unfilteredTableRows: HTMLTableRowElement[] = <HTMLTableRowElement[]>Array.from(document.querySelectorAll("table tbody tr"));
+    const filteredTableRows: HTMLTableRowElement[] = modelHelper.filterTableRows(query, unfilteredTableRows);
 
-  // search filter algorithm
-  const searchResults: HTMLTableRowElement[] = trs.filter((tr: HTMLTableRowElement) => {
-    if (!tr.dataset.value) { return false; }
-    const value: any = JSON.parse(tr.dataset.value);
-    const name: string = value.name.toLowerCase();
-    return name.indexOf(query) !== -1;
-  });
-
-  // display the ones that pass the test
-  trs.forEach((tr: HTMLTableRowElement) => {
-    if (searchResults.indexOf(tr) !== -1) {
-      tr.style.display = null;
-    } else {
-      tr.style.display = "none"; // invisible
-    }
-  });
-
-});
-
-// when the user submits the sort attribute <form>
-document.getElementById("form-sort-attributes").addEventListener("submit", event => {
-  event.preventDefault(); // prevent the default action of the submit button (because by default, it wil refresh the page)
-  const attribute: string = (<HTMLSelectElement>document.getElementById("select-sort-attributes")).value;
-  const thForAttribute: HTMLTableHeaderCellElement = <HTMLTableHeaderCellElement>document.querySelector(`th[data-attribute=${attribute}]`);
-  thForAttribute.click();
-});
-
-// keyboard shortcuts for page
-document.querySelector("body").addEventListener("keyup", (event: KeyboardEvent) => {
-  if (document.getElementById("search") === document.activeElement) { return; }
-  switch (event.key) {
-    case "n":
-      document.getElementById("add-new").click();
-      break;
-    case "/":
-      document.getElementById("search").focus();
-  }
-});
-
-// handles the control panel toggle button
-document.getElementsByClassName("toggle-control-panel")[0].addEventListener("click", event => {
-  const controlPanel: HTMLDivElement = <HTMLDivElement>document.getElementsByClassName("sidebar")[0];
-  controlPanel.classList.toggle("minimized");
-});
-
-/** This creates the sort options (in the control panel) that users can select in the control bar */
-(function createAttributeSortOptions(): void {
-  const select: HTMLSelectElement = <HTMLSelectElement>document.getElementById("select-sort-attributes");
-  modelList.getSortedAttributes().forEach((attribute: any) => {
-    const attributeName: string = Object.keys(attribute)[0];
-    const option: HTMLOptionElement = document.createElement("option");
-
-    option.innerHTML = attributeName;
-    select.appendChild(option);
+    // display the ones that pass the test
+    unfilteredTableRows.forEach(tr => {
+      if (filteredTableRows.indexOf(tr) !== -1) {
+        tr.style.display = null; // visible
+      } else {
+        tr.style.display = "none"; // invisible
+      }
+    });
   });
 })();
 
-/** Creates the attribute's check boxes */
-(function createAttributeCheckboxes(): void {
-  const fieldset: HTMLFieldSetElement = <HTMLFieldSetElement>document.getElementById("fieldset-attributes");
-  const toggleAllCheckbox: HTMLInputElement = <HTMLInputElement>document.getElementById("toggle-attributes");
-
-  toggleAllCheckbox.addEventListener("change", (event: Event) => {
-    const checked: boolean = (<HTMLInputElement>event.target).checked;
-    Array.from(
-      document.getElementsByClassName("checkbox-attribute")
-    ).forEach((checkbox: HTMLInputElement) => checkbox.checked !== checked ? checkbox.click() : null);
+// when the user submits the sort attribute <form>
+(function (): void {
+  document.getElementById("form-sort-attributes").addEventListener("submit", event => {
+    event.preventDefault(); // prevent the default action of the submit button (because by default, it wil refresh the page)
+    const attribute: string = (<HTMLSelectElement>document.getElementById("select-sort-attributes")).value;
+    const thForAttribute: HTMLTableHeaderCellElement =
+      <HTMLTableHeaderCellElement>document.querySelector(`th[data-attribute=${attribute}]`);
+    thForAttribute.click(); // because the TH has a click handler which sorts the rows alrady.
   });
+})();
+
+// implement keyboard shortcuts for page
+(function (): void {
+  document.querySelector("body").addEventListener("keyup", (event: KeyboardEvent) => {
+    const isFocusedOnSearchField: boolean = document.getElementById("search") === document.activeElement;
+    if (isFocusedOnSearchField) { return; } // because they're typing in the search field, not trying to run a keyboard shortcut.
+    switch (event.key) {
+      case "n":
+        document.getElementById("add-new").click();
+        break;
+      case "/":
+        document.getElementById("search").focus();
+    }
+  });
+})();
+
+// handles the control panel toggle button
+(function (): void {
+  document.getElementsByClassName("toggle-control-panel")[0].addEventListener("click", event => {
+    const controlPanel: HTMLDivElement = <HTMLDivElement>document.getElementsByClassName("sidebar")[0];
+    controlPanel.classList.toggle("minimized");
+  });
+})();
+
+// this creates the sort options (in the control panel) that users can select in the control bar
+(function (): void {
+  const sortSelectElement: HTMLSelectElement = <HTMLSelectElement>document.getElementById("select-sort-attributes");
+  modelHelper.getSortedAttributes().forEach(attribute => {
+    const attributeName: string = Object.keys(attribute)[0];
+    const optionElement: HTMLOptionElement = document.createElement("option");
+    optionElement.innerHTML = attributeName;
+    sortSelectElement.appendChild(optionElement);
+  });
+})();
+
+// creates the attribute's check boxes
+(function (): void {
+  const fieldSetElement: HTMLFieldSetElement = <HTMLFieldSetElement>document.getElementById("fieldset-attributes");
+  const toggleAllCheckboxElement: HTMLInputElement = <HTMLInputElement>document.getElementById("toggle-attributes");
+
+  // event handler for the toggle-all checkbox
+  (function (): void {
+    toggleAllCheckboxElement.addEventListener("change", (event: Event) => {
+      const isChecked: boolean = (<HTMLInputElement>event.target).checked;
+      const attributeCheckBoxes: HTMLInputElement[] = <HTMLInputElement[]>Array.from(document.getElementsByClassName("checkbox-attribute"));
+
+      // check all the attributes to the value of the "toggle all" checkbox
+      attributeCheckBoxes.forEach((checkbox: HTMLInputElement) => {
+        return checkbox.checked !== isChecked ? checkbox.click() : null;
+      });
+    });
+  })();
+
 
   // output checkboxes for each attribute
-  modelList.getSortedAttributes().forEach(attribute => {
-    attribute = Object.keys(attribute)[0];
-    const container: HTMLDivElement = document.createElement("div");
-    const checkbox: HTMLInputElement = document.createElement("input");
-    const label: HTMLLabelElement = document.createElement("label");
+  (function (): void {
+    modelHelper.getSortedAttributes().forEach(attribute => {
+      attribute = Object.keys(attribute)[0];
+      const container: HTMLDivElement = document.createElement("div");
+      const checkbox: HTMLInputElement = document.createElement("input");
+      const label: HTMLLabelElement = document.createElement("label");
 
-    checkbox.type = "checkbox";
-    checkbox.setAttribute("checked", "checked"); // check all the boxes
-    checkbox.classList.add("checkbox-attribute");
-    checkbox.id = `attr-${attribute}`;
+      checkbox.type = "checkbox";
+      checkbox.setAttribute("checked", "checked"); // check all the boxes
+      checkbox.classList.add("checkbox-attribute");
+      checkbox.id = `attr-${attribute}`;
 
-    checkbox.addEventListener("change", event => {
-      const checked: boolean = (<HTMLInputElement>event.target).checked;
-      Array.from(
-        document.querySelectorAll(`th[data-attribute=${attribute}], td[data-attribute=${attribute}]`)
-      ).forEach((cell: HTMLTableCellElement) => cell.style.display = checked ? null : "none");
+      checkbox.addEventListener("change", event => {
+        const checked: boolean = (<HTMLInputElement>event.target).checked;
+        Array.from(
+          document.querySelectorAll(`th[data-attribute=${attribute}], td[data-attribute=${attribute}]`)
+        ).forEach((cell: HTMLTableCellElement) => cell.style.display = checked ? null : "none");
+      });
+
+      label.innerHTML = attribute;
+      label.setAttribute("for", checkbox.id);
+
+      container.appendChild(checkbox);
+      container.appendChild(label);
+
+      fieldSetElement.appendChild(container);
     });
-
-    label.innerHTML = attribute;
-    label.setAttribute("for", checkbox.id);
-
-    container.appendChild(checkbox);
-    container.appendChild(label);
-
-    fieldset.appendChild(container);
-  });
+  })();
 })();
 
 /** Create table headers */
-(function createTableHeaders(): void {
+(function (): void {
   const theadTr: HTMLTableRowElement = <HTMLTableRowElement>document.querySelector("table thead tr");
   const editTh: HTMLTableHeaderCellElement = document.createElement("th");
 
-  document.getElementById("title").innerHTML = `${modelList.modelName}`;
-  (<HTMLAnchorElement>document.getElementById("add-new")).href = `/models/${modelList.modelName}/create`;
+  document.getElementById("title").innerHTML = `${modelHelper.modelName}`;
+  (<HTMLAnchorElement>document.getElementById("add-new")).href = `/models/${modelHelper.modelName}/create`;
   editTh.innerHTML = "Edit";
   theadTr.appendChild(editTh);
 
   // convert attributes to th
-  modelList.getSortedAttributes().forEach((attr: {}) => {
+  modelHelper.getSortedAttributes().forEach((attr: {}) => {
     const arrowsContainer: HTMLDivElement = document.createElement("div");
     const keys: string[] = Object.keys(attr);
     const downArrow: HTMLSpanElement = document.createElement("span");
@@ -281,7 +311,7 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
     // when the user clicks a <th> (to sort)
     th.addEventListener("click", event => {
       const attributeName: string = th.dataset.attribute;
-      const attributeProperties: any = attributes[attributeName];
+      const attributeProperties: any = currentModel.attributes[attributeName];
       const tbody: HTMLTableSectionElement = document.querySelector("tbody");
       const trs: HTMLTableRowElement[] = <HTMLTableRowElement[]>Array.from(tbody.querySelectorAll("table#table-list > tbody > tr"));
 
@@ -325,8 +355,8 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
           let tr1Value: any = JSON.parse(tr1.dataset.value)[th.dataset.attribute];
           let tr2Value: any = JSON.parse(tr2.dataset.value)[th.dataset.attribute];
 
-          const tr1ValIsEmpty: any = modelList.isEmpty(tr1Value);
-          const tr2ValIsEmpty: any = modelList.isEmpty(tr2Value);
+          const tr1ValIsEmpty: any = modelHelper.isEmpty(tr1Value);
+          const tr2ValIsEmpty: any = modelHelper.isEmpty(tr2Value);
 
           // if one is undefined
           if (tr1ValIsEmpty && !tr2ValIsEmpty) { return targetSort === "ascending" ? 1 : -1; }
@@ -393,133 +423,135 @@ document.getElementsByClassName("toggle-control-panel")[0].addEventListener("cli
 })();
 
 /** Display the data */
-modelList.getRecords().then((data: any) => {
-  data.forEach(item => {
-    // for loop that run for each record in table
-    const deleteTd: HTMLTableDataCellElement = document.createElement("td");
-    const deleteLink: HTMLAnchorElement = document.createElement("a");
-    const editTd: HTMLTableDataCellElement = document.createElement("td");
-    const editLink: HTMLAnchorElement = document.createElement("a");
-    const tr: HTMLTableRowElement = document.createElement("tr");
+(function (): void {
+  modelHelper.getRecords().then((data: any) => {
+    data.forEach(item => {
+      // for loop that run for each record in table
+      const deleteTd: HTMLTableDataCellElement = document.createElement("td");
+      const deleteLink: HTMLAnchorElement = document.createElement("a");
+      const editTd: HTMLTableDataCellElement = document.createElement("td");
+      const editLink: HTMLAnchorElement = document.createElement("a");
+      const tr: HTMLTableRowElement = document.createElement("tr");
 
-    editLink.innerHTML = "Edit";
-    editLink.href = `/models/${modelList.modelName}/${item.id}`;
-    editTd.appendChild(editLink);
+      editLink.innerHTML = "Edit";
+      editLink.href = `/models/${modelHelper.modelName}/${item.id}`;
+      editTd.appendChild(editLink);
 
-    deleteLink.innerHTML = "Delete";
-    deleteLink.href = `/models/${modelList.modelName}`;
-    deleteLink.onclick = event => {
-      event.preventDefault();
-      const warningMessage: string = `Are you sure you want to delete this item?\n\n${JSON.stringify(item)}`;
-      if (confirm(warningMessage)) {
-        modelList.deleteRecord(item).then(response => {
-          location.href = deleteLink.href;
-        });
-      }
-    };
-    deleteTd.appendChild(deleteLink);
-    tr.appendChild(editTd);
-
-    // for loop that runs for each attrubte of a record
-    modelList.getSortedAttributes().forEach(attr => {
-      const keys: string[] = Object.keys(attr);
-      const attrName: string = keys[0];
-      const attrProperties: any = attr[attrName];
-      const value: any = item[attrName];
-      const td: HTMLTableDataCellElement = document.createElement("td");
-      let name: string = modelList.getFriendlyValueName(value, attrProperties);
-
-      td.dataset.attribute = keys[0];
-
-      if (attrProperties === undefined) {
-        // if the user forgets to add the name to a model, inform the user, then skip the rest of the code.
-        console.log("Missing property '" + attrName + "' in model '" + modelList.modelName + "'");
-        td.innerHTML = "";
-        tr.appendChild(td);
-        document.querySelector("table tbody").appendChild(tr);
-        return;
-      }
-
-      // if the attribute is a foreign model, make it a link to that model.
-      if (attrProperties.model) {
-        if (value) {
-          const a: HTMLAnchorElement = document.createElement("a");
-          a.innerHTML = `#${value.id} ${name}`;
-          a.href = `/models/${attrProperties.model}/${value.id}`;
-          a.title = `#${value.id}`; // hover
-          td.appendChild(a);
-        } else {
-          td.title = "null";
+      deleteLink.innerHTML = "Delete";
+      deleteLink.href = `/models/${modelHelper.modelName}`;
+      deleteLink.onclick = event => {
+        event.preventDefault();
+        const warningMessage: string = `Are you sure you want to delete this item?\n\n${JSON.stringify(item)}`;
+        if (confirm(warningMessage)) {
+          modelHelper.deleteRecord(item).then(response => {
+            location.href = deleteLink.href;
+          });
         }
-      } else {
-        // if not a foreign key
+      };
+      deleteTd.appendChild(deleteLink);
+      tr.appendChild(editTd);
 
-        // if the current attribute is a collection (a 1-to-N relationship)
-        if (attrProperties.collection) {
-          const container: HTMLDivElement = document.createElement("div");
-          const details: HTMLElement = document.createElement("details");
-          const summary: HTMLElement = document.createElement("summary"); // the value (when collection has data)
-          const span: HTMLSpanElement = document.createElement("span"); // the value (when collection does not have data)
-          const expandedTable: HTMLDivElement = document.createElement("div");
+      // for loop that runs for each attrubte of a record
+      modelHelper.getSortedAttributes().forEach(attr => {
+        const keys: string[] = Object.keys(attr);
+        const attrName: string = keys[0];
+        const attrProperties: any = attr[attrName];
+        const value: any = item[attrName];
+        const td: HTMLTableDataCellElement = document.createElement("td");
+        let name: string = modelHelper.getFriendlyValueName(value, attrProperties);
 
-          container.classList.add("container");
-          container.classList.add("container-flex-center");
+        td.dataset.attribute = keys[0];
 
-          if (value.length > 0) {
-            summary.innerHTML = name;
-            summary.classList.add("value");
-            summary.style.flex = "90";
+        if (attrProperties === undefined) {
+          // if the user forgets to add the name to a model, inform the user, then skip the rest of the code.
+          console.log("Missing property '" + attrName + "' in model '" + modelHelper.modelName + "'");
+          td.innerHTML = "";
+          tr.appendChild(td);
+          document.querySelector("table tbody").appendChild(tr);
+          return;
+        }
 
-            expandedTable.classList.add("collection-table");
-
-            value.forEach(val => {
-              const label: HTMLLabelElement = document.createElement("label");
-              const a: HTMLAnchorElement = document.createElement("a");
-              const br: HTMLBRElement = document.createElement("br");
-
-              a.innerHTML = `#${val.id} - ${val.name}`;
-              a.href = `/models/${attrProperties.collection}/${val.id}`;
-
-              label.appendChild(a);
-              expandedTable.appendChild(label);
-              expandedTable.appendChild(br);
-            });
-            expandedTable.style.display = "block";
-
-            details.appendChild(summary);
-            details.appendChild(expandedTable);
-
-            summary.addEventListener("focus", event => {
-              (<HTMLElement>document.querySelector("summary")).blur();
-            });
-
-            td.appendChild(details);
+        // if the attribute is a foreign model, make it a link to that model.
+        if (attrProperties.model) {
+          if (value) {
+            const a: HTMLAnchorElement = document.createElement("a");
+            a.innerHTML = `#${value.id} ${name}`;
+            a.href = `/models/${attrProperties.model}/${value.id}`;
+            a.title = `#${value.id}`; // hover
+            td.appendChild(a);
           } else {
-            span.innerHTML = name;
-            span.classList.add("value");
-            span.style.flex = "90";
-
-            container.appendChild(span);
-            td.appendChild(container);
+            td.title = "null";
           }
         } else {
-          td.innerHTML = name;
-        }
-      }
-      tr.appendChild(td);
-      document.querySelector("table tbody").appendChild(tr);
-    });
+          // if not a foreign key
 
-    tr.dataset.value = JSON.stringify(item);
-    tr.appendChild(deleteTd);
-  });
-  if (highlight) {
-    const tr: HTMLTableRowElement = <HTMLTableRowElement>Array.from(document.querySelectorAll("tbody tr"))
-      .find((tr: HTMLTableRowElement) => {
-        if (!tr.dataset.value) { return false; }
-        const id: number = JSON.parse(tr.dataset.value).id;
-        return id === highlight;
+          // if the current attribute is a collection (a 1-to-N relationship)
+          if (attrProperties.collection) {
+            const container: HTMLDivElement = document.createElement("div");
+            const details: HTMLElement = document.createElement("details");
+            const summary: HTMLElement = document.createElement("summary"); // the value (when collection has data)
+            const span: HTMLSpanElement = document.createElement("span"); // the value (when collection does not have data)
+            const expandedTable: HTMLDivElement = document.createElement("div");
+
+            container.classList.add("container");
+            container.classList.add("container-flex-center");
+
+            if (value.length > 0) {
+              summary.innerHTML = name;
+              summary.classList.add("value");
+              summary.style.flex = "90";
+
+              expandedTable.classList.add("collection-table");
+
+              value.forEach(val => {
+                const label: HTMLLabelElement = document.createElement("label");
+                const a: HTMLAnchorElement = document.createElement("a");
+                const br: HTMLBRElement = document.createElement("br");
+
+                a.innerHTML = `#${val.id} - ${val.name}`;
+                a.href = `/models/${attrProperties.collection}/${val.id}`;
+
+                label.appendChild(a);
+                expandedTable.appendChild(label);
+                expandedTable.appendChild(br);
+              });
+              expandedTable.style.display = "block";
+
+              details.appendChild(summary);
+              details.appendChild(expandedTable);
+
+              summary.addEventListener("focus", event => {
+                (<HTMLElement>document.querySelector("summary")).blur();
+              });
+
+              td.appendChild(details);
+            } else {
+              span.innerHTML = name;
+              span.classList.add("value");
+              span.style.flex = "90";
+
+              container.appendChild(span);
+              td.appendChild(container);
+            }
+          } else {
+            td.innerHTML = name;
+          }
+        }
+        tr.appendChild(td);
+        document.querySelector("table tbody").appendChild(tr);
       });
-    tr.classList.add("highlighted");
-  }
-});
+
+      tr.dataset.value = JSON.stringify(item);
+      tr.appendChild(deleteTd);
+    });
+    if (highlight) {
+      const tr: HTMLTableRowElement = <HTMLTableRowElement>Array.from(document.querySelectorAll("tbody tr"))
+        .find((tr: HTMLTableRowElement) => {
+          if (!tr.dataset.value) { return false; }
+          const id: number = JSON.parse(tr.dataset.value).id;
+          return id === highlight;
+        });
+      tr.classList.add("highlighted");
+    }
+  });
+})();
