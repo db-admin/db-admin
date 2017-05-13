@@ -20,6 +20,19 @@ These terminologies should be known for anyone reading this document or the sour
 
 ![](http://i.imgur.com/MF7miEx.png)
 
+Sort by clicking on a table header column:
+
+![](http://i.imgur.com/QqSsIdw.gif)
+
+### Quickly view foreign references
+
+When a foreign key exists in a model's database, instead of just showing the ID of the foreign key, DBAdmin will show the name of the foreign object.
+
+![](http://i.imgur.com/MD0AwIm.png)
+
+Even supports a one-to-many relationships:
+![](http://i.imgur.com/88bBXxP.gif)
+
 ### Edit a record
 
 ![](http://i.imgur.com/sWEZCoa.gif)
@@ -31,16 +44,6 @@ Foreign keys show as select boxes. No more memorizing ids!
 Even supports multi select!
 
 ![](http://i.imgur.com/bVYpp0m.gif)
-
-### Quickly view foreign references
-
-When a foreign key exists in a model's database, instead of just showing the ID of the foreign key, DBAdmin will show the name of the foreign object.
-
-![](http://i.imgur.com/MD0AwIm.png)
-
-Even supports a one-to-many relationships:
-![](http://i.imgur.com/88bBXxP.gif)
-
 
 ## Pages
 
