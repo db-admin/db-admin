@@ -274,17 +274,22 @@ const modelHelper: ModelHelper = new ModelHelper(currentModel.name, currentModel
   })();
 })();
 
-/** Create table headers */
+// create page header.
+(function (): void {
+  document.getElementById("title").innerHTML = `${modelHelper.modelName}`;
+  (<HTMLAnchorElement>document.getElementById("add-new")).href = `/models/${modelHelper.modelName}/create`;
+})();
+
+// create table headers
 (function (): void {
   const theadTr: HTMLTableRowElement = <HTMLTableRowElement>document.querySelector("table thead tr");
   const editTh: HTMLTableHeaderCellElement = document.createElement("th");
 
-  document.getElementById("title").innerHTML = `${modelHelper.modelName}`;
-  (<HTMLAnchorElement>document.getElementById("add-new")).href = `/models/${modelHelper.modelName}/create`;
+  // create edit column.
   editTh.innerHTML = "Edit";
   theadTr.appendChild(editTh);
 
-  // convert attributes to th
+  // create a table header element for each attribute.
   modelHelper.getSortedAttributes().forEach((attr: {}) => {
     const arrowsContainer: HTMLDivElement = document.createElement("div");
     const keys: string[] = Object.keys(attr);
@@ -417,12 +422,13 @@ const modelHelper: ModelHelper = new ModelHelper(currentModel.name, currentModel
     theadTr.appendChild(th);
   });
 
+  //  create delete column.
   const deleteTh: HTMLTableHeaderCellElement = document.createElement("th");
   deleteTh.innerHTML = "Delete";
   theadTr.appendChild(deleteTh);
 })();
 
-/** Display the data */
+// display the data.
 (function (): void {
   modelHelper.getRecords().then((data: any) => {
     data.forEach(item => {
