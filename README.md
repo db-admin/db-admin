@@ -1,7 +1,7 @@
 # DB Admin
 
 ## Introduction
-DB Admin is a web data manager for any database supported by [Sails](http://sailsjs.com/). The management interface is user-friendly, easy to use, and includes many beneficial features (listed below). To see which databases are supported, read Sails' [Models and ORM documentation](http://sailsjs.com/documentation/concepts/models-and-orm). Specifically, the [Database Agnosticism section](http://sailsjs.com/documentation/concepts/models-and-orm#?database-agnosticism). In short, some of the databases they support are MySQL, PostgreSQL, and MongoDB. [Here](https://www.npmjs.com/search?q=sails%20adapter&page=2&ranking=optimal) are almost all the other databases supported. I don't know how this application will work with NoSQL databases.
+DB Admin is a web data manager for any database supported by [Sails](http://sailsjs.com/). It allows the user to perform basic CRUD operations in their database. The management interface is user-friendly, easy to use, and includes many beneficial features (listed below). To see which databases are supported, read Sails' [Models and ORM documentation](http://sailsjs.com/documentation/concepts/models-and-orm). Specifically, the [Database Agnosticism section](http://sailsjs.com/documentation/concepts/models-and-orm#?database-agnosticism). In short, some of the databases they support are MySQL, PostgreSQL, and MongoDB. [Here](https://www.npmjs.com/search?q=sails%20adapter&page=2&ranking=optimal) are almost all the other databases supported. I don't know how this application will work with NoSQL databases.
 
 ## Terminology
 
@@ -9,6 +9,16 @@ These terminologies should be known for anyone reading this document or the sour
 
 * **model** - a representation of a database table. A model is a JavaScript object that gives key functionality to the represented table in the database. See Sails' [models](http://sailsjs.com/documentation/reference/waterline-orm/models).
 * **record** - a representation of a row in a table. From Sails' documentation: A record is a uniquely identifiable object that corresponds 1-to-1 with a database entry; e.g. a row in Oracle/MSSQL/PostgreSQL/MySQL, a document in MongoDB, or a hash in Redis. See Sails' documentation on [records](http://sailsjs.com/documentation/reference/waterline-orm/records).
+
+## Features
+
+### List all models and record count
+
+![](http://i.imgur.com/X7W47Np.png)
+
+### View all records in a model's database
+
+![](http://i.imgur.com/MF7miEx.png)
 
 ## Pages
 
