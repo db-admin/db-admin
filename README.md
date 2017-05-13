@@ -20,6 +20,28 @@ These terminologies should be known for anyone reading this document or the sour
 
 ![](http://i.imgur.com/MF7miEx.png)
 
+### Edit a record
+
+![](http://i.imgur.com/sWEZCoa.gif)
+
+Foreign keys show as select boxes. No more memorizing ids!
+
+![](http://i.imgur.com/sFeLD4S.png)
+
+Even supports multi select!
+
+![](http://i.imgur.com/bVYpp0m.gif)
+
+### Quickly view foreign references
+
+When a foreign key exists in a model's database, instead of just showing the ID of the foreign key, DBAdmin will show the name of the foreign object.
+
+![](http://i.imgur.com/MD0AwIm.png)
+
+Even supports a one-to-many relationships:
+![](http://i.imgur.com/88bBXxP.gif)
+
+
 ## Pages
 
 There are three main pages in this application:
@@ -40,9 +62,9 @@ This page is where users can see the records in the current model they're viewin
 
 Two possible URLs:
 
-* `uri: '/models/<model name>/create'` 
+* `uri: '/models/<model-name>/create'` 
 * or
-* `url: '/models/<model name>/<record id>'`
+* `url: '/models/<model-name>/<record id>'`
 
 This page gives the user the ability to edit a record in a database using a friendly form. The key benefits of this form is the ability to use SELECT HTML elements to reference foreign keys for one-to-one relationships, or one-to-many relationships.
 
