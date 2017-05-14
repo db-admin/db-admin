@@ -1,3 +1,5 @@
+![](http://i.imgur.com/OpCIyES.png)
+
 # DB Admin
 
 ## Introduction
