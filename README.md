@@ -30,7 +30,7 @@ Sort by clicking on a table header column:
 
 When a foreign key exists in a model's database, instead of just showing the ID of the foreign key, DBAdmin will show the name of the foreign object.
 
-![](http://i.imgur.com/MD0AwIm.png)
+![](http://i.imgur.com/ik8GvGU.png)
 
 ### Edit a record
 
