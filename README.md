@@ -30,9 +30,6 @@ When a foreign key exists in a model's database, instead of just showing the ID 
 
 ![](http://i.imgur.com/MD0AwIm.png)
 
-Even supports a one-to-many relationships:
-![](http://i.imgur.com/88bBXxP.gif)
-
 ### Edit a record
 
 ![](http://i.imgur.com/sWEZCoa.gif)
