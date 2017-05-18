@@ -104,8 +104,21 @@ for (let key in attributes) {
 
     // add the form helpers
     if (formHelpers) {
-        input.setAttribute("title", `Description: ${formHelpers.description}`);
-        input.setAttribute("placeholder", `${formHelpers.placeholder} (Eg: ${formHelpers.example})`);
+        let placeHolderText: string = "";
+        if (formHelpers.placeholder) {
+            placeHolderText += `${formHelpers.placeholder} `;
+        }
+        if (formHelpers.example) {
+            if (formHelpers.placeholder) {
+                placeHolderText += "(";
+            }
+            placeHolderText += `Eg: ${formHelpers.example}`;
+            if (formHelpers.placeholder) {
+                placeHolderText += ")";
+            }
+        }
+        input.setAttribute("title", `${formHelpers.description}`);
+        input.setAttribute("placeholder", placeHolderText);
     }
 
     // create the label
