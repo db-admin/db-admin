@@ -22,7 +22,7 @@ These terminologies should be known for anyone reading this document or the sour
 
 ![](http://i.imgur.com/MF7miEx.png)
 
-Sort by clicking on a table header column:
+You can also sort by clicking on a table header column.
 
 ![](http://i.imgur.com/QqSsIdw.gif)
 
