@@ -1,23 +1,29 @@
 <style media="screen">
-  form div{
+  form div {
     display: flex;
     justify-content: space-between;
     align-items: stretch;
   }
-  form div *{
+
+  form div * {
     margin: 1px;
   }
+
   form div label {
     flex: 10;
     text-align: right;
     text-transform: capitalize;
   }
-  form div input, form div select{
+
+  form div input,
+  form div select {
     padding: 2px;
     flex: 90;
     font-family: consolas;
   }
-  form div input:focus, form div select:focus{
+
+  form div input:focus,
+  form div select:focus {
     outline-style: solid;
   }
 </style>
@@ -26,8 +32,9 @@
 <form method="post"></form>
 
 <script type="text/javascript">
-const table = '<%- req.params.model %>'; // the model table name
-const recordId = <%- req.params.id || 'null' %>;
-const attributes = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
+  const table = '<%- req.params.model %>'; // the model table name
+  const recordId = <%- req.params.id || 'null' %>;
+  const attributes = <%- JSON.stringify(sails.models[req.params.model].attributes) %>;
+
 </script>
 <script src="/js/create-edit.js"></script>

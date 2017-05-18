@@ -276,7 +276,7 @@ const modelHelper: ModelHelper = new ModelHelper(currentModel.name, currentModel
 
 // create page header.
 (function (): void {
-  document.getElementById("title").innerHTML = `${modelHelper.modelName}`;
+  document.getElementById("title").innerHTML = `${modelHelper.modelName} table`;
   (<HTMLAnchorElement>document.getElementById("add-new")).href = `/models/${modelHelper.modelName}/create`;
 })();
 

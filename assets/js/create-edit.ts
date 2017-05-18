@@ -1,3 +1,6 @@
+/**
+ * The model name.
+ */
 declare const table: string;
 declare const recordId: number | null;
 
@@ -177,12 +180,12 @@ if (form.getElementsByTagName("select").length !== 0) {
 // 3. Populate form elements
 function loadEditingModel(): void {
     // gets the current editing model (if editing). (And this needs to finish first!)
+    const title: HTMLHeadElement = <HTMLHeadElement>document.getElementById("title");
     if (isEditing) {
         fetch(`/${table}/${recordId}`).then(results => results.json().then(result => {
-            const title: HTMLHeadElement = <HTMLHeadElement>document.getElementById("title");
             console.log("Model editing:", result);
             modelEditing = result;
-            title.innerHTML = result.name;
+            title.innerHTML = `Editing: ${result.name}`;
 
             // for each form item
             for (let i: number = 0; i < form.elements.length; i++) {
@@ -226,8 +229,9 @@ function loadEditingModel(): void {
                     input.value = currentValue;
                 }
             }
-
         }));
+    } else {
+        title.innerHTML = `New ${table}`;
     }
 
 }
@@ -273,6 +277,8 @@ form.addEventListener("submit", event => {
         console.log("didnt work because idk");
     });
 });
+
+form.appendChild(document.createElement("hr"));
 
 // add submit button
 submitButton.type = "submit";
