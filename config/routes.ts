@@ -50,6 +50,7 @@ module.exports.routes = {
         // if this is the last model the list of modelNames, then render the page.
         const isLastModel: boolean = i === modelNames.length - 1;
         if (isLastModel) {
+          homePageConfig.modelNamesAndRows = homePageConfig.modelNamesAndRows.sort((a, b) => a.name.localeCompare(b.name));
           res.view("homepage", homePageConfig);
         }
       });
