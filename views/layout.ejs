@@ -1,80 +1,102 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<style media="screen">
-html{
-  font-family: consolas;
-  background-color: #282a36;
-  color: #50fa72;
-}
-a {
-  color: white;
-}
+  <style media="screen">
+    html {
+      font-family: consolas;
+      background-color: #282a36;
+      color: #50fa72;
+    }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+    a {
+      color: white;
+    }
 
-table, th, td {
-  border: 1px solid white;
-}
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
 
-th {
-  cursor: pointer;
-}
+    table,
+    th,
+    td {
+      border: 1px solid white;
+    }
 
-th, td {
-  white-space: nowrap;
-}
+    th {
+      cursor: pointer;
+    }
 
-.container-flex-center {
-  display: flex;
-}
+    th[data-attribute] {
+      -webkit-user-select: none;
+      /* Chrome/Safari */
+      -moz-user-select: none;
+      /* Firefox */
+      -ms-user-select: none;
+      /* IE10+ */
+      /* Rules below not implemented in browsers yet */
+      -o-user-select: none;
+      user-select: none;
+    }
 
-.container-th{
-  justify-content: space-between;
-  align-items: center;
-}
+    th,
+    td {
+      white-space: nowrap;
+    }
 
-.container-arrows{
-  flex-direction: column;
-  line-height: 11px;
-  font-size: 14px;
-  padding: 2px;
-}
+    .container-flex-center {
+      display: flex;
+    }
 
-.container-flex-center {
-  flex-direction: row;
-  justify-content: center; /* flex-flow alignment */
-  align-items: center; /* opposite of flex-flow alignment */
-  justify-content: space-between; /* How the children are distributed (or spread out) */
-}
+    .container-th {
+      justify-content: space-between;
+      align-items: center;
+    }
 
-.expand-shrink-button{
-  float: right;
-  padding: 0;
-  width: 18px;
-  height: 18px;
-  font-size: 10px;
-}
+    .container-arrows {
+      flex-direction: column;
+      line-height: 11px;
+      font-size: 14px;
+      padding: 2px;
+    }
 
-#title{
-  text-align: center;
-}
-</style>
-<script type="text/javascript">
-  Date.prototype.toInputString = function(){
-    return this.toISOString().slice(0, 22);
-  }
-</script>
-<title><%=typeof title == 'undefined' ? 'New Sails App' : title%></title>
+    .container-flex-center {
+      flex-direction: row;
+      justify-content: center;
+      /* flex-flow alignment */
+      align-items: center;
+      /* opposite of flex-flow alignment */
+      justify-content: space-between;
+      /* How the children are distributed (or spread out) */
+    }
 
-<!-- Viewport mobile tag for sensible mobile support -->
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    .expand-shrink-button {
+      float: right;
+      padding: 0;
+      width: 18px;
+      height: 18px;
+      font-size: 10px;
+    }
+
+    #title {
+      text-align: center;
+    }
+  </style>
+  <script type="text/javascript">
+    Date.prototype.toInputString = function () {
+      return this.toISOString().slice(0, 22);
+    }
+  </script>
+  <title>
+    <%=typeof title == 'undefined' ? 'New Sails App' : title%>
+  </title>
+
+  <!-- Viewport mobile tag for sensible mobile support -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-<!--
+  <!--
 Stylesheets and Preprocessors
 ==============================
 
@@ -95,9 +117,9 @@ For example, here are a few things you could do:
 + Use a different or additional preprocessor, like SASS, SCSS or Stylus
 -->
 
-<!--STYLES-->
-<link rel="stylesheet" href="/styles/importer.css">
-<!--STYLES END-->
+  <!--STYLES-->
+  <link rel="stylesheet" href="/styles/importer.css">
+  <!--STYLES END-->
 </head>
 
 <body>
@@ -105,7 +127,7 @@ For example, here are a few things you could do:
 
 
 
-  <!--
+    <!--
   Client-side Templates
   ========================
 
@@ -126,12 +148,12 @@ For example, here are a few things you could do:
   stringfile before they're served.
 -->
 
-<!--TEMPLATES-->
+    <!--TEMPLATES-->
 
-<!--TEMPLATES END-->
+    <!--TEMPLATES END-->
 
 
-<!--
+    <!--
 
 Client-side Javascript
 ========================
@@ -154,6 +176,7 @@ For example, here are a few things you could do:
 
 -->
 
-<script src="/js/dependencies/sails.io.js"></script>
+    <script src="/js/dependencies/sails.io.js"></script>
 </body>
+
 </html>
