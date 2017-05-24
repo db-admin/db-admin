@@ -41,7 +41,6 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^7.0.13",
-    "tsc": "^1.20150623.0",
     "typescript": "^2.3.2"
   }
 }
