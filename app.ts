@@ -1,4 +1,4 @@
-// ensure we're in the project directory, so cwd-relative paths work as expected
+﻿// ensure we're in the project directory, so cwd-relative paths work as expected
 // no matter where we actually lift from.
 // > Note: This is not required in order to lift, but it is a convenient default.
 process.chdir(__dirname);
@@ -9,7 +9,7 @@ rc = rc("sails");
 
 // sails My Admin
 const fs: any = require("fs");
-const dbaConfig: any = JSON.parse(fs.readFileSync("dba.config.json"));
+const dbaConfig: any = require("./dba.config");
 
 // set sails settings to what is found in the dba.config.json file
 rc.connections = {
