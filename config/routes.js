@@ -9,6 +9,9 @@ module.exports.routes = {
         const modelNames = Object.keys(sails.models); // the list of modelnames.
         homePageConfig.title = sails.config.globals.title;
         homePageConfig.modelNamesAndRows = [];
+        if (modelNames.length === 0) {
+            return res.view("homepage", homePageConfig);
+        }
         /**
          * For each modelName, set the name and the row count, and send it to the view.
          */

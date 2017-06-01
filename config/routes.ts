@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Route Mappings
  * (sails.config.routes)
  *
@@ -32,6 +32,10 @@ module.exports.routes = {
 
     homePageConfig.title = sails.config.globals.title;
     homePageConfig.modelNamesAndRows = [];
+
+    if (modelNames.length === 0) {
+        return res.view("homepage", homePageConfig);
+    }
 
     /**
      * For each modelName, set the name and the row count, and send it to the view.

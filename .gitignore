@@ -1,4 +1,4 @@
-################################################
+﻿################################################
 ###############  .gitignore   ##################
 ################################################
 #
@@ -19,6 +19,8 @@
 
 
 dba.config.json
+dba.config.js
+dba.config.ts
 api/controllers
 api/models
 
@@ -119,5 +121,10 @@ nbproject
 *.map
 
 # Typescript
+*.js.map
 app.js
 assets/**/*.js
+sample-dba.config.js
+
+#Visual Studio
+.vs
