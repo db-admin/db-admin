@@ -60,3 +60,7 @@ typings/
 # typescript > javascript
 **/*.js
 **/*.map
+
+# Ignore the models that sequelize-auto generates. 
+models
+dba.config.ts
