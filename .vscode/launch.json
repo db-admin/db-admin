@@ -5,24 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "node",
+            "request": "launch",
+            "name": "1. Node",
+            "program": "${workspaceRoot}/bin/www"
+        },
+        {
             "type": "chrome",
             "request": "launch",
-            "name": "Chrome",
-            "url": "http://localhost:1337",
-            "webRoot": "${workspaceRoot}/assets/js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Node",
-            "program": "${workspaceRoot}\\app.js"
-        },
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Attach to Port",
-            "address": "localhost",
-            "port": 5858
+            "name": "2. Chrome",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceRoot}"
         }
     ]
 }
