@@ -1,25 +1,27 @@
-<a href="/">Home</a>
-<table border="1" style="min-width: 100%;">
-    <thead>
-        <% if(records.length > 0){ %>
-            <tr>
-                <% Object.keys(records[0]).forEach(attr => { %>
-                    <th>
-                        <%= attr %>
-                    </th>
-                    <% }); %>
-            </tr>
-            <% } %>
-    </thead>
-    <tbody>
-        <% records.forEach(record => { %>
-            <tr>
-                <% Object.keys(record).forEach(attribute => { %>
-                    <td>
-                        <%= record[attribute] %>
-                    </td>
-                    <% }); %>
-            </tr>
-            <% }); %>
-    </tbody>
-</table>
+<%- include('../partials/header') -%>
+    <a href="/">Home</a>
+    <table border="1" class="mdl-data-table mdl-js-data-table">
+        <thead>
+            <% if(records.length > 0){ %>
+                <tr>
+                    <% Object.keys(records[0]).forEach(attr => { %>
+                        <th class="mdl-data-table__cell--non-numeric">
+                            <%= attr %>
+                        </th>
+                        <% }); %>
+                </tr>
+                <% } %>
+        </thead>
+        <tbody>
+            <% records.forEach(record => { %>
+                <tr>
+                    <% Object.keys(record).forEach(attribute => { %>
+                        <td class="mdl-data-table__cell--non-numeric">
+                            <%= record[attribute] %>
+                        </td>
+                        <% }); %>
+                </tr>
+                <% }); %>
+        </tbody>
+    </table>
+    <%- include('../partials/footer') -%>
