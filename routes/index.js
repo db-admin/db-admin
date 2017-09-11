@@ -14,7 +14,7 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passw
 const router = express.Router();
 /* GET home page. */
 router.get("/", function (req, res, next) {
-    res.render("index", { title: DBAConfig.title, tables: Object.keys(models.getModels(sequelize)) });
+    res.render("index", { title: DBAConfig.title, tables2: models.getModels(sequelize) });
 });
 module.exports = router;
 //# sourceMappingURL=index.js.map

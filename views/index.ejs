@@ -1,0 +1,17 @@
+<h1>
+    <%= title %>
+</h1>
+<p>Welcome to
+    <%= title %>
+</p>
+<div>
+    <table border="1">
+        <% Object.keys(tables2).forEach(table => { %>
+            <tr>
+                <td>
+                    <%= table %>
+                </td>
+            </tr>
+            <%})%>
+    </table>
+</div>
