@@ -1,0 +1,25 @@
+<a href="/">Home</a>
+<table border="1" style="min-width: 100%;">
+    <thead>
+        <% if(records.length > 0){ %>
+            <tr>
+                <% Object.keys(records[0]).forEach(attr => { %>
+                    <th>
+                        <%= attr %>
+                    </th>
+                    <% }); %>
+            </tr>
+            <% } %>
+    </thead>
+    <tbody>
+        <% records.forEach(record => { %>
+            <tr>
+                <% Object.keys(record).forEach(attribute => { %>
+                    <td>
+                        <%= record[attribute] %>
+                    </td>
+                    <% }); %>
+            </tr>
+            <% }); %>
+    </tbody>
+</table>

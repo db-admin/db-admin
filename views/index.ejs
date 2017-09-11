@@ -6,10 +6,12 @@
 </p>
 <div>
     <table border="1">
-        <% Object.keys(tables2).forEach(table => { %>
+        <% Object.keys(tables).forEach(table => { %>
             <tr>
                 <td>
-                    <%= table %>
+                    <a href="/model/<%= table %>">
+                        <%= table %>
+                    </a>
                 </td>
             </tr>
             <%})%>

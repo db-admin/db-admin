@@ -12,9 +12,9 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passw
     define: { freezeTableName: true }
 });
 const router = express.Router();
-/* GET home page. */
+/* GET model */
 router.get("/", function (req, res, next) {
-    res.render("index", { title: DBAConfig.title, tables2: models.getModels(sequelize) });
+    res.render("index", { title: DBAConfig.title, tables: models.getModels(sequelize) });
 });
 module.exports = router;
 //# sourceMappingURL=index.js.map

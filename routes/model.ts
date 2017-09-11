@@ -14,9 +14,11 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.passw
 });
 const router = express.Router();
 
-/* GET model */
-router.get("/", function (req: Express.Request, res: Express.Response, next: Express.Handler) {
-  res.render("index", { title: DBAConfig.title, tables: models.getModels(sequelize) });
+/* GET home page. */
+router.get("/:model", async function (req: Express.Request, res: Express.Response, next: Express.Handler) {
+  res.render("model/index", {
+    records: (await models.getModels(sequelize)[req.params.model].findAll()).map(record => record.dataValues)
+  });
 });
 
 export = router;
