@@ -1,21 +1,24 @@
 <%- include('partials/header') -%>
-    <h1>
-        <%= title %>
-    </h1>
-    <p>Welcome to
-        <%= title %>
-    </p>
-    <div>
-        <table border="1">
-            <% Object.keys(tables).forEach(table => { %>
-                <tr>
-                    <td>
-                        <a href="/model/<%= table %>">
-                            <%= table %>
-                        </a>
-                    </td>
-                </tr>
-                <%})%>
-        </table>
-    </div>
-    <%- include('partials/footer') -%>
+  <h1>
+    <%= title %>
+  </h1>
+  <p>Welcome to
+    <%= title %>
+  </p>
+  <div>
+    <table class="mdl-data-table mdl-js-data-table">
+      <tr>
+        <th>Tables</th>
+      </tr>
+      <% Object.keys(tables).forEach(table => { %>
+        <tr>
+          <td>
+            <a href="/model/<%= table %>">
+              <%= table %>
+            </a>
+          </td>
+        </tr>
+        <%})%>
+    </table>
+  </div>
+  <%- include('partials/footer') -%>
