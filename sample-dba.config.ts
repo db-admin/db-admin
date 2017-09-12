@@ -5,7 +5,7 @@ export = <DBAConfig>{
     /**
      * The title of the application.
      */
-    title: "My Amazing App",
+    title: "My Amazing DBAdmin App",
 
     /**
      * The connection to use from the list of connections provided.
