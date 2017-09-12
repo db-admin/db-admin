@@ -8,7 +8,6 @@ import cookieParser = require("cookie-parser");
 import bodyParser = require("body-parser");
 
 import index = require("./routes/index");
-import users = require("./routes/users");
 import model = require("./routes/model");
 
 const app = express();
@@ -26,7 +25,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", index);
-app.use("/users", users);
 app.use("/model", model);
 
 // catch 404 and forward to error handler
