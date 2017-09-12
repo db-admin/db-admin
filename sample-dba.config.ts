@@ -1,7 +1,7 @@
 /**
  * Configuration file for DBAdmin
  */
-export = {
+export = <DBAConfig>{
     /**
      * The title of the application.
      */
@@ -20,7 +20,7 @@ export = {
         myDatabase: {
             dialect: `"mysql" | "mariadb" | "sqlite" | "postgres" | "mssql"`,
             host: "url.to.database",
-            port: "5432",
+            port: 5432,
             user: "user name",
             password: "password",
             database: "database name"
@@ -29,7 +29,7 @@ export = {
         someOtherDatabase: {
             dialect: `"mysql" | "mariadb" | "sqlite" | "postgres" | "mssql"`,
             host: "url.to.database",
-            port: "5432",
+            port: 5432,
             user: "user name",
             password: "password",
             database: "database name"
