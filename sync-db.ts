@@ -13,7 +13,10 @@ const auto = new SequelizeAuto(dbConfig.database, dbConfig.user, dbConfig.passwo
   directory: "models",
   port: dbConfig.port,
   typescript: true,
-  // dialectOptions: { ssl: true }
+  dialectOptions: { ssl: dbConfig.ssl },
+  additional: {
+    timestamps: false,
+  },
 });
 
 auto.run((error: Error) => {
