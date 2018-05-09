@@ -1,9 +1,0 @@
-{
-  "name": "db-admin",
-  "dependencies": {
-    "sails": "registry:npm/sails#0.12.0+20160610190623"
-  },
-  "globalDependencies": {
-    "node": "registry:dt/node#7.0.0+20170322231424"
-  }
-}
