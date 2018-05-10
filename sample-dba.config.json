@@ -1,0 +1,24 @@
+{
+    "title": "My Awesome App",
+    "connections": [
+        {
+            "name": "local-database",
+            "host": "localhost",
+            "database": "my-database",
+            "port": "5432",
+            "username": "some-username",
+            "password": "some-password",
+            "ssl": false
+        },
+        {
+            "name": "database-on-heroku",
+            "host": "ec2-xxx-xxx-xxx.compute-1.amazonaws.com",
+            "database": "my-database-on-heroku",
+            "port": "5432",
+            "username": "some-username",
+            "password": "some-password",
+            "ssl": true
+        }
+    ],
+    "connection": "database-on-heroku"
+}
