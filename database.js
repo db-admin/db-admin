@@ -44,16 +44,16 @@ module.exports.getTablesInSchema = async (schema) => {
  * WARNING: This is NOT safe from sequel injection.
  * @param {string} tableName the table to get the records from.
  */
-module.exports.getRecords = async (table) => {
-    return query(`SELECT * FROM ${table}`);
+module.exports.getRecords = async (schema, table) => {
+    return query(`SELECT * FROM ${schema}.${table}`);
 }
 
 /**
  * Gets the columns in the given table.
  * @param {string} table the table to get the columns for.
  */
-module.exports.getColumns = async (table) => {
-    return query("SELECT column_name, data_type FROM information_schema.columns WHERE table_name = $1", [table]);
+module.exports.getColumns = async (schema, table) => {
+    return query("SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2", [schema, table]);
 }
 
 /**
@@ -61,10 +61,10 @@ module.exports.getColumns = async (table) => {
  * NOTE: This does not protect from SQL injection.
  * @param {string} table the table name
  */
-module.exports.getColumnsAndRecords = async (table) => {
+module.exports.getColumnsAndRecords = async (schema, table) => {
     return query(`
-        SELECT column_name,data_type FROM information_schema.columns WHERE table_name = '${table}';
-        SELECT * FROM ${table};
+        SELECT column_name,data_type FROM information_schema.columns WHERE table_schema = '${schema}' AND table_name = '${table}';
+        SELECT * FROM ${schema}.${table};
     `);
 };
 
@@ -73,10 +73,10 @@ module.exports.getColumnsAndRecords = async (table) => {
  * @param {string} table the table name
  * @param {number} recordId the record id to get
  */
-module.exports.getColumnsAndRecord = async (table, recordId) => {
+module.exports.getColumnsAndRecord = async (schema, table, recordId) => {
     return query(`
-        SELECT column_name,data_type FROM information_schema.columns WHERE table_name = '${table}';
-        SELECT * FROM ${table} where id = ${recordId};
+        SELECT column_name,data_type FROM information_schema.columns WHERE table_schema = '${schema}' AND table_name = '${table}';
+        SELECT * FROM ${schema}.${table} where id = ${recordId};
     `);
 }
 
