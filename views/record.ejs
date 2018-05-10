@@ -1,3 +1,11 @@
+<a href="/schema/<%= schema %>/<%= table %>">🔙</a>
 <form action="">
-
+    <% for (let i = 0; i < record.values.length; i++) { %>
+        <div>
+            <label for="dba-<%= columns[i].column_name %>">
+                <%= columns[i].column_name %>
+            </label>
+            <input value="<%= record.values[i] %>">
+            <% } %>
+        </div>
 </form>

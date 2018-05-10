@@ -63,10 +63,22 @@ module.exports.getColumns = async (table) => {
  */
 module.exports.getColumnsAndRecords = async (table) => {
     return query(`
-    SELECT column_name,data_type FROM information_schema.columns WHERE table_name = '${table}';
-    SELECT * FROM ${table};
+        SELECT column_name,data_type FROM information_schema.columns WHERE table_name = '${table}';
+        SELECT * FROM ${table};
     `);
 };
+
+/**
+ * Gets the columns of a table and a record with the given id.
+ * @param {string} table the table name
+ * @param {number} recordId the record id to get
+ */
+module.exports.getColumnsAndRecord = async (table, recordId) => {
+    return query(`
+        SELECT column_name,data_type FROM information_schema.columns WHERE table_name = '${table}';
+        SELECT * FROM ${table} where id = ${recordId};
+    `);
+}
 
 module.exports.query = query;
 
