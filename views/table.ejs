@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <a href="/schema/<%= schema %>">🔙</a>
+    <h1>
+        <%= table %>
+    </h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>NAME</th>
+                <% for(let column of columns) { %>
+                    <th>
+                        <%= column.column_name.toUpperCase() %>
+                    </th>
+                    <%}%>
+
+            </tr>
+        </thead>
+        <tbody>
+
+            <% for(let record of records) { %>
+                <tr>
+                    <td>
+                        <%= record.id %>
+                    </td>
+                    <td>
+                        <a href="/schema/<%= schema %>/<%= table %>/<%= record.id %>">
+                            <%= record.name %>
+                        </a>
+                    </td>
+                    <% for(let value of record.values) { %>
+                        <td>
+                            <%= value %>
+                        </td>
+                        <% } %>
+                </tr>
+                <% } %>
+        </tbody>
+    </table>
+</body>
+
+</html>

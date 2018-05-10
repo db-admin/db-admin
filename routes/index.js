@@ -7,6 +7,7 @@ router.get('/', async (req, res, next) => {
   const pool = await database();
   const response = await pool.query("select schema_name from information_schema.schemata");
   const schemas = response.rows.map(r => r.schema_name);
+  pool.end();
   res.render('index', { title: 'Express', schemas });
 });
 

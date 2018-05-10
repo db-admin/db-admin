@@ -7,6 +7,16 @@
   <body>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
-    <p><%= schemas %></p>
+    <table>
+      <% for(let schema of schemas) { %>
+      <tr>
+        <td>
+          <a href="/schema/<%=schema%>">
+            <%= schema %>
+          </a>
+        </td>
+      </tr>
+      <% } %>
+    </table>
   </body>
 </html>
