@@ -53,7 +53,7 @@ module.exports.getRecords = async (table) => {
  * @param {string} table the table to get the columns for.
  */
 module.exports.getColumns = async (table) => {
-    return query("SELECT column_name,data_type FROM information_schema.columns WHERE table_name = $1", [table]);
+    return query("SELECT column_name, data_type FROM information_schema.columns WHERE table_name = $1", [table]);
 }
 
 /**

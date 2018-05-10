@@ -12,7 +12,8 @@
 <body>
     <a href="/schema/<%= schema %>">🔙</a>
     <h1>
-        <%= table %>></h1>
+        <%= table %>
+    </h1>
     <table>
         <thead>
             <tr>
@@ -31,7 +32,9 @@
             <% for(let record of records) { %>
                 <tr>
                     <td>
-                        <%= record.id %>
+                        <a href="/schema/<%= schema %>/<%= table %>/<%= record.id %>">
+                            <%= record.id %>
+                        </a>
                     </td>
                     <td>
                         <a href="/schema/<%= schema %>/<%= table %>/<%= record.id %>">

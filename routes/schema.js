@@ -13,7 +13,7 @@ router.get("/:schema/:table", async (req, res, next) => {
     const columns = response[0].rows;
     const records = response[1].rows.map(r => ({
         id: r.id,
-        name: r.name || r.title,
+        name: r.name,
         values: Object.values(r),
     }));
 
