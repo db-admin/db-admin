@@ -66,6 +66,18 @@ module.exports.getRecord = (schema, table, recordId) => {
     return module.exports.query(`SELECT * FROM ${schema}.${table} WHERE id = ${recordId};`);
 }
 
+module.exports.getColumnsAndRecord = (schema, table, recordId) => {
+    return module.exports.query(`
+        SELECT column_name, data_type 
+            FROM information_schema.columns 
+            WHERE table_schema = '${schema}' 
+            AND table_name = '${table}';
+        SELECT * 
+            FROM ${schema}.${table} 
+            WHERE id = ${recordId};
+    `);
+}
+
 
 /**
  * Populates all foriegn attributes

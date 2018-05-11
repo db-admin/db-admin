@@ -5,12 +5,26 @@
         <% for (let i = 0; i < record.values.length; i++) { %>
             <tr>
                 <td class="label">
-                    <label for="dba-<%= columns[i].name %>">
-                        <%= columns[i].name %>
+                    <label for="dba-<%= columns[i].column_name %>">
+                        <%= columns[i].column_name %>
                     </label>
                 </td>
                 <td class="value">
-                    <input id="dba-<%= columns[i].name %>" name="<%= columns[i].name %>" value="<%= record.values[i] %>">
+                    <% if(columns[i].data_type == "integer") { %>
+                    <input 
+                        id="dba-<%= columns[i].column_name %>" 
+                        name="<%= columns[i].column_name %>" 
+                        value="<%= record.values[i] %>"
+                        type="number"
+                    />
+                    <% } else { %>
+                    <input 
+                        id="dba-<%= columns[i].column_name %>" 
+                        name="<%= columns[i].column_name %>" 
+                        value="<%= record.values[i] %>"
+                        type="text"
+                    />
+                    <% } %>
                 </td>
             </tr>
         <% } %>
