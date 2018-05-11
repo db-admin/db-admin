@@ -7,9 +7,9 @@ router.get("/:schema/:table/:id", async (req, res, next) => {
     const schema = req.params.schema;
     const table = req.params.table;
     const id = req.params.id;
-    const response = await database.getColumnsAndRecord(schema, table, id);
-    const columns = response[0].rows;
-    const record = new Record(response[1].rows[0]);
+    const response = await database.getRecord(schema, table, id);
+    const columns = response.fields;
+    const record = new Record(response.rows[0], schema, table);
 
     res.render("record", {
         table: req.params.table,
@@ -21,9 +21,9 @@ router.get("/:schema/:table/:id", async (req, res, next) => {
 router.get("/:schema/:table", async (req, res, next) => {
     const table = req.params.table;
     const schema = req.params.schema;
-    const response = await database.getColumnsAndRecords(schema, table);
-    const columns = response[0].rows;
-    const records = response[1].rows.map(r => new Record(r));
+    const response = await database.getRecords(schema, table);
+    const columns = response.fields;
+    const records = response.rows.map(r => new Record(r, schema, table));
     await database.populateForeignValues(schema, table, records, columns);
     res.render("table", {
         table: req.params.table,

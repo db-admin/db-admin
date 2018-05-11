@@ -1,0 +1,10 @@
+table{
+    width: 100%;
+}
+td.label {
+    width: 1px;
+    text-align: right;
+}
+td.value input{
+    width: 100%;
+}

@@ -2,9 +2,11 @@ module.exports = class Record {
     /**
      * @param {{id:number, name:string}}} record 
      */
-    constructor(record) {
+    constructor(record, schema, table) {
         this.id = record.id;
         this.name = record.name;
+        this.table = table;
+        this.schema = schema;
         this.values = Object.values(record);
         this.original = record;
     }

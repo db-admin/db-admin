@@ -21,7 +21,7 @@
                 <th>NAME</th>
                 <% for(let column of columns) { %>
                     <th>
-                        <%= column.column_name.toUpperCase() %>
+                        <%= column.name.toUpperCase() %>
                     </th>
                     <%}%>
 
@@ -44,7 +44,9 @@
                     <% for(let value of record.values) { %>
                         <% if(typeof value == "object" && value != null) { %>
                             <td>
-                                <%= value.id %><%= value.name ? "." + value.name : ''  %>
+                                <a href="/schema/<%= value.schema %>/<%= value.table %>/<%= value.id %>">
+                                    <%= value.id %><%= value.name ? "." + value.name : ''  %>
+                                </a>
                             </td>
                         <% } else { %>
                             <td>

@@ -58,27 +58,12 @@ module.exports.getColumns = (schema, table) => {
 }
 
 /**
- * Gets the columns and records from a table. This is done in one network request.
- * NOTE: This does not protect from SQL injection.
- * @param {string} table the table name
- */
-module.exports.getColumnsAndRecords = (schema, table) => {
-    return module.exports.query(`
-        SELECT column_name,data_type FROM information_schema.columns WHERE table_schema = '${schema}' AND table_name = '${table}';
-        SELECT * FROM ${schema}.${table};
-    `);
-};
-
-/**
  * Gets the columns of a table and a record with the given id.
  * @param {string} table the table name
  * @param {number} recordId the record id to get
  */
-module.exports.getColumnsAndRecord = (schema, table, recordId) => {
-    return module.exports.query(`
-        SELECT column_name,data_type FROM information_schema.columns WHERE table_schema = '${schema}' AND table_name = '${table}';
-        SELECT * FROM ${schema}.${table} where id = ${recordId};
-    `);
+module.exports.getRecord = (schema, table, recordId) => {
+    return module.exports.query(`SELECT * FROM ${schema}.${table} WHERE id = ${recordId};`);
 }
 
 
@@ -104,7 +89,7 @@ module.exports.populateForeignValues = async (schema, table, records) => {
         for (let r of records.filter(r => r.original[fk.column_name] != null)) {
             const index = columns.indexOf(fk.column_name);
             const newValue = values.rows.find(v => v[fk.foreign_column_name] == r.original[fk.column_name]);
-            r.updateValue(index, new Record(newValue));
+            r.updateValue(index, new Record(newValue, fk.foreign_table_schema, fk.foreign_table_name));
         }
     }
 }
