@@ -1,4 +1,5 @@
-const pool = async () => {
+const Record = require("./record.class");
+const pool = () => {
     const fs = require("fs");
     let dbaConfig;
     let dbConfig;
@@ -27,16 +28,16 @@ const pool = async () => {
 /**
  * Gets all the schemas in the database.
  */
-module.exports.getSchemas = async () => {
-    return query("SELECT schema_name FROM information_schema.schemata");
+module.exports.getSchemas = () => {
+    return module.exports.query("SELECT schema_name FROM information_schema.schemata");
 }
 
 /**
  * Gets all the tables in the given schema.
  * @param {string} schema the schema to get the tables from.
  */
-module.exports.getTablesInSchema = async (schema) => {
-    return query("SELECT * FROM information_schema.tables WHERE table_schema = $1", [schema]);
+module.exports.getTablesInSchema = (schema) => {
+    return module.exports.query("SELECT * FROM information_schema.tables WHERE table_schema = $1", [schema]);
 }
 
 /**
@@ -45,15 +46,15 @@ module.exports.getTablesInSchema = async (schema) => {
  * @param {string} tableName the table to get the records from.
  */
 module.exports.getRecords = async (schema, table) => {
-    return query(`SELECT * FROM ${schema}.${table}`);
+    return module.exports.query(`SELECT * FROM ${schema}.${table}`);
 }
 
 /**
  * Gets the columns in the given table.
  * @param {string} table the table to get the columns for.
  */
-module.exports.getColumns = async (schema, table) => {
-    return query("SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2", [schema, table]);
+module.exports.getColumns = (schema, table) => {
+    return module.exports.query("SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2", [schema, table]);
 }
 
 /**
@@ -61,8 +62,8 @@ module.exports.getColumns = async (schema, table) => {
  * NOTE: This does not protect from SQL injection.
  * @param {string} table the table name
  */
-module.exports.getColumnsAndRecords = async (schema, table) => {
-    return query(`
+module.exports.getColumnsAndRecords = (schema, table) => {
+    return module.exports.query(`
         SELECT column_name,data_type FROM information_schema.columns WHERE table_schema = '${schema}' AND table_name = '${table}';
         SELECT * FROM ${schema}.${table};
     `);
@@ -73,23 +74,72 @@ module.exports.getColumnsAndRecords = async (schema, table) => {
  * @param {string} table the table name
  * @param {number} recordId the record id to get
  */
-module.exports.getColumnsAndRecord = async (schema, table, recordId) => {
-    return query(`
+module.exports.getColumnsAndRecord = (schema, table, recordId) => {
+    return module.exports.query(`
         SELECT column_name,data_type FROM information_schema.columns WHERE table_schema = '${schema}' AND table_name = '${table}';
         SELECT * FROM ${schema}.${table} where id = ${recordId};
     `);
 }
 
-module.exports.query = query;
+
+/**
+ * Populates all foriegn attributes
+ * NOTE: Does not protect against SQL injection.
+ * @param {string} schema the schema where the records came from
+ * @param {string} table the table where the records came from
+ * @param {Record[]} records the records to populate
+ */
+module.exports.populateForeignValues = async (schema, table, records) => {
+    const foreignKeys = await module.exports.getForeignKeys(schema, table);
+    const columns = Object.keys(records[0].original);
+    for (let fk of foreignKeys.rows) {
+        const ids = records
+            .filter(r => r.original[fk.column_name] != null)
+            .map(r => r.original[fk.column_name]);
+        const values = await module.exports.query(`
+            SELECT * 
+            FROM ${fk.foreign_table_schema}.${fk.foreign_table_name}
+            WHERE ${fk.foreign_column_name} IN (${ids})
+        `);
+        for (let r of records.filter(r => r.original[fk.column_name] != null)) {
+            const index = columns.indexOf(fk.column_name);
+            const newValue = values.rows.find(v => v[fk.foreign_column_name] == r.original[fk.column_name]);
+            r.updateValue(index, new Record(newValue));
+        }
+    }
+}
+
+/**
+ * Gets the foreign keys of a table
+ * @param {string} schema the schema of the table to get the keys from
+ * @param {string} table the table to get the keys from
+ */
+module.exports.getForeignKeys = (schema, table) => {
+    return module.exports.query(`
+        SELECT
+            kcu.column_name,
+            ccu.table_schema AS foreign_table_schema,
+            ccu.table_name AS foreign_table_name,
+            ccu.column_name AS foreign_column_name 
+        FROM 
+            information_schema.table_constraints AS tc 
+            JOIN information_schema.key_column_usage AS kcu
+            ON tc.constraint_name = kcu.constraint_name
+            JOIN information_schema.constraint_column_usage AS ccu
+            ON ccu.constraint_name = tc.constraint_name
+        WHERE constraint_type = 'FOREIGN KEY' AND tc.table_schema = $1 AND tc.table_name = $2;`,
+        [schema, table]
+    );
+}
 
 /**
  * Executes a query against the database.
  * @param {string} query the query to execute
  * @param {string[]} vars variables to use in prepared statement
  */
-async function query(query, vars) {
+module.exports.query = async (query, vars) => {
     const p = await pool();
-    const queryResponse = await p.query(query, vars);
+    const response = await p.query(query, vars);
     p.end();
-    return queryResponse;
+    return response;
 };

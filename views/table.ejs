@@ -42,10 +42,16 @@
                         </a>
                     </td>
                     <% for(let value of record.values) { %>
-                        <td>
-                            <%= value %>
-                        </td>
+                        <% if(typeof value == "object" && value != null) { %>
+                            <td>
+                                <%= value.id %><%= value.name ? "." + value.name : ''  %>
+                            </td>
+                        <% } else { %>
+                            <td>
+                                <%= value %>
+                            </td>
                         <% } %>
+                    <% } %>
                 </tr>
                 <% } %>
         </tbody>

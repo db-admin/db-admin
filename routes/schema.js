@@ -24,7 +24,7 @@ router.get("/:schema/:table", async (req, res, next) => {
     const response = await database.getColumnsAndRecords(schema, table);
     const columns = response[0].rows;
     const records = response[1].rows.map(r => new Record(r));
-
+    await database.populateForeignValues(schema, table, records, columns);
     res.render("table", {
         table: req.params.table,
         schema: req.params.schema,
