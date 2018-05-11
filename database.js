@@ -118,6 +118,26 @@ module.exports.getForeignKeys = (schema, table) => {
 }
 
 /**
+ * Updates a record in the database.
+ * NOTE: This does NOT protect against SQL injection.
+ * @param {string} schema the schema of the record
+ * @param {string} table the table of the record
+ * @param {Record} record the record with its updated values
+ */
+module.exports.updateRecord = (schema, table, record) => {
+    let i = 0;
+    const columns = Object.keys(record.original).map(c => `"${c}"`); // should be variables
+    const values = record.values;
+    const valueVariables = values.map(v => `$${++i}`);
+    let query = `
+        UPDATE ${schema}.${table} 
+        SET (${columns}) = (${valueVariables}) 
+        WHERE id = $${++i};
+    `;
+    return module.exports.query(query, [...values, record.id]);
+}
+
+/**
  * Executes a query against the database.
  * @param {string} query the query to execute
  * @param {string[]} vars variables to use in prepared statement

@@ -18,6 +18,15 @@ router.get("/:schema/:table/:id", async (req, res, next) => {
     })
 });
 
+router.post("/:schema/:table/:id", async (req, res, next) => {
+    const schema = req.params.schema;
+    const table = req.params.table;
+    const id = req.params.id;
+    const updated = new Record(req.body, schema, table);
+    await database.updateRecord(schema, table, updated);
+    res.redirect(`/schema/${schema}/${table}?highlight=${id}`);
+});
+
 router.get("/:schema/:table", async (req, res, next) => {
     const table = req.params.table;
     const schema = req.params.schema;

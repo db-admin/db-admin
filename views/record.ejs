@@ -1,6 +1,6 @@
 <a href="/schema/<%= schema %>/<%= table %>">🔙</a>
 <link href="/stylesheets/record.css" rel="stylesheet" />
-<form action="">
+<form action="/schema/<%= schema %>/<%= table %>/<%= record.id %>" method="post">
     <table>
         <% for (let i = 0; i < record.values.length; i++) { %>
             <tr>
@@ -10,9 +10,12 @@
                     </label>
                 </td>
                 <td class="value">
-                    <input id="dba-<%= columns[i].name %>" value="<%= record.values[i] %>">
+                    <input id="dba-<%= columns[i].name %>" name="<%= columns[i].name %>" value="<%= record.values[i] %>">
                 </td>
             </tr>
         <% } %>
     </table>
+
+    <a href="/schema/<%= schema %>/<%= table %>">Cancel</a>
+    <input type="submit" />
 </form>
