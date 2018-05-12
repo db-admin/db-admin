@@ -120,11 +120,5 @@ nbproject
 .node_history
 *.map
 
-# Typescript
-*.js.map
-app.js
-assets/**/*.js
-sample-dba.config.js
-
 #Visual Studio
 .vs
