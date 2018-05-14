@@ -87,6 +87,7 @@ module.exports.getColumnsAndRecord = (schema, table, recordId) => {
  * @param {Record[]} records the records to populate
  */
 module.exports.populateForeignValues = async (schema, table, records) => {
+    if (records.length == 0) return;
     const foreignKeys = await module.exports.getForeignKeys(schema, table);
     const columns = Object.keys(records[0].original);
     for (let fk of foreignKeys.rows) {
