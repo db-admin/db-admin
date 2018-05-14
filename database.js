@@ -78,7 +78,6 @@ module.exports.getColumnsAndRecord = (schema, table, recordId) => {
     `);
 }
 
-
 /**
  * Populates all foriegn attributes
  * NOTE: Does not protect against SQL injection.

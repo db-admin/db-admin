@@ -1,6 +1,9 @@
 module.exports = class Record {
     /**
-     * @param {{id:number, name:string}}} record 
+     * 
+     * @param {any} record The original record returned from a database query
+     * @param {string} schema The parent schema name of the databsae of the record
+     * @param {string} table The table name of the record
      */
     constructor(record, schema, table) {
         this.id = record.id;

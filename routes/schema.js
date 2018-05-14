@@ -9,7 +9,7 @@ router.get("/:schema/:table/:id", async (req, res, next) => {
     const id = req.params.id;
     const response = await database.getColumnsAndRecord(schema, table, id);
     const columns = response[0].rows;
-    const record = new Record(response[1].rows[0], schema, table);
+    const record = response[1].rows[0];
 
     res.render("record", {
         table: req.params.table,

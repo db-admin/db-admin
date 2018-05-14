@@ -2,7 +2,7 @@
 <link href="/stylesheets/record.css" rel="stylesheet" />
 <form action="/schema/<%= schema %>/<%= table %>/<%= record.id %>" method="post">
     <table>
-        <% for (let i = 0; i < record.values.length; i++) { %>
+        <% for (let i = 0; i < Object.keys(record).length; i++) { %>
             <tr>
                 <td class="label">
                     <label for="dba-<%= columns[i].column_name %>">
@@ -10,24 +10,19 @@
                     </label>
                 </td>
                 <td class="value">
-                    <% if(columns[i].data_type == "integer") { %>
-                    <input 
-                        id="dba-<%= columns[i].column_name %>" 
-                        name="<%= columns[i].column_name %>" 
-                        value="<%= record.values[i] %>"
-                        type="number"
-                    />
-                    <% } else { %>
-                    <input 
-                        id="dba-<%= columns[i].column_name %>" 
-                        name="<%= columns[i].column_name %>" 
-                        value="<%= record.values[i] %>"
-                        type="text"
-                    />
-                    <% } %>
+                    <%= columns[i].data_type %>
+                        <% if(columns[i].data_type == "integer") { %>
+                            <input id="dba-<%= columns[i].column_name %>" name="<%= columns[i].column_name %>" value="<%= Object.values(record)[i] %>"
+                                type="number" />
+                            <% } else if (columns[i].data_type == "timestamp with time zone") { %>
+                                <input id="dba-<%= columns[i].column_name %>" name="<%= columns[i].column_name %>" value="<%= Object.values(record)[i].toISOString().slice(0, 23) %>"
+                                    type="datetime-local" <% } else { %>
+                                <input id="dba-<%= columns[i].column_name %>" name="<%= columns[i].column_name %>" value="<%= Object.values(record)[i] %>"
+                                    type="text" />
+                                <% } %>
                 </td>
             </tr>
-        <% } %>
+            <% } %>
     </table>
 
     <a href="/schema/<%= schema %>/<%= table %>">Cancel</a>

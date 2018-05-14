@@ -8,3 +8,7 @@ td.label {
 td.value input{
     width: 100%;
 }
+
+td.value input:focus{
+    outline: 3px solid #04a1e1
+}
