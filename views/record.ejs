@@ -1,28 +1,75 @@
 <a href="/schema/<%= schema %>/<%= table %>">🔙</a>
 <link href="/stylesheets/record.css" rel="stylesheet" />
-<form action="/schema/<%= schema %>/<%= table %>/<%= record.id %>" method="post">
+<%
+    let view;
+    let action = `/schema/${schema}/${table}/`;
+    if(typeof record == "undefined"){
+        view = "create";
+    } else {
+        view = "edit";
+        action += record.id;
+    }
+%>
+
+<form action="<%=action%>" method="post">
     <table>
-        <% for (let i = 0; i < Object.keys(record).length; i++) { %>
-            <tr>
-                <td class="label">
-                    <label for="dba-<%= columns[i].column_name %>">
-                        <%= columns[i].column_name %>
-                    </label>
-                </td>
-                <td class="value">
-                    <%= columns[i].data_type %>
-                        <% if(columns[i].data_type == "integer") { %>
-                            <input id="dba-<%= columns[i].column_name %>" name="<%= columns[i].column_name %>" value="<%= Object.values(record)[i] %>"
-                                type="number" />
-                            <% } else if (columns[i].data_type == "timestamp with time zone") { %>
-                                <input id="dba-<%= columns[i].column_name %>" name="<%= columns[i].column_name %>" value="<%= Object.values(record)[i].toISOString().slice(0, 23) %>"
-                                    type="datetime-local" <% } else { %>
-                                <input id="dba-<%= columns[i].column_name %>" name="<%= columns[i].column_name %>" value="<%= Object.values(record)[i] %>"
-                                    type="text" />
+        <% 
+            for (let i = 0; i < columns.length; i++) { 
+                const column = columns[i].column_name;
+        %>
+                <tr>
+                    <td class="label">
+                        <label for="dba-<%= column %>">
+                            <%= columns[i].column_name %>
+                        </label>
+                    </td>
+                    <td class="value">
+                        <%
+                            let value;
+                            let datatype = columns[i].data_type;
+                            if(view == "edit") value = Object.values(record)[i];
+                            if(datatype == "integer") { 
+                             if(foreignRecords[column]) { %>
+                                <select id="dba-<%= column %>" name="<%= column %>" value="<%= value %>">
+                                    <% 
+                                    for (let r of foreignRecords[column]) { 
+                                        const innerText = `${r.name} [${r.id}]`;
+                                        const selected = r.id == value ? "selected" : "";
+                                    %>
+                                        <option value="<%= r.id %>" <%= selected %>>
+                                            <%=innerText%>
+                                        </option>
+                                    <% } %>
+                                </select>
+                                <% } else { %>
+                                    <input 
+                                    id="dba-<%= column %>"
+                                    name="<%= column %>"
+                                    value="<%= value %>"
+                                    type="number" />
                                 <% } %>
-                </td>
-            </tr>
-            <% } %>
+                        <% 
+                            } else if (datatype == "timestamp with time zone") {
+                        %>
+                                <input 
+                                id="dba-<%= column %>" 
+                                name="<%= column %>" 
+                                <% if(value) { %> value="<%= value.toISOString().slice(0, 23) %>" <% } %>
+                                type="datetime-local" />
+                        <%
+                            } else { 
+                        %>
+                                <input 
+                                id="dba-<%= column %>" 
+                                name="<%= column %>" 
+                                value="<%= value %>" 
+                                type="text" />
+                        <% } %>
+                    </td>
+                </tr>
+        <% 
+            } 
+        %>
     </table>
 
     <a href="/schema/<%= schema %>/<%= table %>">Cancel</a>

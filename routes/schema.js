@@ -7,15 +7,21 @@ router.get("/:schema/:table/:id", async (req, res, next) => {
     const schema = req.params.schema;
     const table = req.params.table;
     const id = req.params.id;
-    const response = await database.getColumnsAndRecord(schema, table, id);
-    const columns = response[0].rows;
-    const record = response[1].rows[0];
 
-    res.render("record", {
-        table: req.params.table,
-        schema: req.params.schema,
-        columns, record,
-    });
+    let foreignRecords = await database.getForeignRecords(schema, table);
+
+    if (id == "create") {
+        const columns = await database.getColumns(schema, table);
+        res.render("record", {
+            table, schema,
+            columns: columns.rows
+        });
+    } else {
+        const response = await database.getColumnsAndRecord(schema, table, id);
+        const columns = response[0].rows;
+        const record = response[1].rows[0];
+        res.render("record", { table, schema, columns, record, foreignRecords });
+    }
 });
 
 router.post("/:schema/:table/:id", async (req, res, next) => {

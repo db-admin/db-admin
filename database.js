@@ -130,6 +130,29 @@ module.exports.getForeignKeys = (schema, table) => {
 }
 
 /**
+ * Gets the foreign records of a specific table.
+ * @param {string} schema the schema to get the records from
+ * @param {string} table the table to get the records from
+ * @return {{[x:string]: any[]} the foreign keys, indexed by the column
+ * name of the given table
+ */
+module.exports.getForeignRecords = async (schema, table) => {
+    const foreignKeys = await module.exports.getForeignKeys(schema, table);
+    const queries = [];
+    for (let fk of foreignKeys.rows) {
+        queries.push(`SELECT * FROM ${fk.foreign_table_schema}.${fk.foreign_table_name}`);
+    }
+    let response = await module.exports.query(queries.join(";"));
+    if (!Array.isArray(response)) { response = [response]; }
+    const foreignRecords = {};
+    for (let i = 0; i < foreignKeys.rows.length; i++) {
+        const fk = foreignKeys.rows[i];
+        const column = fk.column_name;
+        foreignRecords[column] = response[i].rows;
+    }
+    return foreignRecords;
+}
+/**
  * Updates a record in the database.
  * NOTE: This does NOT protect against SQL injection.
  * @param {string} schema the schema of the record
@@ -138,15 +161,15 @@ module.exports.getForeignKeys = (schema, table) => {
  */
 module.exports.updateRecord = (schema, table, record) => {
     let i = 0;
-    const columns = Object.keys(record.original).map(c => `"${c}"`); // should be variables
-    const values = record.values;
-    const valueVariables = values.map(v => `$${++i}`);
+    const columns = Object.keys(record.original).map(v => ` "${v}"`); // should be variables
+    const values = record.values.map(v => v == "" ? null : v);
+    const variables = values.map(x => `$${++i}`);
     let query = `
-        UPDATE ${schema}.${table} 
-        SET (${columns}) = (${valueVariables}) 
-        WHERE id = $${++i};
+        UPDATE ${schema}.${table}
+        SET (${columns}) = (${variables})
+        WHERE id = ${record.id};
     `;
-    return module.exports.query(query, [...values, record.id]);
+    return module.exports.query(query, values);
 }
 
 /**

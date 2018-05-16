@@ -14,6 +14,7 @@
     <h1>
         <%= table %>
     </h1>
+    <a href="/schema/<%= schema %>/<%= table %>/create">Create</a>
     <table>
         <thead>
             <tr>
@@ -45,15 +46,16 @@
                         <% if(typeof value == "object" && value != null) { %>
                             <td>
                                 <a href="/schema/<%= value.schema %>/<%= value.table %>/<%= value.id %>">
-                                    <%= value.id %><%= value.name ? "." + value.name : ''  %>
+                                    <%= value.id %>
+                                        <%= value.name ? "." + value.name : ''  %>
                                 </a>
                             </td>
-                        <% } else { %>
-                            <td>
-                                <%= value %>
-                            </td>
-                        <% } %>
-                    <% } %>
+                            <% } else { %>
+                                <td>
+                                    <%= value %>
+                                </td>
+                                <% } %>
+                                    <% } %>
                 </tr>
                 <% } %>
         </tbody>
