@@ -46,8 +46,7 @@
                         <% if(typeof value == "object" && value != null) { %>
                             <td>
                                 <a href="/schema/<%= value.schema %>/<%= value.table %>/<%= value.id %>">
-                                    <%= value.id %>
-                                        <%= value.name ? "." + value.name : ''  %>
+                                    <%= value.id %><%= value.name ? ". " + value.name : ''  %>
                                 </a>
                             </td>
                             <% } else { %>
@@ -55,7 +54,7 @@
                                     <%= value %>
                                 </td>
                                 <% } %>
-                                    <% } %>
+                            <% } %>
                 </tr>
                 <% } %>
         </tbody>
