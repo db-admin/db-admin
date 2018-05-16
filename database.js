@@ -162,12 +162,32 @@ module.exports.getForeignRecords = async (schema, table) => {
 module.exports.updateRecord = (schema, table, record) => {
     let i = 0;
     const columns = Object.keys(record.original).map(v => ` "${v}"`); // should be variables
-    const values = record.values.map(v => v == "" ? null : v);
+    const values = record.values;
     const variables = values.map(x => `$${++i}`);
     let query = `
         UPDATE ${schema}.${table}
         SET (${columns}) = (${variables})
         WHERE id = ${record.id};
+    `;
+    return module.exports.query(query, values);
+}
+
+module.exports.insertRecord = (schema, table, record) => {
+    let i = 0;
+    let columns = Object
+        .keys(record.original)
+    let values = record.values;
+    (function removeIds() {
+        const idIndex = columns.findIndex(c => c.toLowerCase() == "id");
+        columns.splice(idIndex, 1);
+        values.splice(idIndex, 1);
+    })();
+    const variables = values.map(x => `$${++i}`);
+    columns = columns.map(v => ` "${v}"`); // should be variables
+    let query = `
+        INSERT INTO ${schema}.${table} (${columns})
+        VALUES (${variables})
+        RETURNING id;
     `;
     return module.exports.query(query, values);
 }

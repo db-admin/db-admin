@@ -4,6 +4,7 @@
     let view;
     let action = `/schema/${schema}/${table}/`;
     if(typeof record == "undefined"){
+        action += "create";
         view = "create";
     } else {
         view = "edit";
@@ -27,27 +28,30 @@
                         <%
                             let value;
                             let datatype = columns[i].data_type;
+                            let inputType = "number";
                             if(view == "edit") value = Object.values(record)[i];
                             if(datatype == "integer") { 
-                             if(foreignRecords[column]) { %>
-                                <select id="dba-<%= column %>" name="<%= column %>" value="<%= value %>">
+                                const tempForeignRecords = foreignRecords[column] || [];
+                                if(tempForeignRecords.length) inputType = "text";
+                        %>
+                                <datalist id="dba-list-<%= column %>" name="<%= column %>" value="<%= value %>">
                                     <% 
-                                    for (let r of foreignRecords[column]) { 
-                                        const innerText = `${r.name} [${r.id}]`;
-                                        const selected = r.id == value ? "selected" : "";
+                                        for (let r of tempForeignRecords) { 
+                                            const selected = r.id == value ? "selected" : "";
                                     %>
                                         <option value="<%= r.id %>" <%= selected %>>
-                                            <%=innerText%>
+                                            <%= r.name %>
                                         </option>
                                     <% } %>
-                                </select>
-                                <% } else { %>
-                                    <input 
-                                    id="dba-<%= column %>"
-                                    name="<%= column %>"
-                                    value="<%= value %>"
-                                    type="number" />
-                                <% } %>
+                                </datalist>
+                                <input 
+                                id="dba-<%= column %>"
+                                list="dba-list-<%= column %>"
+                                name="<%= column %>"
+                                value="<%= value %>"
+                                type="<%= inputType %>" 
+                                />
+                                
                         <% 
                             } else if (datatype == "timestamp with time zone") {
                         %>

@@ -10,7 +10,7 @@ module.exports = class Record {
         this.name = record.name;
         this.table = table;
         this.schema = schema;
-        this.values = Object.values(record);
+        this.values = Object.values(record).map(v => v == "" ? null : v);
         this.original = record;
     }
 
