@@ -11,7 +11,6 @@
         action += record.id;
     }
 %>
-
 <form action="<%=action%>" method="post">
     <table>
         <% 
@@ -78,4 +77,18 @@
 
     <a href="/schema/<%= schema %>/<%= table %>">Cancel</a>
     <input type="submit" />
+    <% if(view == "edit") { %>
+        <input type="button" onclick="deleteRecord(this)" value="Delete">
+    <% } %>
 </form>
+
+<script>
+<% if(view == "edit") { %>
+    async function deleteRecord(){
+        const message = `Are you sure you want to delete the following record?\n<%=record.id%>. <%=record.name%>`;
+        if(!confirm(message)) return;
+        await fetch("/schema/<%=schema%>/<%=table%>/<%= record.id %>", { method: "delete" });
+        location.href="/schema/<%=schema%>/<%=table%>";
+    }
+<% } %>
+</script>

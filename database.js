@@ -192,6 +192,14 @@ module.exports.insertRecord = (schema, table, record) => {
     return module.exports.query(query, values);
 }
 
+module.exports.deleteRecord = (schema, table, id) => {
+    const query = `
+        DELETE FROM ${schema}.${table}
+        WHERE ID = $1
+    `;
+    return module.exports.query(query, [id]);
+}
+
 /**
  * Executes a query against the database.
  * @param {string} query the query to execute

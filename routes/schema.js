@@ -40,6 +40,14 @@ router.post("/:schema/:table/:id", async (req, res, next) => {
     res.redirect(`/schema/${schema}/${table}?highlight=${id}`);
 });
 
+router.delete("/:schema/:table/:id", async (req, res, next) => {
+    const schema = req.params.schema;
+    const table = req.params.table;
+    const id = req.params.id;
+    await database.deleteRecord(schema, table, id);
+    res.status(200).send();
+});
+
 router.get("/:schema/:table", async (req, res, next) => {
     const table = req.params.table;
     const schema = req.params.schema;
