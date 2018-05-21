@@ -6,7 +6,7 @@ module.exports = class Record {
      * @param {string} table The table name of the record
      */
     constructor(record, schema, table) {
-        this.id = record.id;
+        this.id = record.id || record.number;
         this.name = record.name;
         this.table = table;
         this.schema = schema;
