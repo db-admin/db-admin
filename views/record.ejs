@@ -28,7 +28,12 @@
                             let value;
                             let datatype = columns[i].data_type;
                             let inputType = "number";
+                            let required = "";
+                            let readonly = "";
+
+                            if(view == "edit" && column == "id"){ readonly = "readonly" }
                             if(view == "edit") value = Object.values(record)[i];
+                            if(columns[i].is_nullable == "NO" && columns[i].column_name !== "id"){ required="required"; }
                             if(datatype == "integer") { 
                                 const tempForeignRecords = foreignRecords[column] || [];
                                 if(tempForeignRecords.length) inputType = "text";
@@ -49,6 +54,8 @@
                                 name="<%= column %>"
                                 value="<%= value %>"
                                 type="<%= inputType %>" 
+                                <%= required %>
+                                <%= readonly %>
 <% if(tempForeignRecords.length) { %> placeholder="Search" <% } %>
                                 />
                                 
@@ -56,6 +63,8 @@
                             } else if (datatype == "timestamp with time zone") {
                         %>
                                 <input 
+                                <%= required %>
+                                <%= readonly %>
                                 id="dba-<%= column %>" 
                                 name="<%= column %>" 
                                 <% if(value) { %> value="<%= value.toISOString().slice(0, 23) %>" <% } %>
@@ -64,6 +73,8 @@
                             } else { 
                         %>
                                 <input 
+                                <%= required %>
+                                <%= readonly %>
                                 id="dba-<%= column %>" 
                                 name="<%= column %>" 
                                 value="<%= value %>" 
